@@ -9,7 +9,7 @@
  * @version   1.0.0
  */
 
- namespace GRONC\WCFM\Controllers;
+ namespace GRONC\Controllers;
 
 
 

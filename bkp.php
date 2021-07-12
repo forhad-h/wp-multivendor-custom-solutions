@@ -4,12 +4,13 @@ if(!defined('ABSPATH')) exit; // Exit if accessed directly
 
 if(!class_exists('WCFM')) return; // Exit if WCFM not installed
 
-use GRONC\WCFM\Controllers\GRON_GEO_Routes;
+use GRONC\Controllers\GRON_GEO_Routes;
 
 /**
  * WCFM - Custom Menus Query Var
  */
 function gronc_query_vars( $query_vars ) {
+
 	$wcfm_modified_endpoints = (array) get_option( 'wcfm_endpoints' );
 
 	$query_custom_menus_vars = array(
@@ -26,16 +27,13 @@ add_filter( 'wcfm_query_vars', 'gronc_query_vars', 50 );
  * WCFM - Custom Menus End Point Title
  */
 function gronc_endpoint_title( $title, $endpoint ) {
-	global $wp;
-	switch ( $endpoint ) {
-		case 'wcfm-geo-routes' :
-			$title = __( 'GEO Routes', 'gron-custom' );
-  		break;
-		default:
-		  break;
+
+	if( $endpoint === 'wcfm-geo-routes' ) {
+		$title = __( 'GEO Routes', 'gron-custom' );
 	}
 
 	return $title;
+
 }
 add_filter( 'wcfm_endpoint_title', 'gronc_endpoint_title', 50, 2 );
 
@@ -170,6 +168,3 @@ function wcfm_csm_ajax_controller() {
 	}
 }
 add_action( 'after_wcfm_ajax_controller', 'wcfm_csm_ajax_controller' );
-
-
-  new GRON_GEO_Routes();
