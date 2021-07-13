@@ -2,8 +2,8 @@
 {
   "autoload": {
     "psr-4": {
-      "GRONC\\Controllers\\": "controllers/",
-      "GRONC\\": "inc/"
+      "GRONC\\": "inc/",
+      "GRONC\\WCFM\\": "wcfm/"
     }
   }
 }

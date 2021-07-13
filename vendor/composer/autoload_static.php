@@ -9,15 +9,15 @@ class ComposerStaticInit5fbd97e47ab29fe0cb76532a16bb17c2
     public static $prefixLengthsPsr4 = array (
         'G' => 
         array (
-            'GRONC\\Controllers\\' => 18,
+            'GRONC\\WCFM\\' => 11,
             'GRONC\\' => 6,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'GRONC\\Controllers\\' => 
+        'GRONC\\WCFM\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/controllers',
+            0 => __DIR__ . '/../..' . '/wcfm',
         ),
         'GRONC\\' => 
         array (

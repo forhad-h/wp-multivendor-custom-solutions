@@ -24,7 +24,7 @@ global $WCFM, $wp_query;
 		<div class="wcfm-container">
 			<div id="wcfm_build_listing_expander" class="wcfm-content">
 
-				<!---- Add Content Here ----->
+				content goes here...
 
 				<div class="wcfm-clearfix"></div>
 			</div>

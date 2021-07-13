@@ -6,6 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'GRONC\\Controllers\\' => array($baseDir . '/controllers'),
+    'GRONC\\WCFM\\' => array($baseDir . '/wcfm'),
     'GRONC\\' => array($baseDir . '/inc'),
 );

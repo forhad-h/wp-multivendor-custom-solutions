@@ -8,12 +8,11 @@
  * @package 	wcfmcsm/controllers
  * @version   1.0.0
  */
+namespace GRONC\WCFM\controllers;
 
- namespace GRONC\Controllers;
+defined('ABSPATH') or exit;
 
-
-
-class GRON_GEO_Routes {
+class GRON_GEO_Routes_Controller {
 
 	public function __construct() {
 		global $WCFM, $WCFMu;
@@ -24,7 +23,7 @@ class GRON_GEO_Routes {
 	public function processing() {
 		global $WCFM, $WCFMu, $wpdb, $_POST;
 
-	  echo '{ "status": true, "message": "' . __( 'Build updated.', 'wc-frontend-manager' ) . '" }';
+	  echo '{ "status": true, "message": "' . __( 'GEO Routes updated.', 'gron-custom' ) . '" }';
 
 	  die;
 	}
