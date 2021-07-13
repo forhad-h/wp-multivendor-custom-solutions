@@ -4,8 +4,6 @@ defined('ABSPATH') or exit;
 
 use GRONC\WCFM\core\Menu;
 
-global $gronc;
-
 // create GEO Routes menu in WCFM store-manager
 new Menu([
   'label' => 'GEO Routes',
