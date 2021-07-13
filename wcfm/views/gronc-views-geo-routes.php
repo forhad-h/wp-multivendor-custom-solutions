@@ -22,25 +22,30 @@ global $WCFM;
 			<div class="wcfm-clearfix"></div>
 		</div>
 
+		<div class="wcfm-container">
+				<div id="delay"></div>
+				<div id="map"></div>
+	  </div>
+
 
 		<div class="wcfm_clearfix"></div><br />
 
 			<div class="wcfm-tabWrap">
 
 				<!-- collapsible -->
-				<div class="page_collapsible" id="gronc-geo-routes-map-head">
+				<div class="page_collapsible" id="gronc-geo-routes-details-head">
 					<label class="wcfmfa fa-map"></label>
-					<?php _e('Map', 'gron-custom'); ?><span></span>
+					<?php _e('Details', 'gron-custom'); ?><span></span>
 				</div>
 
 				<div class="wcfm-container">
-					<div id="gronc-geo-routes-map-expander" class="wcfm-content">
+					<div id="gronc-geo-routes-details-expander" class="wcfm-content">
 
 					  <h2><?php _e('Customer Routes', 'gron-custom'); ?></h2>
-
 						<div class="wcfm_clearfix"></div>
 
-						Map goes here...
+						<div id="messages"></div>
+						<div id="directions-panel"></div>
 
 					</div>
 				</div>
@@ -49,7 +54,7 @@ global $WCFM;
 
 					<!-- collapsible -->
 					<div class="page_collapsible" id="gronc-geo-routes-settings-head">
-						<label class="wcfmfa fa-chalkboard"></label>
+						<label class="wcfmfa fa-cogs"></label>
 						<?php _e('Settings', 'gron-custom'); ?><span></span>
 					</div>
 
@@ -64,7 +69,9 @@ global $WCFM;
 
 	              <form id="gronc-geo-routes-form" class="wcfm">
 
-									Map Settings content goes here...
+									<p class="wcfm_title"><strong>Google Map API Key</strong></p>
+									<label class="screen-reader-text">Google Map API Key</label>
+									<input type="text" class="wcfm-text" placeholder="Google Map API Key goes here...">
 
 									<div class="wcfm_form_simple_submit_wrapper">
 									  <div class="wcfm-message" tabindex="-1"></div>
