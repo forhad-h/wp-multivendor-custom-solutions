@@ -39,6 +39,12 @@ class DB {
     ]);
   }
 
+  public function get_vendor_info( $id ) {
+    $query = "SELECT * FROM {$this->table_name} WHERE vendor_id={$id}";
+    $res = $this->db->get_row( $query );
+    return $res;
+  }
+
 
 
 }

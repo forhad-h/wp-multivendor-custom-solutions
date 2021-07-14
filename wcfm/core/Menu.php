@@ -141,10 +141,12 @@ class Menu {
         $googl_map_src = add_query_arg( $args, 'https://maps.googleapis.com/maps/api/js' );
 
         wp_enqueue_script( 'gronc_google_map', $googl_map_src, array(), GRONC_VERSION, true );
+
+        wp_enqueue_script( 'gronc_map_implementation', GRONC_DIR_URI . 'wcfm/assets/js/gron-map.js' , array( 'gronc_google_map' ), GRONC_VERSION, true );
       }
 
     if( $this->slug ) {
-  			wp_enqueue_script( 'gronc_main_js', GRONC_DIR_URI . 'wcfm/assets/js/gronc-script-' . $this->slug . '.js', array('jquery', 'gronc_google_map' ), GRONC_VERSION, true );
+  			wp_enqueue_script( 'gronc_main_js', GRONC_DIR_URI . 'wcfm/assets/js/gronc-script-' . $this->slug . '.js', array('jquery', 'gronc_map_implementation' ), GRONC_VERSION, true );
     }
 
 
