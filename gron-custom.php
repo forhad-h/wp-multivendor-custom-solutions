@@ -20,6 +20,15 @@ register_activation_hook( __FILE__, function() {
   new Activation();
 } );
 
+function gron_init() {
 
-// Include wcfm integration
-require_once GRONC_DIR_PATH . "wcfm/wcfm.php";
+    $user = wp_get_current_user();
+    $is_vendor =$user->roles[0] == 'wcfm_vendor';
+    define( 'IS_GRON_VENDOR', $is_vendor );
+
+    // Include wcfm integration
+    require_once GRONC_DIR_PATH . "wcfm/wcfm.php";
+
+}
+
+add_action('init', 'gron_init');

@@ -54,7 +54,7 @@ class Menu {
   			'label'  => __( $this->label, 'gron-custom'),
   			'url'       => $this->get_menu_url( 'wcfm-' . $this->slug ),
   			'icon'      => $this->icon,
-  			'priority'  => 100
+  			'priority'  => 500
   		),
   	);
 
@@ -122,7 +122,7 @@ class Menu {
 
   public function ajax_controller() {
 
-  	if( isset( $_POST['controller'] ) ) {
+  	if( $_POST['controller'] === $this->endpoint ) {
 
 
       new GRON_GEO_Routes_Controller();
@@ -134,8 +134,13 @@ class Menu {
   public function load_scripts( $end_point ) {
 
       if( $end_point === 'gronc-geo-routes' ) {
+        global $WCFMmp;
+
+        $wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
+        $wcfm_google_map_api = isset( $wcfm_marketplace_options['wcfm_google_map_api'] ) ? $wcfm_marketplace_options['wcfm_google_map_api'] : '';
+
         $args = array(
-          'key' => 'AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg'
+          'key' => $wcfm_google_map_api
         );
 
         $googl_map_src = add_query_arg( $args, 'https://maps.googleapis.com/maps/api/js' );

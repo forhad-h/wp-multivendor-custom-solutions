@@ -1,7 +1,20 @@
 <?php
-global $WCFM;
+global $WCFM, $WCFMmp;
 
-$user_id = $WCFM->wcfm_marketplace ? $WCFM->wcfm_marketplace->vendor_id : get_current_user_id();
+
+/*$default_geolocation = isset( $wcfm_marketplace_options['default_geolocation'] ) ? $wcfm_marketplace_options['default_geolocation'] : array();
+
+$admin_store_lat           = isset( $default_geolocation['lat'] ) ? esc_attr( $default_geolocation['lat'] ) : apply_filters( 'wcfmmp_map_default_lat', 30.0599153 );
+$admin_store_lng           = isset( $default_geolocation['lng'] ) ? esc_attr( $default_geolocation['lng'] ) : apply_filters( 'wcfmmp_map_default_lng', 31.2620199 );
+
+$user_id = apply_filters( 'gronc_current_user_id', get_current_user_id() );
+$vendor_data = get_user_meta( $user_id, 'wcfmmp_profile_settings', true );
+
+$vendor_store_lat    = isset( $vendor_data['store_lat'] ) ? esc_attr( $vendor_data['store_lat'] ) : $default_lat;
+$vendor_store_lng    = isset( $vendor_data['store_lng'] ) ? esc_attr( $vendor_data['store_lng'] ) : $default_lng;*/
+
+
+var_dump($is_vendor);
 
 ?>
 
@@ -103,7 +116,7 @@ $user_id = $WCFM->wcfm_marketplace ? $WCFM->wcfm_marketplace->vendor_id : get_cu
     									<div class="wcfm_form_simple_submit_wrapper">
     									  <div class="wcfm-message" tabindex="-1"></div>
 
-    										<input type="submit" value="<?php _e( 'Save', 'gron-custom' ); ?>" class="wcfm_submit_button" />
+    										<input type="submit" value="<?php _e( 'Save', 'gron-custom' ); ?>" />
     									</div>
 
     									<input type="hidden" value="<?php echo wp_create_nonce( 'gronc_geo_routes' ); ?>" />
