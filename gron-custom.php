@@ -16,7 +16,6 @@ require_once GRONC_DIR_PATH . "vendor/autoload.php";
 use GRONC\Activation;
 use GRONC\DB;
 
-
 register_activation_hook( __FILE__, function() {
   new Activation();
 } );

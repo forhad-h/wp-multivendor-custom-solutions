@@ -15,8 +15,12 @@ defined('ABSPATH') or exit;
 
 class GRON_GEO_Routes_Controller {
 
+	private $wcfm;
+
 	public function __construct() {
 		global $WCFM, $WCFMu;
+
+		$this->wcfm = $WCFM;
 
 		$this->processing();
 	}
@@ -25,21 +29,16 @@ class GRON_GEO_Routes_Controller {
 		global $WCFM;
 	  $db = new DB();
 
-		if( $_POST['task'] === 'get-map-pointer' ) {
+		if( $_POST['task'] === 'get-map-address' ) {
 
-      $vendor_id = $WCFM->wcfm_marketplace->vendor_id;
+			$this->get_map_address();
 
-			if( $vendor_id ) {
-				$get_vendor = $db->get_vendor_info( $vendor_id );
+		}elseif( $_POST['task'] === 'save-admin-settings' ) {
 
-				echo $this->response( 'found', 'Vendor data found!', $get_vendor );
+			$this->save_admin_settings();
 
-			}else {
-				echo $this->response( 'not_vendor', 'You are not a vendor!' );
-			}
-
-
-		}else {
+		}
+		else {
 			echo $this->response( 'no_task', 'No task found!' );
 		}
 
@@ -56,6 +55,29 @@ class GRON_GEO_Routes_Controller {
 		);
 
 		return json_encode( $res );
+	}
+
+	private function get_map_address( $user_id ) {
+
+		if( $user_id ) {
+			$get_info = $db->get_user_info( $user_id );
+
+			echo $this->response( 'found', 'Vendor data found!', $get_vendor );
+
+		}else {
+			echo $this->response( 'not_vendor', 'You are not a vendor!' );
+		}
+
+	}
+
+	private function save_admin_settings() {
+
+		$api_key = $_POST['google_map_api_key'];
+
+		if( $api_key ) {
+			$db->save_option('gron_google_map_api_key', $api_key );
+		}
+
 	}
 
 }
