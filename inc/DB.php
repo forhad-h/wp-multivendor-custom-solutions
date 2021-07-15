@@ -11,7 +11,7 @@ class DB {
   public function __construct() {
     global $wpdb;
     $this->db = $wpdb;
-    $this->table_name = $wpdb->prefix . "geo_routes";
+    $this->table_name = $wpdb->prefix . "gron_customs";
   }
 
   public function create_table() {
@@ -22,13 +22,6 @@ class DB {
       $query = "CREATE TABLE $this->table_name (
         id mediumint(9) NOT NULL AUTO_INCREMENT,
         user_id mediumint(9) NOT NULL,
-        address_line_1 varchar(100),
-        address_line_2 varchar(100),
-        post_code varchar(10),
-        city varchar(85),
-        state varchar(35),
-        start_marker_url varchar(250),
-        end_marker_url varchar(250),
         PRIMARY KEY (id)
       ) $charset_collate;";
 

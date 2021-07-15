@@ -29,9 +29,29 @@ global $wpdb, $WCFM, $WCFMmp;
 
     <div class="gron_route_details_wrapper">
 
+      <div class="gronc_help_text">
+        <?php
+          if( !IS_GRON_VENDOR ) :
+        ?>
+          <p>Make sure you have set your Map Default Location in
+            <strong>
+              <span class="wcfmfa fa-cogs"></span> Settings >
+              <span class="wcfmfa fa-street-view"></span> GEO Location > Map Default Location </strong>
+          </p>
+        <?php
+          else:
+        ?>
+          <p>Make sure you have set your Map Default Location in
+            <strong>
+              <span class="wcfmfa fa-cogs"></span> Settings >
+              <span class="wcfmfa fa-globe"></span> Location > Store Location</strong>
+          </p>
+        <?php endif; ?>
+      </div>
+
+
       <div id="gron-route-details-panel">
-        <ul>
-        </ul>
+        <ul></ul>
       </div>
 
       <div id="messages"></div>

@@ -32,3 +32,10 @@
 .grons_single_info p {
   margin-bottom: 5px;
 }
+.gronc_help_text {
+  border-left: 2px solid #aaa;
+  padding-left: 11px;
+}
+.gronc_help_text .wcfmfa {
+  font-size: 1rem;
+}

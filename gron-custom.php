@@ -17,7 +17,7 @@ use GRONC\Activation;
 use GRONC\DB;
 
 register_activation_hook( __FILE__, function() {
-  new Activation();
+  //new Activation();
 } );
 
 function gron_init() {

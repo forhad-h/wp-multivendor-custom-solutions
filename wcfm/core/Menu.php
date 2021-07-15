@@ -54,7 +54,7 @@ class Menu {
   			'label'  => __( $this->label, 'gron-custom'),
   			'url'       => $this->get_menu_url( 'wcfm-' . $this->slug ),
   			'icon'      => $this->icon,
-  			'priority'  => 500
+  			'priority'  => 101
   		),
   	);
 
