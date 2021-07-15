@@ -8,7 +8,7 @@ jQuery(document).ready(function($) {
     data: {
       action: 'wcfm_ajax_controller',
       controller: 'gronc-geo-routes',
-      task: 'get-map-address'
+      task: 'get-map-locations'
     }
   })
   .done( function (res) {
@@ -16,38 +16,32 @@ jQuery(document).ready(function($) {
       var resObj = JSON.parse( res );
 
       if( resObj.data ) {
-        console.log('Response inside inital ajax controller: ', resObj);
 
-        var latLng = { lat: 4.2105, lng: 101.9758 };
-        //  var routeMap = new GRONMap( latLng );
+        //console.log('Response inside inital ajax controller: ', resObj);
+
+        var lat = resObj.data.store.lat;
+        var lng = resObj.data.store.lng;
+        var address = resObj.data.store.address;
+
+        var baseLocation = {
+          address: address,
+          lat: lat,
+          lng: lng
+        };
+
+        var othersLocation = resObj.data.order
+
+        if(othersLocation.length > 0 ) {
+          new GRONMap( baseLocation, othersLocation );
+        }else {
+          new GRONMap( baseLocation )
+        }
+
       }
 
   } )
   .fail( function ( err ) {
     console.error( "Error in AJAX", err )
   } )
-
-
-  $('#gronc-geo-routes-admin-settings-form').on( 'submit', function( e ) {
-    e.preventDefault();
-
-    $.ajax({
-      type: "POST",
-      url: wcfm_params.ajax_url,
-      data: {
-        action: 'wcfm_ajax_controller',
-        controller: 'gronc-geo-routes',
-        task: 'save-admin-settings',
-        google_map_api_key: $('#gron-google-map-api-key').val()
-      }
-    })
-    .done( function( res ) {
-
-    } )
-    .fail( function( err ) {
-
-    } )
-
-  })
 
 } );

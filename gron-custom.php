@@ -22,8 +22,13 @@ register_activation_hook( __FILE__, function() {
 
 function gron_init() {
 
-    $user = wp_get_current_user();
-    $is_vendor =$user->roles[0] == 'wcfm_vendor';
+    $is_vendor = false;
+    $user = is_user_logged_in() ? wp_get_current_user() : '';
+
+    if($user) {
+       $is_vendor = $user->roles[0] == 'wcfm_vendor';
+    }
+
     define( 'IS_GRON_VENDOR', $is_vendor );
 
     // Include wcfm integration

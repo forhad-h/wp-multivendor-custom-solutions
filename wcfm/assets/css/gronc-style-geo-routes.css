@@ -1,4 +1,34 @@
 #map {
-  height: 301px;
+  height: 501px;
   width: 100%;
+}
+.gron_route_details_wrapper {
+  padding: 10px 20px 20px 20px;
+  background: #fff;
+}
+
+#gron-route-details-panel ul {
+  list-style: none;
+  overflow: hidden;
+  padding-left: 0;
+  margin-bottom: 0;
+}
+
+#gron-route-details-panel ul li {
+  width: 31%;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 1%;
+  margin-right: 1%;
+  margin-bottom: 2%;
+  padding: 15px;
+  background-color: #ebfff5;
+  border-radius: 5px;
+}
+.grons_single_info {
+  max-width: 300px;
+  color: #111;
+}
+.grons_single_info p {
+  margin-bottom: 5px;
 }

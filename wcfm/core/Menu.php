@@ -133,25 +133,30 @@ class Menu {
 
   public function load_scripts( $end_point ) {
 
-      if( $end_point === 'gronc-geo-routes' ) {
-        global $WCFMmp;
+    if( $end_point === 'gronc-geo-routes' ) {
+      global $WCFMmp;
 
-        $wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
-        $wcfm_google_map_api = isset( $wcfm_marketplace_options['wcfm_google_map_api'] ) ? $wcfm_marketplace_options['wcfm_google_map_api'] : '';
+      $wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
+      $wcfm_google_map_api = isset( $wcfm_marketplace_options['wcfm_google_map_api'] ) ? $wcfm_marketplace_options['wcfm_google_map_api'] : '';
 
-        $args = array(
-          'key' => $wcfm_google_map_api
-        );
+      $args = array(
+        'key' => $wcfm_google_map_api
+      );
 
-        $googl_map_src = add_query_arg( $args, 'https://maps.googleapis.com/maps/api/js' );
+      $googl_map_src = add_query_arg( $args, 'https://maps.googleapis.com/maps/api/js' );
 
-        wp_enqueue_script( 'gronc_google_map', $googl_map_src, array(), GRONC_VERSION, true );
+      wp_enqueue_script( 'gronc_google_map', $googl_map_src, array(), GRONC_VERSION, true );
 
-        wp_enqueue_script( 'gronc_map_implementation', GRONC_DIR_URI . 'wcfm/assets/js/gron-map.js' , array( 'gronc_google_map' ), GRONC_VERSION, true );
-      }
+      wp_enqueue_script( 'gronc_map_implementation', GRONC_DIR_URI . 'wcfm/assets/js/google-map-implementation.js' , array( 'gronc_google_map' ), GRONC_VERSION, true );
+
+      wp_localize_script('gronc_map_implementation', 'wcfm', array( 'gronDirUri' => GRONC_DIR_URI ) );
+
+    }
 
     if( $this->slug ) {
-  			wp_enqueue_script( 'gronc_main_js', GRONC_DIR_URI . 'wcfm/assets/js/gronc-script-' . $this->slug . '.js', array('jquery', 'gronc_map_implementation' ), GRONC_VERSION, true );
+
+  			wp_enqueue_script( 'gronc_' . $this->slug . '_js', GRONC_DIR_URI . 'wcfm/assets/js/gronc-script-' . $this->slug . '.js', array('jquery', 'gronc_map_implementation' ), GRONC_VERSION, true );
+
     }
 
 
@@ -160,7 +165,7 @@ class Menu {
   function load_styles( $end_point ) {
 
     if( $this->slug ) {
-      wp_enqueue_style( 'gronc_main_css', GRONC_DIR_URI . 'wcfm/assets/css/gronc-style-' . $this->slug . '.css', array(), GRONC_VERSION );
+      wp_enqueue_style( 'gronc_' . $this->slug . '_css', GRONC_DIR_URI . 'wcfm/assets/css/gronc-style-' . $this->slug . '.css', array(), GRONC_VERSION );
     }
 
   }
