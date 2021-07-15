@@ -1,6 +1,9 @@
 <?php
 global $wpdb, $WCFM, $WCFMmp;
 
+$wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
+$wcfm_google_map_api = isset( $wcfm_marketplace_options['wcfm_google_map_api'] ) ? $wcfm_marketplace_options['wcfm_google_map_api'] : ''
+
 ?>
 
 <div class="collapse wcfm-collapse" id="gronc-geo-routes">
@@ -32,16 +35,22 @@ global $wpdb, $WCFM, $WCFMmp;
       <div class="gronc_help_text">
         <?php
           if( !IS_GRON_VENDOR ) :
+            $api_key_info = !$wcfm_google_map_api ? 'Google Map API Key and' : '' ;
         ?>
-          <p>Make sure you have set your Map Default Location in
+          <p>Make sure you have set your <?php echo $api_key_info;  ?> Map Default Location in <br>
+            <strong>
+              <span class="wcfmfa fa-cogs"></span> Settings >
+              <span class="wcfmfa fa-street-view"></span> GEO Location > Google Map API Key </strong><br>
+          <?php if(!$wcfm_google_map_api) : ?>
             <strong>
               <span class="wcfmfa fa-cogs"></span> Settings >
               <span class="wcfmfa fa-street-view"></span> GEO Location > Map Default Location </strong>
+          <?php endif;?>
           </p>
         <?php
           else:
         ?>
-          <p>Make sure you have set your Map Default Location in
+          <p>Make sure you have set your Map Default Location in <br>
             <strong>
               <span class="wcfmfa fa-cogs"></span> Settings >
               <span class="wcfmfa fa-globe"></span> Location > Store Location</strong>
