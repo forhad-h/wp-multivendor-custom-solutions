@@ -6,7 +6,7 @@ $wcfm_google_map_api = isset( $wcfm_marketplace_options['wcfm_google_map_api'] )
 
 ?>
 
-<div class="collapse wcfm-collapse" id="gronc-geo-routes">
+<div class="collapse wcfm-collapse" id="gron-geo-routes">
 
   <div class="wcfm-page-headig">
 		<span class="wcfmfa fa-street-view"></span>

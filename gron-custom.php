@@ -3,6 +3,8 @@
   Plugin Name: GRON Custom Solutions
   Description: Functionality Extention  on top of WCFM
   Author: Forhad Hosain
+  Text Domain: gron-custom
+  Domain Path: /languages
 */
 defined('ABSPATH') or exit;
 

@@ -7,7 +7,7 @@ jQuery(document).ready(function($) {
     url: wcfm_params.ajax_url,
     data: {
       action: 'wcfm_ajax_controller',
-      controller: 'gronc-geo-routes',
+      controller: 'gron-geo-routes',
       task: 'get-map-locations'
     }
   })

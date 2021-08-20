@@ -114,7 +114,7 @@ class Menu {
 
   public function load_views( $end_point ) {
 
-    if( $this->slug ) {
+    if( $end_point === $this->endpoint ) {
       require_once( GRONC_DIR_PATH . 'wcfm/views/gronc-views-' . $this->slug . '.php' );
     }
 
@@ -124,7 +124,6 @@ class Menu {
 
   	if( $_POST['controller'] === $this->endpoint ) {
 
-
       new GRON_GEO_Routes_Controller();
 
   	}
@@ -133,7 +132,7 @@ class Menu {
 
   public function load_scripts( $end_point ) {
 
-    if( $end_point === 'gronc-geo-routes' ) {
+    if( $end_point === 'gron-geo-routes' ) {
       global $WCFMmp;
 
       $wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
@@ -153,9 +152,15 @@ class Menu {
 
     }
 
-    if( $this->slug ) {
+    if( $end_point === $this->endpoint ) {
 
-  			wp_enqueue_script( 'gronc_' . $this->slug . '_js', GRONC_DIR_URI . 'wcfm/assets/js/gronc-script-' . $this->slug . '.js', array('jquery', 'gronc_map_implementation' ), GRONC_VERSION, true );
+      $deps = array( 'jquery' );
+
+      if( $end_point === 'gron-geo-routes' ) {
+        $deps = array('jquery', 'gronc_map_implementation' );
+      }
+
+  		wp_enqueue_script( 'gronc_' . $this->slug . '_js', GRONC_DIR_URI . 'wcfm/assets/js/gronc-script-' . $this->slug . '.js', $deps, GRONC_VERSION, true );
 
     }
 
@@ -164,7 +169,7 @@ class Menu {
 
   function load_styles( $end_point ) {
 
-    if( $this->slug ) {
+    if( $end_point === $this->endpoint ) {
       wp_enqueue_style( 'gronc_' . $this->slug . '_css', GRONC_DIR_URI . 'wcfm/assets/css/gronc-style-' . $this->slug . '.css', array(), GRONC_VERSION );
     }
 
