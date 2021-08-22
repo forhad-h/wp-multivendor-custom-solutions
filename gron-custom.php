@@ -3,6 +3,7 @@
   Plugin Name: GRON Custom Solutions
   Description: Functionality Extention  on top of WCFM
   Author: Forhad Hosain
+  Version: 2.0.0
   Text Domain: gron-custom
   Domain Path: /languages
 */
@@ -10,16 +11,16 @@ defined('ABSPATH') or exit;
 
 define( "GRONC_DIR_PATH", plugin_dir_path( __FILE__ ) );
 define( "GRONC_DIR_URI", plugin_dir_url( __FILE__ ) );
-define( "GRONC_VERSION", '1.0.0');
+define( "GRONC_VERSION", '2.0.0');
 
 // include class autoloader
 require_once GRONC_DIR_PATH . "vendor/autoload.php";
 
 use GRONC\Activation;
-use GRONC\DB;
+use GRONC\GRON_WooCommerce;
 
 register_activation_hook( __FILE__, function() {
-  //new Activation();
+  new Activation();
 } );
 
 function gron_init() {
@@ -35,6 +36,9 @@ function gron_init() {
 
     // Include wcfm integration
     require_once GRONC_DIR_PATH . "wcfm/wcfm.php";
+
+    // WooCommerce related implementation
+    new GRON_WooCommerce();
 
 }
 

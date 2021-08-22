@@ -107,6 +107,7 @@ $wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
             </div>
             <div class="gron_backdrop"></div>
             <div class="gron_modal" id="gron-modal">
+              <h2 class="ci_modal_title">Add new delivery slot</h2>
               <form id="gron-delivery-slots-form">
 
                 <div class="gron_each_field">

@@ -3,7 +3,7 @@ namespace GRONC;
 defined('ABSPATH') or exit;
 
 
-class DB {
+class GRON_DB {
 
   private $db;
   private $table_name;
