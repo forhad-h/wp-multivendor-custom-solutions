@@ -17,7 +17,7 @@ $wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
 
 	  <div id="wcfm_page_load"></div>
 
-		<?php do_action( 'before_gronc_geo_routes' ); ?>
+		<?php do_action( 'before_gron_geo_routes' ); ?>
 
 		<div class="wcfm-container wcfm-top-element-container">
 			<h2><?php _e('Delivery Options', 'gron-custom' ); ?></h2>

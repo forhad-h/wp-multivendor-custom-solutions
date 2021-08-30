@@ -1,5 +1,5 @@
 <?php
-namespace GRONC;
+namespace GRON;
 defined('ABSPATH') or exit;
 
 
@@ -28,7 +28,7 @@ class GRON_DB {
       require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
       dbDelta( $query );
 
-      add_option( 'gron_version', GRONC_VERSION );
+      add_option( 'gron_version', GRON_VERSION );
     }catch( Exception $e) {
       $this->print_error( 'db_table_creation_failed', sprintf('Error: during create %s table.', $this->table_name ), $e );
     }

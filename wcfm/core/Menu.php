@@ -2,8 +2,8 @@
 /**
  * class Menu
 */
-namespace GRONC\WCFM\core;
-use GRONC\WCFM\controllers\GRON_GEO_Routes_Controller;
+namespace GRON\WCFM\core;
+use GRON\WCFM\controllers\GRON_GEO_Routes_Controller;
 
 defined('ABSPATH') or exit;
 
@@ -115,7 +115,7 @@ class Menu {
   public function load_views( $end_point ) {
 
     if( $end_point === $this->endpoint ) {
-      require_once( GRONC_DIR_PATH . 'wcfm/views/gronc-views-' . $this->slug . '.php' );
+      require_once( GRON_DIR_PATH . 'wcfm/views/gron-views-' . $this->slug . '.php' );
     }
 
   }
@@ -144,11 +144,11 @@ class Menu {
 
       $googl_map_src = add_query_arg( $args, 'https://maps.googleapis.com/maps/api/js' );
 
-      wp_enqueue_script( 'gronc_google_map', $googl_map_src, array(), GRONC_VERSION, true );
+      wp_enqueue_script( 'gron_google_map', $googl_map_src, array(), GRON_VERSION, true );
 
-      wp_enqueue_script( 'gronc_map_implementation', GRONC_DIR_URI . 'wcfm/assets/js/google-map-implementation.js' , array( 'gronc_google_map' ), GRONC_VERSION, true );
+      wp_enqueue_script( 'gron_map_implementation', GRON_DIR_URI . 'wcfm/assets/js/google-map-implementation.js' , array( 'gron_google_map' ), GRON_VERSION, true );
 
-      wp_localize_script('gronc_map_implementation', 'wcfm', array( 'gronDirUri' => GRONC_DIR_URI ) );
+      wp_localize_script('gron_map_implementation', 'wcfm', array( 'gronDirUri' => GRON_DIR_URI ) );
 
     }
 
@@ -157,10 +157,10 @@ class Menu {
       $deps = array( 'jquery' );
 
       if( $end_point === 'gron-geo-routes' ) {
-        $deps = array('jquery', 'gronc_map_implementation' );
+        $deps = array('jquery', 'gron_map_implementation' );
       }
 
-  		wp_enqueue_script( 'gronc_' . $this->slug . '_js', GRONC_DIR_URI . 'wcfm/assets/js/gronc-script-' . $this->slug . '.js', $deps, GRONC_VERSION, true );
+  		wp_enqueue_script( 'gron_' . $this->slug . '_js', GRON_DIR_URI . 'wcfm/assets/js/gron-script-' . $this->slug . '.js', $deps, GRON_VERSION, true );
 
     }
 
@@ -170,7 +170,7 @@ class Menu {
   function load_styles( $end_point ) {
 
     if( $end_point === $this->endpoint ) {
-      wp_enqueue_style( 'gronc_' . $this->slug . '_css', GRONC_DIR_URI . 'wcfm/assets/css/gronc-style-' . $this->slug . '.css', array(), GRONC_VERSION );
+      wp_enqueue_style( 'gron_' . $this->slug . '_css', GRON_DIR_URI . 'wcfm/assets/css/gron-style-' . $this->slug . '.css', array(), GRON_VERSION );
     }
 
   }

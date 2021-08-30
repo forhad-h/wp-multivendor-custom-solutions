@@ -18,7 +18,7 @@ $wcfm_google_map_api = isset( $wcfm_marketplace_options['wcfm_google_map_api'] )
 
 	  <div id="wcfm_page_load"></div>
 
-		<?php do_action( 'before_gronc_geo_routes' ); ?>
+		<?php do_action( 'before_gron_geo_routes' ); ?>
 
 		<div class="wcfm-container wcfm-top-element-container">
 			<h2><?php _e('GEO Routes', 'gron-custom' ); ?></h2>
@@ -32,7 +32,7 @@ $wcfm_google_map_api = isset( $wcfm_marketplace_options['wcfm_google_map_api'] )
 
     <div class="gron_route_details_wrapper">
 
-      <div class="gronc_help_text">
+      <div class="gron_help_text">
         <?php
           if( !IS_GRON_VENDOR ) :
             $api_key_info = !$wcfm_google_map_api ? 'Google Map API Key and' : '' ;

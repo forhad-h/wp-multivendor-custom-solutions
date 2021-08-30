@@ -2,7 +2,7 @@
 
 defined('ABSPATH') or exit;
 
-use GRONC\WCFM\core\Menu;
+use GRON\WCFM\core\Menu;
 
 // create GEO Routes menu in WCFM store-manager
 new Menu([

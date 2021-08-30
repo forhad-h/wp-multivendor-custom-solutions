@@ -8,8 +8,8 @@
  * @package 	wcfmcsm/controllers
  * @version   1.0.0
  */
-namespace GRONC\WCFM\controllers;
-use GRONC\DB;
+namespace GRON\WCFM\controllers;
+use GRON\DB;
 
 defined('ABSPATH') or exit;
 
@@ -77,8 +77,8 @@ class GRON_GEO_Routes_Controller {
 	}
 
 	private function get_store_locations() {
-		$default_lat = apply_filters( 'gronc_map_default_lat',  4.2105 );
-		$default_lng = apply_filters( 'gronc_map_default_lng', 101.9758 );
+		$default_lat = apply_filters( 'gron_map_default_lat',  4.2105 );
+		$default_lng = apply_filters( 'gron_map_default_lng', 101.9758 );
 
 		if( !IS_GRON_VENDOR ) {
 			try {
@@ -108,7 +108,7 @@ class GRON_GEO_Routes_Controller {
 		}else {
 
 			try {
-				$user_id = apply_filters( 'gronc_current_user_id', get_current_user_id() );
+				$user_id = apply_filters( 'gron_current_user_id', get_current_user_id() );
 
 				$vendor_data = get_user_meta( $user_id, 'wcfmmp_profile_settings', true );
 

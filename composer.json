@@ -2,8 +2,8 @@
 {
   "autoload": {
     "psr-4": {
-      "GRONC\\": "inc/",
-      "GRONC\\WCFM\\": "wcfm/"
+      "GRON\\": "inc/",
+      "GRON\\WCFM\\": "wcfm/"
     }
   }
 }

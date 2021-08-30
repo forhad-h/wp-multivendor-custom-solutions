@@ -1,8 +1,8 @@
 <?php
-namespace GRONC;
+namespace GRON;
 defined('ABSPATH') or exit;
 
-use GRONC\DB;
+use GRON\DB;
 
 class Activation {
 

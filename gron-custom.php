@@ -9,19 +9,23 @@
 */
 defined('ABSPATH') or exit;
 
-define( "GRONC_DIR_PATH", plugin_dir_path( __FILE__ ) );
-define( "GRONC_DIR_URI", plugin_dir_url( __FILE__ ) );
-define( "GRONC_VERSION", '2.0.0');
+define( "GRON_DIR_PATH", plugin_dir_path( __FILE__ ) );
+define( "GRON_DIR_URI", plugin_dir_url( __FILE__ ) );
+define( "GRON_VERSION", '2.0.0');
 
 // include class autoloader
-require_once GRONC_DIR_PATH . "vendor/autoload.php";
+require_once GRON_DIR_PATH . "vendor/autoload.php";
 
-use GRONC\Activation;
-use GRONC\GRON_WooCommerce;
+use GRON\Activation;
+use GRON\GRON_WooCommerce;
+use GRON\Enqueue_Scripts;
 
 register_activation_hook( __FILE__, function() {
   new Activation();
 } );
+
+// Register styles and scripts
+new Enqueue_Scripts();
 
 function gron_init() {
 
@@ -35,11 +39,16 @@ function gron_init() {
     define( 'IS_GRON_VENDOR', $is_vendor );
 
     // Include wcfm integration
-    require_once GRONC_DIR_PATH . "wcfm/wcfm.php";
+    require_once GRON_DIR_PATH . "wcfm/wcfm.php";
 
-    // WooCommerce related implementation
-    new GRON_WooCommerce();
 
 }
 
 add_action('init', 'gron_init');
+
+function gron_woocommerce_loaded() {
+  // WooCommerce related implementation
+  new GRON_WooCommerce();
+}
+
+add_action( 'woocommerce_loaded', 'gron_woocommerce_loaded');

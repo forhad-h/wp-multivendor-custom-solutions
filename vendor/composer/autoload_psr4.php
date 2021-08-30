@@ -6,6 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'GRONC\\WCFM\\' => array($baseDir . '/wcfm'),
-    'GRONC\\' => array($baseDir . '/inc'),
+    'GRON\\WCFM\\' => array($baseDir . '/wcfm'),
+    'GRON\\' => array($baseDir . '/inc'),
 );
