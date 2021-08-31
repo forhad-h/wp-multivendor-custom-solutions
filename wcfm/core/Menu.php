@@ -3,7 +3,8 @@
  * class Menu
 */
 namespace GRON\WCFM\core;
-use GRON\WCFM\controllers\GRON_GEO_Routes_Controller;
+use GRON\WCFM\controllers\GEO_Routes_Controller;
+use GRON\WCFM\controllers\Delivery_Controller;
 
 defined('ABSPATH') or exit;
 
@@ -14,6 +15,12 @@ class Menu {
   private $icon;
   private $endpoint;
   private $slug;
+
+  private $endpoint_geo_routes = GRON_ENDPOINT_GEO_ROUTES;
+  private $endpoint_delivery = GRON_ENDPOINT_DELIVERY;
+
+  private $task_update_shop_timings = 'update-shop-timings';
+  private $get_map_locations = 'get_map_locations';
 
   public function __construct( $component ) {
 
@@ -115,18 +122,41 @@ class Menu {
   public function load_views( $end_point ) {
 
     if( $end_point === $this->endpoint ) {
-      require_once( GRON_DIR_PATH . 'wcfm/views/gron-views-' . $this->slug . '.php' );
+      require_once( GRON_DIR_PATH . 'wcfm/views/' . $this->slug . '.php' );
     }
 
   }
 
+  /**
+   * WCFM ajax request
+   * Run on every request
+  */
   public function ajax_controller() {
 
-  	if( $_POST['controller'] === $this->endpoint ) {
+    // Controller for GEO Routes
+  	if(
+      $_POST['controller'] === $this->endpoint_geo_routes &&
+      $_POST['task'] && $this->get_map_locations
+    ) {
 
-      new GRON_GEO_Routes_Controller();
+      new GEO_Routes_Controller();
 
   	}
+
+    // Controller for Delivery options
+    if( $_POST['controller'] === $this->endpoint_delivery ) {
+
+      $delivery_controller = new Delivery_Controller();
+
+      if( $_POST['task'] && $this->task_update_shop_timings ) {
+
+        if( $_POST['data'] ) {
+          $delivery_controller->update_shop_timings( $_POST['data'] );
+        }
+
+      }
+
+    }
 
   }
 
@@ -160,7 +190,7 @@ class Menu {
         $deps = array('jquery', 'gron_map_implementation' );
       }
 
-  		wp_enqueue_script( 'gron_' . $this->slug . '_js', GRON_DIR_URI . 'wcfm/assets/js/gron-script-' . $this->slug . '.js', $deps, GRON_VERSION, true );
+  		wp_enqueue_script( 'gron_' . $this->slug . '_js', GRON_DIR_URI . 'wcfm/assets/js/' . $this->slug . '.js', $deps, GRON_VERSION, true );
 
     }
 
@@ -170,7 +200,7 @@ class Menu {
   function load_styles( $end_point ) {
 
     if( $end_point === $this->endpoint ) {
-      wp_enqueue_style( 'gron_' . $this->slug . '_css', GRON_DIR_URI . 'wcfm/assets/css/gron-style-' . $this->slug . '.css', array(), GRON_VERSION );
+      wp_enqueue_style( 'gron_' . $this->slug . '_css', GRON_DIR_URI . 'wcfm/assets/css/' . $this->slug . '.css', array(), GRON_VERSION );
     }
 
   }

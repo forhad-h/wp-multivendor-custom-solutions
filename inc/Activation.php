@@ -10,7 +10,7 @@ class Activation {
 
     // Create Database
     $db = new DB();
-    $db->create_table();
+    $db->create_tables();
 
   }
 

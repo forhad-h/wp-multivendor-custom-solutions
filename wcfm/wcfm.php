@@ -8,14 +8,14 @@ use GRON\WCFM\core\Menu;
 new Menu([
   'label' => __( 'GRON - GEO Routes','gron-custom' ),
   'icon' => 'street-view',
-  'endpoint' => 'gron-geo-routes',
-  'slug' => 'gron-geo-routes',
+  'endpoint' => GRON_ENDPOINT_GEO_ROUTES,
+  'slug' => GRON_ENDPOINT_GEO_ROUTES,
 ]);
 
 // create Delivery menu in WCFM store-manager
 new Menu([
   'label' => __( 'GRON - Delivery','gron-custom' ),
   'icon' => 'truck-loading',
-  'endpoint' => 'gron-delivery',
-  'slug' => 'gron-delivery',
+  'endpoint' => GRON_ENDPOINT_DELIVERY,
+  'slug' => GRON_ENDPOINT_DELIVERY,
 ]);

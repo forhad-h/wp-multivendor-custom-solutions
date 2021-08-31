@@ -1,7 +1,5 @@
 jQuery(document).ready(function($) {
 
-
-
   $.ajax({
     type: "POST",
     url: wcfm_params.ajax_url,
@@ -16,8 +14,6 @@ jQuery(document).ready(function($) {
       var resObj = JSON.parse( res );
 
       if( resObj.data ) {
-
-        //console.log('Response inside inital ajax controller: ', resObj);
 
         var lat = resObj.data.store.lat;
         var lng = resObj.data.store.lng;
@@ -41,7 +37,7 @@ jQuery(document).ready(function($) {
 
   } )
   .fail( function ( err ) {
-    console.error( "Error in AJAX", err )
+    console.error( "Error in AJAX: ", err )
   } )
 
 } );

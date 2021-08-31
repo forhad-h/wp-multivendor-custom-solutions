@@ -1,19 +1,13 @@
 <?php
 /**
- * WCFM plugin controllers
- *
- * Plugin Products Custom Menus Build Controller
- *
- * @author 		WC Lovers
- * @package 	wcfmcsm/controllers
- * @version   1.0.0
+ * GEO_Routes_Controller controllers
  */
 namespace GRON\WCFM\controllers;
 use GRON\DB;
 
 defined('ABSPATH') or exit;
 
-class GRON_GEO_Routes_Controller {
+class GEO_Routes_Controller {
 
 	private $wcfm;
 

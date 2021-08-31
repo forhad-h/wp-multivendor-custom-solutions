@@ -31,7 +31,7 @@ $wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
       <div class="wcfm-tabWrap">
 
         <!-- collapsible -->
-        <!--<div class="page_collapsible" id="gron-delivery-shop-timing">
+        <div class="page_collapsible" id="gron-delivery-shop-timing">
           <label class="wcfmfa fa-chalkboard"></label>
           <?php _e('Shop Timings', 'wc-frontend-manager'); ?><span></span>
         </div>
@@ -40,7 +40,12 @@ $wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
           <div id="gron-delivery-shop-timing" class="wcfm-content">
             <h2><?php _e('Shop Timings', 'wc-frontend-manager'); ?></h2>
             <div class="wcfm_clearfix"></div>
-            <form id="gron-shop-timing-form" class="wcfm">
+            <form
+              id="gron-shop-timing-form"
+              class="wcfm" method="post"
+              method="post"
+              action="<?php echo esc_html( $_SERVER["PHP_SELF"] ); ?>"
+            >
               <table class="gron_table">
                 <thead>
                   <tr>
@@ -62,11 +67,13 @@ $wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
                     array( 'name' => 'saturday', 'start_time' => '', 'end_time' => '' ),
                   );
 
+                  var_dump( wp_remote_get('http://localhost:80/wp-json/gron/v1/api/shop_timings') );
+
                 ?>
 
                 <?php foreach( $week_info as $info ): ?>
                   <tr>
-                    <td><input type="checkbox" class="wcfm-checkbox" value="sunday"></td>
+                    <td><input type="checkbox" class="wcfm-checkbox" value="<?php echo $info['name']; ?>"></td>
                     <td><?php echo ucfirst( $info['name'] ); ?></td>
                     <td><input type="time" value="<?php echo $info['start_time']; ?>" /></td>
                     <td><input type="time" valude="<?php echo $info['end_time']; ?>" /></td>
@@ -80,7 +87,7 @@ $wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
 
           </div>
         </div>
-        <div class="wcfm_clearfix"></div>-->
+        <div class="wcfm_clearfix"></div>
         <!-- end collapsible -->
 
         <!-- collapsible -->

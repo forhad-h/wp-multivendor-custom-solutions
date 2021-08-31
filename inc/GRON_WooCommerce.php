@@ -22,6 +22,8 @@ class GRON_WooCommerce {
 
     // load custom styles
     wp_enqueue_style( 'gron-woocommerce-style' );
+    // Load script
+    wp_enqueue_script( 'gron-woocommerce-js' );
 
     $collection_type_field = array(
         'type'        => 'radio',
@@ -41,7 +43,7 @@ class GRON_WooCommerce {
         'type'        => 'select',
         'label'       => __( 'Deliver Date', 'gron-custom' ),
         'required'    => true,
-        'class'       => array( 'gron_deliver_date' ),
+        'class'       => array( 'select2', 'gron_deliver_date' ),
         'clear'       => true,
         'options'     => array(
           'option_1'     => 'Option 1',
