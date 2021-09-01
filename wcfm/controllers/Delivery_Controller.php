@@ -21,15 +21,49 @@ class Delivery_Controller {
 	/**
    * update shop timings
    * @param Array $data
-   * @return WP_Error|JSON
   */
   public function update_shop_timings( $data_array ) {
 
 		foreach( $data_array as $data ) {
-			$this->db->update_shop_timing( $data );
+			$update = $this->db->update_shop_timing( $data );
 		}
 
+		echo $update;
+
   }
+
+	/**
+   * insert delivery slot
+   * @param Array $data
+  */
+	public function insert_delivery_slot( $data ) {
+
+		$insert = $this->db->insert_delivery_slot( $data );
+		echo $insert;
+
+	}
+
+	/**
+   * insert delivery slot
+   * @param Array $data
+  */
+  public function update_delivery_slot( $data ) {
+
+		$update = $this->db->update_delivery_slot( $data );
+		echo $update;
+
+	}
+
+	/**
+	 * insert delivery slot
+	 * @param Array $data
+	*/
+  public function delete_delivery_slot( $data ) {
+
+    $delete = $this->db->delete_delivery_slot( $data );
+		echo $delete;
+
+	}
 
 	private function response( $status, $message, $data = '', $error = '' ) {
 
@@ -42,5 +76,6 @@ class Delivery_Controller {
 
 		return json_encode( $res );
 	}
+
 
 }

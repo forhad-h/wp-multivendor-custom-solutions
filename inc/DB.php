@@ -40,7 +40,7 @@ class DB {
 
       $query_delivery_slots = "CREATE TABLE $this->delivery_slots_tb_name (
         id INT NOT NULL AUTO_INCREMENT,
-        time_form TIME NOT NULL,
+        time_from TIME NOT NULL,
         time_to TIME NOT NULL,
         PRIMARY KEY (id)
       ) $charset_collate;";
@@ -153,21 +153,26 @@ class DB {
 
   /**
    * update shop timings
-   * @return NULL
+   * @return NULL|Boolean
    * @version 2.0.1
   */
   public function update_shop_timing( $data ) {
+
+    $start_time = esc_sql( $data['start_time'] );
+    $end_time = esc_sql( $data['end_time'] );
+    $is_active = esc_sql( $data['is_active'] );
+    $day_name = esc_sql( $data['day_name'] );
 
     try {
       $update = $this->db->update(
         $this->shop_timings_tb_name,
         array(
-          'start_time' => $data['start_time'],
-          'end_time' => $data['end_time'],
-          'is_active' => $data['is_active'] == 'true' ? true : false
+          'start_time' => $start_time,
+          'end_time' => $end_time,
+          'is_active' => $is_active == 'true' ? true : false
         ),
         array(
-          'day_name' => $data['day_name']
+          'day_name' => $day_name
         )
       );
 
@@ -180,17 +185,21 @@ class DB {
 
   /**
    * get shop timings
-   * @return NULL
+   * @return NULL|Array
    * @version 2.0.1
   */
-  public function get_shop_timings() {
+  public function get_shop_timings( $active_only = '' ) {
     $sql = "SELECT * FROM {$this->shop_timings_tb_name}";
+    if( $active_only ) {
+      $sql .= " WHERE is_active=1";
+    }
     $result = $this->db->get_results( $sql );
     return $result;
   }
 
   /**
     * Has data in Shop Timings
+    * @return NULL|Boolean
   */
   private function has_shop_timings_data() {
 
@@ -199,5 +208,90 @@ class DB {
 
     return (bool) $result;
   }
+
+  /**
+   * insert delivery slot
+   * @return NULL|Bollean
+   * @version 2.0.3
+  */
+  public function insert_delivery_slot( $data ) {
+
+    $time_from = esc_sql( $data['time_from'] );
+    $time_to = esc_sql( $data['time_to'] );
+
+    $insert = $this->db->insert(
+        $this->delivery_slots_tb_name,
+        array(
+          'time_from' => $time_from,
+          'time_to' => $time_to
+        )
+    );
+
+    return $insert;
+
+
+  }
+
+    /**
+     * update delivery slot
+     * @return NULL|Bollean
+     * @version 2.0.3
+    */
+    public function update_delivery_slot( $data ) {
+
+      $id = esc_sql( $data['id'] );
+      $time_from = esc_sql( $data['time_from'] );
+      $time_to = esc_sql( $data['time_to'] );
+
+      $update = $this->db->update(
+          $this->delivery_slots_tb_name,
+          array(
+            'time_from' => $time_from,
+            'time_to' => $time_to
+          ),
+          array(
+            'id' => $id
+          )
+      );
+
+      return $update;
+
+    }
+
+    /**
+     * delete delivery slot
+     * @return NULL|Bollean
+     * @version 2.0.3
+    */
+    public function delete_delivery_slot( $data ) {
+
+      $id = esc_sql( $data['id'] );
+
+      $delete = $this->db->delete(
+        $this->delivery_slots_tb_name,
+        array(
+          'id' => $id
+        )
+      );
+
+      return $delete;
+
+    }
+
+
+    /**
+     * get delivery slots
+     * @return NULL|Array
+     * @version 2.0.3
+    */
+    public function get_delivery_slots() {
+
+      $sql = "SELECT * FROM {$this->delivery_slots_tb_name}";
+      $results = $this->db->get_results( $sql );
+
+      return $results;
+
+    }
+
 
 }

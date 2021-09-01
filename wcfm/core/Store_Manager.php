@@ -19,7 +19,6 @@ class Store_Manager {
   private $endpoint_geo_routes = GRON_ENDPOINT_GEO_ROUTES;
   private $endpoint_delivery = GRON_ENDPOINT_DELIVERY;
 
-  private $task_update_shop_timings = 'update-shop-timings';
   private $get_map_locations = 'get_map_locations';
 
   public function __construct() {
@@ -152,15 +151,39 @@ class Store_Manager {
     // Controller for Delivery options
     if( $_POST['controller'] === $this->endpoint_delivery ) {
 
+      $task = $_POST['task'];
+      $data = $_POST['data'];
+
+      $task_update_shop_timings = 'update-shop-timings';
+      $task_insert_delivery_slot = 'insert-delivery-slot';
+      $task_update_delivery_slot = 'update-delivery-slot';
+      $task_delete_delivery_slot = 'delete-delivery-slot';
+
       $delivery_controller = new Delivery_Controller();
 
-      if( $_POST['task'] && $this->task_update_shop_timings ) {
 
-        if( $_POST['data'] ) {
-          $delivery_controller->update_shop_timings( $_POST['data'] );
-        }
+      if( $task == $task_update_shop_timings && $data ) {
+
+        // update shop timings
+        $delivery_controller->update_shop_timings( $data );
+
+      }elseif( $task == $task_insert_delivery_slot && $data ) {
+
+        // insert delivery slot
+        $delivery_controller->insert_delivery_slot( $data );
+
+      }elseif( $task == $task_update_delivery_slot && $data ) {
+
+        // insert delivery slot
+        $delivery_controller->update_delivery_slot( $data );
+
+      }elseif( $task == $task_delete_delivery_slot && $data ) {
+
+        // insert delivery slot
+        $delivery_controller->delete_delivery_slot( $data );
 
       }
+
 
     }
 

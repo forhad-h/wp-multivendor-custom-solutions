@@ -1,26 +1,50 @@
 jQuery(document).ready(function($) {
 
-  var animationTime = 300;
+  var animationTime = 150;
+  var modalElm = $('.gron_modal');
+  var backdroElm = $('.gron_backdrop');
 
-  $('.gron_modal').hide();
-  $('.gron_backdrop').hide();
+  modalElm.hide();
+  backdroElm.hide();
+
+  $('.gron_delivery_slot_edit_button').on( 'click', function( e ) {
+
+    e.preventDefault();
+
+    var id = $(this).attr('data-slot-id');
+    var timeFrom = $(this).attr('data-time-from');
+    var timeTo = $(this).attr('data-time-to');
+
+    $('.time_from').val( timeFrom );
+    $('.time_to').val( timeTo );
+    $('#gron-delivery-slot-save-button').attr( 'data-slot-id', id );
+
+  });
+
+  $('.gron_delivery_slot_add_new_button').on( 'click', function( e ) {
+    $('.time_from').val( '' );
+    $('.time_to').val( '' );
+    $('#gron-delivery-slot-save-button').removeAttr( 'data-slot-id' );
+  })
 
   $('.gron_modal_trigger_button').on( 'click', function( e ) {
+
     e.preventDefault();
 
     var target = $(this).attr('data-target');
     $(target).fadeIn( animationTime );
-    $('.gron_backdrop').fadeIn( animationTime );
+    backdroElm.fadeIn( animationTime );
+
   });
 
-  $('.gron_backdrop').on( 'click', function( e ) {
+  backdroElm.on( 'click', function( e ) {
     $(this).fadeOut( animationTime );
-    $('.gron_modal').fadeOut( animationTime );
+    modalElm.fadeOut( animationTime );
   } );
 
   // Regist timings from to submit
-  var formElm = $('#gron-shop-timing-form');
-  formElm.on( 'submit', function( event ) {
+  var formElms = $('#gron-shop-timing-form, #gron-delivery-slots-form');
+  formElms.on( 'submit', function( event ) {
     event.preventDefault();
   })
 
@@ -30,23 +54,27 @@ jQuery(document).ready(function($) {
   singleTimingFields.on( 'change', function() {
     var parentElm = $(this).closest( '.gron_single_titming' );
 
-    var is_active = parentElm.find('.is_active').is(':checked');
-    var day_name = parentElm.find('.day_name').text();
-    var start_time = parentElm.find('.start_time').val();
-    var end_time = parentElm.find('.end_time').val();
+    var isActive = parentElm.find('.is_active').is(':checked');
+    var dayName = parentElm.find('.day_name').text();
+    var startTime = parentElm.find('.start_time').val();
+    var endTime = parentElm.find('.end_time').val();
 
-    data[day_name] = {
-      is_active: is_active,
-      day_name: day_name,
-      start_time: start_time,
-      end_time: end_time
+    data[dayName] = {
+      is_active: isActive,
+      day_name: dayName,
+      start_time: startTime,
+      end_time: endTime
     };
 
   })
 
   // Save timings data
-  var submitBtn = $('#gron-shop-timings-save-button');
-  submitBtn.on('click', function() {
+  var shopTimingSaveBtnElm = $('#gron-shop-timings-save-button');
+  shopTimingSaveBtnElm.on('click', function() {
+
+    _this = $(this)
+
+    _this.val('Saving...');
 
     $.ajax({
       type: "POST",
@@ -60,18 +88,96 @@ jQuery(document).ready(function($) {
     })
     .done( function (res) {
 
-        //var resObj = JSON.parse( res );
-
-        console.log( res );
-
-        //if( resObj.data ) {}
-
     } )
     .fail( function ( err ) {
       console.error( "Error in AJAX: ", err )
     } )
+    .always( function() {
+      _this.val('Save');
+    });
 
   });
 
+  // Insert delivery slot
+  var deliverySlotSaveButton = $('#gron-delivery-slot-save-button');
+  deliverySlotSaveButton.on( 'click', function() {
+
+    _this = $(this);
+    _this.val('Saving...');
+
+    var timeFrom = $('.time_from').val();
+    var timeTo = $('.time_to').val();
+    var task = 'insert-delivery-slot';
+
+    var data = {
+      time_from: timeFrom,
+      time_to: timeTo
+    };
+
+    if( +_this.attr( 'data-slot-id' ) > 0 ) {
+      data.id = _this.attr( 'data-slot-id' );
+      task = 'update-delivery-slot';
+    }
+
+    $.ajax({
+      type: "POST",
+      url: wcfm_params.ajax_url,
+      data: {
+        action: 'wcfm_ajax_controller',
+        controller: 'gron-delivery',
+        task: task,
+        data: data
+      }
+    })
+    .done( function (res) {
+      window.location.reload();
+    } )
+    .fail( function ( err ) {
+      console.error( "Error in AJAX: ", err )
+    } )
+    .always( function() {
+      _this.val('Save');
+      backdroElm.fadeOut( animationTime );
+      modalElm.fadeOut( animationTime );
+    });
+
+  });
+
+  // delete delivery slot
+  var deliverySlotDeleteBtnElms = $('.gron_delivery_slot_delete_button');
+
+  deliverySlotDeleteBtnElms.on( 'click', function( event ) {
+    event.preventDefault();
+
+    _this = $(this);
+
+    if( !confirm("You are deleting a slot!") ) return;
+
+    if( _this.hasClass( 'disabled' ) ) return;
+    _this.addClass('disabled');
+
+    $.ajax({
+      type: "POST",
+      url: wcfm_params.ajax_url,
+      data: {
+        action: 'wcfm_ajax_controller',
+        controller: 'gron-delivery',
+        task: 'delete-delivery-slot',
+        data: {
+          id: $(this).attr( 'data-slot-id' )
+        }
+      }
+    })
+    .done( function (res) {
+      window.location.reload();
+    } )
+    .fail( function ( err ) {
+      console.error( "Error in AJAX: ", err )
+    } )
+    .always( function() {
+
+    });
+
+  });
 
 } );

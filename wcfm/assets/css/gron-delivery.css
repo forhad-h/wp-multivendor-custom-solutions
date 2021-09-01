@@ -41,3 +41,7 @@
 .gron_modal #gron-delivery-slots-form .gron_each_field input[type=time] {
   width: calc( 100% - 117px );
 }
+#wcfm-main-contentainer #gron-delivery-slot-save-button.wcfm_submit_button {
+  float: left;
+  margin-left: 0;
+}
