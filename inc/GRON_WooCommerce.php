@@ -23,6 +23,12 @@ class GRON_WooCommerce {
 
     add_action( 'woocommerce_checkout_update_order_meta', array( $this, 'gron_custom_checkout_field_update_order_meta' ) );
 
+    // allow custom woocommerce checkouut data in WCFM order details page
+    add_filter( 'wcfm_is_allow_order_data_after_billing_address', function( $allow ) {
+      $allow = true;
+      return $allow;
+    } );
+
     add_action( 'woocommerce_admin_order_data_after_billing_address', array( $this, 'gron_custom_checkout_field_display_admin_order_meta' ), 10, 1 );
   }
 
@@ -156,7 +162,7 @@ class GRON_WooCommerce {
     $deliver_date = get_post_meta( $order->get_id(), 'gron_deliver_date', true );
     $deliver_time = get_post_meta( $order->get_id(), 'gron_deliver_time', true );
 
-    echo '<h3>Delivery Details:</h3>';
+    echo '<h3 style="color: #17a2b8;border-bottom: 1px solid #ccc;font-weight: 500;font-size: 13px;padding-bottom: 11px;">Delivery Details:</h3>';
     echo '<p><strong>'.__('Collection Type').':</strong> ' . underscore_to_capitalize( $collection_type ) . '</p>';
     echo '<p><strong>'.__('Deliver Date').':</strong> ' . ucfirst( $deliver_date ) . '</p>';
     echo '<p><strong>'.__('Deliver Time').':</strong> ' . $deliver_time . '</p>';
