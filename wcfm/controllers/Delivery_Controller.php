@@ -23,22 +23,11 @@ class Delivery_Controller {
    * @param Array $data
    * @return WP_Error|JSON
   */
-  public function update_shop_timings( $data ) {
+  public function update_shop_timings( $data_array ) {
 
-    try {
-
-      $update = $this->db->update_shop_timings( $data );
-
-      if( $update ) {
-        $data = $this->db->get_shop_timings();
-        return $this->response( 'success', 'Shop timing updated!', $data, null );
-      }
-
-    }catch( Exception $e ) {
-
-      new WP_Error( 'update-failed', __( 'Shop Timings update failed!', 'gron-custom' ) );
-
-    }
+		foreach( $data_array as $data ) {
+			$this->db->update_shop_timing( $data );
+		}
 
   }
 

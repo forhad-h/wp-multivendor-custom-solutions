@@ -1,7 +1,10 @@
 <?php
+use GRON\DB;
 global $wpdb, $WCFM, $WCFMmp;
 
 $wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
+
+$db = new DB();
 
 ?>
 
@@ -42,9 +45,7 @@ $wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
             <div class="wcfm_clearfix"></div>
             <form
               id="gron-shop-timing-form"
-              class="wcfm" method="post"
-              method="post"
-              action="<?php echo esc_html( $_SERVER["PHP_SELF"] ); ?>"
+              class="wcfm"
             >
               <table class="gron_table">
                 <thead>
@@ -67,22 +68,28 @@ $wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
                     array( 'name' => 'saturday', 'start_time' => '', 'end_time' => '' ),
                   );
 
-                  var_dump( wp_remote_get('http://localhost:80/wp-json/gron/v1/api/shop_timings') );
+                  $timing_info = $db->get_shop_timings();
 
                 ?>
 
-                <?php foreach( $week_info as $info ): ?>
-                  <tr>
-                    <td><input type="checkbox" class="wcfm-checkbox" value="<?php echo $info['name']; ?>"></td>
-                    <td><?php echo ucfirst( $info['name'] ); ?></td>
-                    <td><input type="time" value="<?php echo $info['start_time']; ?>" /></td>
-                    <td><input type="time" valude="<?php echo $info['end_time']; ?>" /></td>
+                <?php
+                  foreach( $timing_info as $info ):
+                    $day = $info->day_name;
+                    $start_time = $info->start_time;
+                    $end_time = $info->end_time;
+                    $is_active = $info->is_active;
+                ?>
+                  <tr class="gron_single_titming">
+                    <td><input type="checkbox" class="wcfm-checkbox is_active" <?php echo $is_active ? 'checked' : ''; ?>></td>
+                    <td class="day_name"><?php echo ucfirst( $day ); ?></td>
+                    <td><input type="time" class="start_time" value="<?php echo $start_time; ?>" /></td>
+                    <td><input type="time" class="end_time" value="<?php echo $start_time; ?>" /></td>
                   </tr>
                 <?php endforeach; ?>
                 <tbody>
 
               </table>
-              <input type="submit" name="save-data" value="Save" id="gron-shop-timings-save-button" class="wcfm_submit_button">
+              <input type="button" name="save-data" value="Save" id="gron-shop-timings-save-button" class="wcfm_submit_button">
             </form>
 
           </div>

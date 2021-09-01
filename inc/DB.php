@@ -32,8 +32,9 @@ class DB {
       $query_shop_timings = "CREATE TABLE $this->shop_timings_tb_name (
         id INT NOT NULL AUTO_INCREMENT,
         day_name VARCHAR(11) NOT NULL,
-        start_time TIME DEFAULT '00:00:00',
-        end_time TIME DEFAULT '00:00:00',
+        start_time TIME,
+        end_time TIME,
+        is_active BOOLEAN,
         PRIMARY KEY (id)
       ) $charset_collate;";
 
@@ -127,7 +128,7 @@ class DB {
    * @param $message error message
    * @param $data error data
   */
-  private function print_error( $code, $message, $data ) {
+  private function print_error( $code, $message, $data = '' ) {
     $error = new WP_Error( $code, $message, $data );
     print $error;
   }
@@ -155,19 +156,25 @@ class DB {
    * @return NULL
    * @version 2.0.1
   */
-  private function update_shop_timings( $data ) {
+  public function update_shop_timing( $data ) {
 
-    $update = $this->db->update(
-      array(
-        'start_time' => $data['start_time'],
-        'end_time' => $data['end_time']
-      ),
-      array(
-        'day_name' => $data['day_name']
-      )
-    );
+    try {
+      $update = $this->db->update(
+        $this->shop_timings_tb_name,
+        array(
+          'start_time' => $data['start_time'],
+          'end_time' => $data['end_time'],
+          'is_active' => $data['is_active'] == 'true' ? true : false
+        ),
+        array(
+          'day_name' => $data['day_name']
+        )
+      );
 
-    return $update;
+      return $update;
+    }catch( Exception $e ) {
+      $this->print_error( 'not-updated', 'shop timing not updated!' );
+    }
 
   }
 

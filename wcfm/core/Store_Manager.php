@@ -8,7 +8,7 @@ use GRON\WCFM\controllers\Delivery_Controller;
 
 defined('ABSPATH') or exit;
 
-class Menu {
+class Store_Manager {
 
   private $wcfm;
   private $label;
@@ -22,25 +22,31 @@ class Menu {
   private $task_update_shop_timings = 'update-shop-timings';
   private $get_map_locations = 'get_map_locations';
 
-  public function __construct( $component ) {
+  public function __construct() {
 
     global $WCFM;
     $this->wcfm = $WCFM;
-    $this->label = $component['label'];
-    $this->icon = $component['icon'];
-    $this->endpoint = $component['endpoint'];
-    $this->slug = $component['slug'];
 
-    add_action( 'init', [ $this, 'init' ], 50 );
-    add_action( 'wcfm_load_scripts', [ $this, 'load_scripts' ] );
-    add_action( 'wcfm_load_styles', [ $this, 'load_styles' ] );
-    add_action( 'wcfm_load_views', [ $this, 'load_views' ], 50 );
-    add_action( 'after_wcfm_ajax_controller', [ $this, 'ajax_controller' ] );
+    add_action( 'after_wcfm_ajax_controller', array( $this, 'ajax_controller' ) );
 
-    add_filter( 'wcfm_menus', [ $this, 'add_menu' ], 20 );
-    add_filter( 'wcfm_query_vars', [ $this, 'query_vars' ], 50 );
-    add_filter( 'wcfm_endpoint_title', [ $this, 'endpoint_title' ], 50, 2 );
-    add_filter( 'wcfm_endpoints_slug', [ $this, 'endpoints_slug' ] );
+  }
+
+  public function add_new_component( $options ) {
+
+    $this->label = $options['label'];
+    $this->icon = $options['icon'];
+    $this->endpoint = $options['endpoint'];
+    $this->slug = $options['slug'];
+
+    add_action( 'init', array( $this, 'init' ), 50 );
+    add_action( 'wcfm_load_scripts', array( $this, 'load_scripts' ) );
+    add_action( 'wcfm_load_styles', array( $this, 'load_styles' ) );
+    add_action( 'wcfm_load_views', array( $this, 'load_views' ), 50 );
+
+    add_filter( 'wcfm_menus', array( $this, 'add_menu' ), 20 );
+    add_filter( 'wcfm_query_vars', array( $this, 'query_vars' ), 50 );
+    add_filter( 'wcfm_endpoint_title', array( $this, 'endpoint_title' ), 50, 2 );
+    add_filter( 'wcfm_endpoints_slug', array( $this, 'endpoints_slug' ) );
 
   }
 
