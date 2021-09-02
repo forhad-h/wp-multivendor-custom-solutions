@@ -38,7 +38,7 @@ $grondb = new DB();
 
         <!-- collapsible -->
         <div class="page_collapsible" id="gron-delivery-slots">
-          <label class="wcfmfa fa-chalkboard"></label>
+          <label class="wcfmfa fa-clock"></label>
           <?php _e('Delivery Slots', 'wc-frontend-manager'); ?><span></span>
         </div>
 
@@ -139,7 +139,7 @@ $grondb = new DB();
 
         <!-- collapsible -->
         <div class="page_collapsible" id="gron-delivery-shop-timing">
-          <label class="wcfmfa fa-chalkboard"></label>
+          <label class="wcfmfa fa-business-time"></label>
           <?php _e('Shop Timings', 'wc-frontend-manager'); ?><span></span>
         </div>
 

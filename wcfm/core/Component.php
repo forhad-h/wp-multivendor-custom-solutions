@@ -1,14 +1,12 @@
 <?php
 /**
- * class Menu
+ * class Component
 */
 namespace GRON\WCFM\core;
-use GRON\WCFM\controllers\GEO_Routes_Controller;
-use GRON\WCFM\controllers\Delivery_Controller;
 
 defined('ABSPATH') or exit;
 
-class Store_Manager {
+class Component {
 
   private $wcfm;
   private $label;
@@ -21,17 +19,10 @@ class Store_Manager {
 
   private $get_map_locations = 'get_map_locations';
 
-  public function __construct() {
+  public function __construct( $options ) {
 
     global $WCFM;
     $this->wcfm = $WCFM;
-
-    add_action( 'after_wcfm_ajax_controller', array( $this, 'ajax_controller' ) );
-
-  }
-
-  public function add_new_component( $options ) {
-
     $this->label = $options['label'];
     $this->icon = $options['icon'];
     $this->endpoint = $options['endpoint'];
@@ -48,7 +39,6 @@ class Store_Manager {
     add_filter( 'wcfm_endpoints_slug', array( $this, 'endpoints_slug' ) );
 
   }
-
 
  	private function get_menu_url( $endpoint ) {
 
@@ -128,63 +118,6 @@ class Store_Manager {
 
     if( $end_point === $this->endpoint ) {
       require_once( GRON_DIR_PATH . 'wcfm/views/' . $this->slug . '.php' );
-    }
-
-  }
-
-  /**
-   * WCFM ajax request
-   * Run on every request
-  */
-  public function ajax_controller() {
-
-    // Controller for GEO Routes
-  	if(
-      $_POST['controller'] === $this->endpoint_geo_routes &&
-      $_POST['task'] && $this->get_map_locations
-    ) {
-
-      new GEO_Routes_Controller();
-
-  	}
-
-    // Controller for Delivery options
-    if( $_POST['controller'] === $this->endpoint_delivery ) {
-
-      $task = $_POST['task'];
-      $data = $_POST['data'];
-
-      $task_update_shop_timings = 'update-shop-timings';
-      $task_insert_delivery_slot = 'insert-delivery-slot';
-      $task_update_delivery_slot = 'update-delivery-slot';
-      $task_delete_delivery_slot = 'delete-delivery-slot';
-
-      $delivery_controller = new Delivery_Controller();
-
-
-      if( $task == $task_update_shop_timings && $data ) {
-
-        // update shop timings
-        $delivery_controller->update_shop_timings( $data );
-
-      }elseif( $task == $task_insert_delivery_slot && $data ) {
-
-        // insert delivery slot
-        $delivery_controller->insert_delivery_slot( $data );
-
-      }elseif( $task == $task_update_delivery_slot && $data ) {
-
-        // insert delivery slot
-        $delivery_controller->update_delivery_slot( $data );
-
-      }elseif( $task == $task_delete_delivery_slot && $data ) {
-
-        // insert delivery slot
-        $delivery_controller->delete_delivery_slot( $data );
-
-      }
-
-
     }
 
   }

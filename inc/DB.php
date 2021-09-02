@@ -201,9 +201,24 @@ class DB {
     * Has data in Shop Timings
     * @return NULL|Boolean
   */
-  private function has_shop_timings_data() {
+  public function has_shop_timings_data( $active_only = '' ) {
 
     $sql = "SELECT COUNT(*) FROM {$this->shop_timings_tb_name}";
+    if( $active_only ) {
+      $sql .= " WHERE is_active=1";
+    }
+    $result = $this->db->get_var( $sql );
+
+    return (bool) $result;
+  }
+
+  /**
+    * Has data in Delivery Slots
+    * @return NULL|Boolean
+  */
+  public function has_delivery_slots_data() {
+
+    $sql = "SELECT COUNT(*) FROM {$this->delivery_slots_tb_name}";
     $result = $this->db->get_var( $sql );
 
     return (bool) $result;

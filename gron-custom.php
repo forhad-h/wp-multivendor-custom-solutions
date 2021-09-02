@@ -23,6 +23,7 @@ use GRON\Activation;
 use GRON\GRON_WooCommerce;
 use GRON\Register_Scripts;
 use GRON\REST_Controller;
+use GRON\WCFM\Store_Manager;
 
 register_activation_hook( __FILE__, function() {
   new Activation();
@@ -43,10 +44,7 @@ function gron_init() {
     define( 'IS_GRON_VENDOR', $is_vendor );
 
     // Include wcfm integration
-    require_once GRON_DIR_PATH . "wcfm/wcfm.php";
-
-
-
+    new Store_Manager();
 
 }
 
@@ -59,7 +57,7 @@ function gron_woocommerce_loaded() {
 
 add_action( 'woocommerce_loaded', 'gron_woocommerce_loaded');
 
+// REST API TODO: Remove if not needed
 add_action( 'rest_api_init', function() {
-  // REST API
   new REST_Controller();
 });

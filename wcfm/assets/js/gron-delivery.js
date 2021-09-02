@@ -87,7 +87,7 @@ jQuery(document).ready(function($) {
       }
     })
     .done( function (res) {
-
+      console.log(res);
     } )
     .fail( function ( err ) {
       console.error( "Error in AJAX: ", err )
