@@ -5,6 +5,10 @@
 #wcfm-main-contentainer table.gron_table {
   margin-top: 0;
 }
+.wcfm-tabWrap.gron_tab_wrap {
+  opacity: 0;
+  transition: 0.3s linear;
+}
 .wcfm-action-icon {
   text-align: center;
 }
@@ -40,8 +44,4 @@
 }
 .gron_modal #gron-delivery-slots-form .gron_each_field input[type=time] {
   width: calc( 100% - 117px );
-}
-#wcfm-main-contentainer #gron-delivery-slot-save-button.wcfm_submit_button {
-  float: left;
-  margin-left: 0;
 }

@@ -1,5 +1,30 @@
 jQuery(document).ready(function($) {
 
+  var currentTab = $('#gron-current-tab').val();
+  var tabWrap = $(".gron_tab_wrap");
+
+  console.log( currentTab );
+
+  if( currentTab ) {
+
+    setTimeout( function() {
+
+      if( currentTab === "delivery_slots" ) {
+        $("#gron-delivery-slots").trigger("click");
+      }
+
+      setTimeout( function() {
+        tabWrap.css('opacity', '1');
+      }, 200)
+
+    }, 1000)
+
+  }else {
+
+    tabWrap.css('opacity', '1');
+
+  }
+
   var animationTime = 150;
   var modalElm = $('.gron_modal');
   var backdroElm = $('.gron_backdrop');
@@ -87,7 +112,10 @@ jQuery(document).ready(function($) {
       }
     })
     .done( function (res) {
-      console.log(res);
+      if(res) {
+        var hrefWithoutQuery = [location.protocol, '//', location.host, location.pathname].join('');
+        window.location.href = hrefWithoutQuery;
+      }
     } )
     .fail( function ( err ) {
       console.error( "Error in AJAX: ", err )
@@ -108,13 +136,14 @@ jQuery(document).ready(function($) {
     var timeFrom = $('.time_from').val();
     var timeTo = $('.time_to').val();
     var task = 'insert-delivery-slot';
+    var isUpdate = +_this.attr( 'data-slot-id' ) > 0;
 
     var data = {
       time_from: timeFrom,
       time_to: timeTo
     };
 
-    if( +_this.attr( 'data-slot-id' ) > 0 ) {
+    if( isUpdate ) {
       data.id = _this.attr( 'data-slot-id' );
       task = 'update-delivery-slot';
     }
@@ -130,7 +159,8 @@ jQuery(document).ready(function($) {
       }
     })
     .done( function (res) {
-      window.location.reload();
+      var hrefWithoutQuery = [location.protocol, '//', location.host, location.pathname].join('');
+      window.location.href = hrefWithoutQuery + '?tab=delivery_slots' ;
     } )
     .fail( function ( err ) {
       console.error( "Error in AJAX: ", err )
@@ -169,7 +199,8 @@ jQuery(document).ready(function($) {
       }
     })
     .done( function (res) {
-      window.location.reload();
+      var hrefWithoutQuery = [location.protocol, '//', location.host, location.pathname].join('');
+      window.location.href = hrefWithoutQuery + '?tab=delivery_slots' ;
     } )
     .fail( function ( err ) {
       console.error( "Error in AJAX: ", err )

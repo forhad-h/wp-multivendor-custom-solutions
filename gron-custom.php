@@ -11,7 +11,7 @@ defined('ABSPATH') or exit;
 
 define( "GRON_DIR_PATH", plugin_dir_path( __FILE__ ) );
 define( "GRON_DIR_URI", plugin_dir_url( __FILE__ ) );
-define( "GRON_VERSION", '2.0.6');
+define( "GRON_VERSION", '2.0.7');
 
 define( "GRON_ENDPOINT_GEO_ROUTES", 'gron-geo-routes' );
 define( "GRON_ENDPOINT_DELIVERY", 'gron-delivery' );
@@ -28,6 +28,7 @@ use GRON\WCFM\Store_Manager;
 register_activation_hook( __FILE__, function() {
   new Activation();
 } );
+
 
 // Register styles and scripts
 new Register_Scripts();

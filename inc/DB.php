@@ -8,14 +8,12 @@ class DB {
   private $db;
   private $shop_timings_tb_name;
   private $delivery_slots_tb_name;
-  private $delivery_schedule_tb_name;
 
   public function __construct() {
     global $wpdb;
     $this->db = $wpdb;
     $this->shop_timings_tb_name = $wpdb->prefix . 'gron_shop_timings';
     $this->delivery_slots_tb_name = $wpdb->prefix . 'gron_delivery_slots';
-    $this->delivery_schedule_tb_name = $wpdb->prefix . 'gron_delivery_schedule';
   }
 
   /**
@@ -34,7 +32,7 @@ class DB {
         day_name VARCHAR(11) NOT NULL,
         start_time TIME,
         end_time TIME,
-        is_active BOOLEAN,
+        is_active BOOLEAN DEFAULT 0,
         PRIMARY KEY (id)
       ) $charset_collate;";
 
@@ -45,25 +43,16 @@ class DB {
         PRIMARY KEY (id)
       ) $charset_collate;";
 
-      $query_delivery_schedule = "CREATE TABLE $this->delivery_schedule_tb_name (
-        id INT NOT NULL AUTO_INCREMENT,
-        order_id INT NOT NULL,
-        schedule_date INT NOT NULL,
-        schedule_time INT NOT NULL,
-        collection_type INT NOT NULL,
-        PRIMARY KEY (id)
-      ) $charset_collate;";
-
       require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
       dbDelta( $query_shop_timings );
       dbDelta( $query_delivery_slots );
-      dbDelta( $query_delivery_schedule );
 
       // insert initial values for shop timings
-      if( !$this->has_shop_timings_data() ) {
+      if( !$this->has_shop_timings_data( false ) ) {
         $this->insert_shop_timings();
       }
 
+      //TODO: what happend if one or more row has been deleted
       if( get_option( 'gron_version' ) ) {
         update_option( 'gron_version', GRON_VERSION );
       }else {
@@ -177,6 +166,7 @@ class DB {
       );
 
       return $update;
+
     }catch( Exception $e ) {
       $this->print_error( 'not-updated', 'shop timing not updated!' );
     }
@@ -188,11 +178,14 @@ class DB {
    * @return NULL|Array
    * @version 2.0.1
   */
-  public function get_shop_timings( $active_only = '' ) {
+  public function get_shop_timings( $active_only = false ) {
+
     $sql = "SELECT * FROM {$this->shop_timings_tb_name}";
+
     if( $active_only ) {
       $sql .= " WHERE is_active=1";
     }
+
     $result = $this->db->get_results( $sql );
     return $result;
   }
@@ -201,12 +194,14 @@ class DB {
     * Has data in Shop Timings
     * @return NULL|Boolean
   */
-  public function has_shop_timings_data( $active_only = '' ) {
+  public function has_shop_timings_data( $active_only = true ) {
 
     $sql = "SELECT COUNT(*) FROM {$this->shop_timings_tb_name}";
+
     if( $active_only ) {
       $sql .= " WHERE is_active=1";
     }
+
     $result = $this->db->get_var( $sql );
 
     return (bool) $result;

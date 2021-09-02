@@ -26,7 +26,7 @@ class Notice {
   */
   public function show_notice() {
 
-    $has_shop_timing = $this->db->has_shop_timings_data( true );
+    $has_shop_timing = $this->db->has_shop_timings_data();
     $has_delivery_slot = $this->db->has_delivery_slots_data( true );
 
     if( !$has_shop_timing ) {
@@ -50,7 +50,8 @@ class Notice {
       'path' => array(
         array( 'icon' => 'truck-loading', 'name' => 'GRON - Delivery' ),
         array( 'icon' => 'business-time', 'name' => 'Shop Timings' ),
-      )
+      ),
+      'id' => 'gron-shop-timing-notice'
     );
 
     return $this->notice_markup( $options );
@@ -68,7 +69,8 @@ class Notice {
       'path' => array(
         array( 'icon' => 'truck-loading', 'name' => 'GRON - Delivery' ),
         array( 'icon' => 'clock', 'name' => 'Delivery Slots' ),
-      )
+      ),
+      'id' => 'gron-delivery-slot-notice'
     );
 
     return $this->notice_markup( $options );
@@ -80,7 +82,7 @@ class Notice {
   */
   private function notice_markup( $options ) {
 
-    $html = '<div class="gron_wcfm_notice gron_notice_error">';
+    $html = "<div id='{$options['id']}' class='gron_wcfm_notice gron_notice_error'>";
     $html .= "<h3 class='gron_title'> {$options['title']} </h3>";
     $html .= '<div class="gron_desc">';
     $html .= $options['description'];

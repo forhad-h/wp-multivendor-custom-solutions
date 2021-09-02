@@ -8,8 +8,13 @@ $wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
 
 $grondb = new DB();
 
+$get_tab = '';
+if( $_GET && !empty( $_GET['tab'] ) ) {
+  $get_tab = esc_attr( $_GET['tab'] );
+}
 
 ?>
+<input type="hidden" id="gron-current-tab" value="<?php echo $get_tab; ?>" />
 
 <div class="collapse wcfm-collapse" id="gron-geo-routes">
 
@@ -34,7 +39,62 @@ $grondb = new DB();
     <br>
 
 
-      <div class="wcfm-tabWrap">
+      <div class="wcfm-tabWrap gron_tab_wrap">
+
+        <!-- collapsible -->
+        <div class="page_collapsible" id="gron-delivery-shop-timing">
+          <label class="wcfmfa fa-business-time"></label>
+          <?php _e('Shop Timings', 'wc-frontend-manager'); ?><span></span>
+        </div>
+
+        <div class="wcfm-container">
+          <div id="gron-delivery-shop-timing" class="wcfm-content">
+            <h2><?php _e('Shop Timings', 'wc-frontend-manager'); ?></h2>
+            <div class="wcfm_clearfix"></div>
+            <form
+              id="gron-shop-timing-form"
+              class="wcfm"
+            >
+              <table class="gron_table">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Day</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                <?php
+
+                  $shop_timings = $grondb->get_shop_timings();
+
+                ?>
+
+                <?php
+                  foreach( $shop_timings as $timing ):
+                    $day = esc_html($timing->day_name);
+                    $start_time =  esc_attr($timing->start_time);
+                    $end_time =  esc_attr($timing->end_time);
+                    $is_active =  esc_attr($timing->is_active);
+                ?>
+                  <tr class="gron_single_titming">
+                    <td><input type="checkbox" class="wcfm-checkbox is_active" <?php echo $is_active ? 'checked' : ''; ?>></td>
+                    <td class="day_name"><?php echo ucfirst( $day ); ?></td>
+                    <td><input type="time" class="start_time" value="<?php echo $start_time; ?>" /></td>
+                    <td><input type="time" class="end_time" value="<?php echo $end_time; ?>" /></td>
+                  </tr>
+                <?php endforeach; ?>
+                <tbody>
+
+              </table>
+              <input type="button" name="save-data" value="Save" id="gron-shop-timings-save-button" class="wcfm_submit_button">
+            </form>
+
+          </div>
+        </div>
+        <div class="wcfm_clearfix"></div>
+        <!-- end collapsible -->
 
         <!-- collapsible -->
         <div class="page_collapsible" id="gron-delivery-slots">
@@ -137,60 +197,6 @@ $grondb = new DB();
         <div class="wcfm_clearfix"></div>
         <!-- end collapsible -->
 
-        <!-- collapsible -->
-        <div class="page_collapsible" id="gron-delivery-shop-timing">
-          <label class="wcfmfa fa-business-time"></label>
-          <?php _e('Shop Timings', 'wc-frontend-manager'); ?><span></span>
-        </div>
-
-        <div class="wcfm-container">
-          <div id="gron-delivery-shop-timing" class="wcfm-content">
-            <h2><?php _e('Shop Timings', 'wc-frontend-manager'); ?></h2>
-            <div class="wcfm_clearfix"></div>
-            <form
-              id="gron-shop-timing-form"
-              class="wcfm"
-            >
-              <table class="gron_table">
-                <thead>
-                  <tr>
-                    <th></th>
-                    <th>Day</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                  </tr>
-                </thead>
-                <tbody>
-                <?php
-
-                  $shop_timings = $grondb->get_shop_timings();
-
-                ?>
-
-                <?php
-                  foreach( $shop_timings as $timing ):
-                    $day = esc_html($timing->day_name);
-                    $start_time =  esc_attr($timing->start_time);
-                    $end_time =  esc_attr($timing->end_time);
-                    $is_active =  esc_attr($timing->is_active);
-                ?>
-                  <tr class="gron_single_titming">
-                    <td><input type="checkbox" class="wcfm-checkbox is_active" <?php echo $is_active ? 'checked' : ''; ?>></td>
-                    <td class="day_name"><?php echo ucfirst( $day ); ?></td>
-                    <td><input type="time" class="start_time" value="<?php echo $start_time; ?>" /></td>
-                    <td><input type="time" class="end_time" value="<?php echo $end_time; ?>" /></td>
-                  </tr>
-                <?php endforeach; ?>
-                <tbody>
-
-              </table>
-              <input type="button" name="save-data" value="Save" id="gron-shop-timings-save-button" class="wcfm_submit_button">
-            </form>
-
-          </div>
-        </div>
-        <div class="wcfm_clearfix"></div>
-        <!-- end collapsible -->
 
       </div>
 
