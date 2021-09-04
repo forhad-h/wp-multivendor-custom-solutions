@@ -109,7 +109,7 @@ GRONMap.prototype.calcRoute = function(start, end, endAddress, next) {
         } else {
           var reason = "Code " + status;
           var msg = 'start="' + start + ' end="' + end + '"" error=' + reason + '(delay=' + _this.delay + 'ms)<br>';
-          document.getElementById("messages").innerHTML += msg;
+//          document.getElementById("messages").innerHTML += msg;
         }
       }
       next();

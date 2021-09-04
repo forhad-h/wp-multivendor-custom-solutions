@@ -11,29 +11,35 @@ jQuery(document).ready(function($) {
   })
   .done( function (res) {
 
+    if( res ) {
       var resObj = JSON.parse( res );
 
       if( resObj.data ) {
 
         var lat = resObj.data.store.lat;
         var lng = resObj.data.store.lng;
-        var address = resObj.data.store.address;
+        var storeAddress = resObj.data.store.address;
+        var orderAddresses = resObj.data.order;
+        var orderAddresses = resObj.data.order
 
         var baseLocation = {
-          address: address,
+          address: storeAddress,
           lat: lat,
           lng: lng
         };
 
-        var othersLocation = resObj.data.order
+        if(Object.keys(orderAddresses).length > 0 ) {
 
-        if(othersLocation.length > 0 ) {
-          new GRONMap( baseLocation, othersLocation );
+          var noticeElm = $('#gron-map-settings-notice');
+          noticeElm.css( 'display', 'none' );
+
+          new GRONMap( baseLocation, orderAddresses );
         }else {
           new GRONMap( baseLocation )
         }
 
       }
+    }
 
   } )
   .fail( function ( err ) {

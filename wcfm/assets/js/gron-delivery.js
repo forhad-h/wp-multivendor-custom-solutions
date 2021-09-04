@@ -3,8 +3,6 @@ jQuery(document).ready(function($) {
   var currentTab = $('#gron-current-tab').val();
   var tabWrap = $(".gron_tab_wrap");
 
-  console.log( currentTab );
-
   if( currentTab ) {
 
     setTimeout( function() {

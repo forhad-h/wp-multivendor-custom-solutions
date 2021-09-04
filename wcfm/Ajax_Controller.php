@@ -16,7 +16,7 @@ class Ajax_Controller {
   public function __construct() {
 
     // GEO Location
-    $this->task['get_map_location'] = 'get_map_locations';
+    $this->task['get_map_location'] = 'get-map-locations';
 
     // Shop Timings
     $this->task['update_shop_timings'] = 'update-shop-timings';

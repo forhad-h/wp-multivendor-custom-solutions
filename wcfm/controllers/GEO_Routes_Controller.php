@@ -66,8 +66,6 @@ class GEO_Routes_Controller {
 		    echo $this->response( 'not_found', 'Location not found!', '', $e );
 		}
 
-
-
 	}
 
 	private function get_store_locations() {
