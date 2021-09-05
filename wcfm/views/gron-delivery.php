@@ -1,6 +1,6 @@
 <?php
 use GRON\DB;
-include_once GRON_DIR_PATH . 'utils.php';
+use GRON\Utils;
 
 global $wpdb, $WCFM, $WCFMmp;
 
@@ -162,8 +162,8 @@ if( $_GET && !empty( $_GET['tab'] ) ) {
                   <tr>
 
                     <td><?php echo $i; ?></td>
-                    <td><?php echo gron_time_format( $time_from ); ?></td>
-                    <td><?php echo gron_time_format( $time_to ); ?></td>
+                    <td><?php echo Utils::time_format( $time_from ); ?></td>
+                    <td><?php echo Utils::time_format( $time_to ); ?></td>
                     <td>
 
                       <a

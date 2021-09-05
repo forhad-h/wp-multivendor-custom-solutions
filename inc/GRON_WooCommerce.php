@@ -9,8 +9,7 @@ namespace GRON;
 defined('ABSPATH') or exit;
 
 use GRON\DB;
-
-include_once GRON_DIR_PATH . 'utils.php';
+use GRON\Utils;
 
 class GRON_WooCommerce {
 
@@ -116,8 +115,8 @@ class GRON_WooCommerce {
     $slots = $this->db->get_delivery_slots();
 
     foreach( $slots as $slot ) {
-      $time_from = gron_time_format( $slot->time_from );
-      $time_to = gron_time_format( $slot->time_to );
+      $time_from = Utils::time_format( $slot->time_from );
+      $time_to = Utils::time_format( $slot->time_to );
       $key = $value = $time_from . '-' . $time_to;
 
       $options[$key] = $value;
@@ -163,7 +162,7 @@ class GRON_WooCommerce {
     $deliver_time = get_post_meta( $order->get_id(), 'gron_deliver_time', true );
 
     echo '<h3 style="color: #17a2b8;border-bottom: 1px solid #ccc;font-weight: 500;font-size: 13px;padding-bottom: 11px;">Delivery Details:</h3>';
-    echo '<p><strong>'.__('Collection Type').':</strong> ' . underscore_to_capitalize( $collection_type ) . '</p>';
+    echo '<p><strong>'.__('Collection Type').':</strong> ' . Utils::underscore_to_capitalize( $collection_type ) . '</p>';
     echo '<p><strong>'.__('Deliver Date').':</strong> ' . ucfirst( $deliver_date ) . '</p>';
     echo '<p><strong>'.__('Deliver Time').':</strong> ' . $deliver_time . '</p>';
   }

@@ -3,6 +3,7 @@ namespace GRON;
 defined('ABSPATH') or exit;
 
 use GRON\DB;
+use GRON\Utils;
 
 // TODO: implement GEO Route notice like this
 class Notice {
@@ -83,13 +84,9 @@ class Notice {
   */
   public function admin_map_api_setting_notice() {
 
-    global $WCFMmp;
-    $wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
-    $wcfm_google_map_api = isset( $wcfm_marketplace_options['wcfm_google_map_api'] ) ? $wcfm_marketplace_options['wcfm_google_map_api'] : '';
-
     $options = array();
 
-    if( !$wcfm_google_map_api ) {
+    if( !Utils::has_map_api_key() ) {
       $options['title'] = 'Google Map API Key is Required!';
       $options['description'] = 'Make sure you have set your Google Map API Key: &nbsp;';
       $options['path'] = array(
@@ -101,12 +98,12 @@ class Notice {
       $options['description'] = 'Make sure you have set your Map Default Location: &nbsp;';
       $options['path'] = array(
         array( 'icon' => 'cogs', 'name' => 'Settings' ),
-        array( 'icon' => 'street-view', 'name' => 'GEO Location > Google Map API Key' )
+        array( 'icon' => 'street-view', 'name' => 'GEO Location > Map Default Location' )
       );
     }
 
     $options['id'] = 'gron-map-settings-notice';
-    $options['type_class'] = 'gron_notice_info';
+    $options['type_class'] = 'gron_warning_info';
 
     return $this->notice_markup( $options );
   }
@@ -123,7 +120,7 @@ class Notice {
         array( 'icon' => 'globe', 'name' => 'Location > Store Location' ),
       ),
       'id' => 'gron-map-settings-notice',
-      'type_class' => 'gron_notice_info'
+      'type_class' => 'gron_warning_info'
     );
 
     return $this->notice_markup( $options );

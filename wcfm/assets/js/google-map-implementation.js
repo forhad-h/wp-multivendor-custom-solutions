@@ -1,5 +1,5 @@
 
-function GRONMap( baseLocation, othersLocation = [] ) {
+function GRONMap( baseLocation, othersLocation = [], travelMode = 'DRIVING' ) {
 
     this.map;
     this.bounds;
@@ -7,6 +7,7 @@ function GRONMap( baseLocation, othersLocation = [] ) {
     this.lat = parseFloat(baseLocation.lat);
     this.lng = parseFloat(baseLocation.lng);
     this.address = baseLocation.address;
+    this.travelMode = travelMode;
 
     this.othersLocation = othersLocation;
 
@@ -66,7 +67,7 @@ GRONMap.prototype.calcRoute = function(start, end, endAddress, next) {
   var request = {
     origin: start,
     destination: end,
-    travelMode: 'DRIVING'
+    travelMode: this.travelMode
   };
   var _this = this;
 
@@ -105,11 +106,11 @@ GRONMap.prototype.calcRoute = function(start, end, endAddress, next) {
         if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT) {
           _this.nextAddress--;
           _this.delay += 100;
-          document.getElementById('delay').innerHTML = "delay between requests=" + _this.delay;
+          //document.getElementById('delay').innerHTML = "delay between requests=" + _this.delay;
         } else {
           var reason = "Code " + status;
           var msg = 'start="' + start + ' end="' + end + '"" error=' + reason + '(delay=' + _this.delay + 'ms)<br>';
-//          document.getElementById("messages").innerHTML += msg;
+          //document.getElementById("messages").innerHTML += msg;
         }
       }
       next();

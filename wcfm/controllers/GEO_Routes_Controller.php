@@ -4,6 +4,7 @@
  */
 namespace GRON\WCFM\controllers;
 use GRON\DB;
+use GRON\Utils;
 
 defined('ABSPATH') or exit;
 
@@ -58,7 +59,8 @@ class GEO_Routes_Controller {
 
 			$data = array(
 				'store' => $this->get_store_locations(),
-				'order' => $this->get_order_locations()
+				'order' => $this->get_order_locations(),
+				'has_api_key' => Utils::has_map_api_key()
 			);
 			echo $this->response( 'data_found', 'Location found!', $data );
 
@@ -69,8 +71,8 @@ class GEO_Routes_Controller {
 	}
 
 	private function get_store_locations() {
-		$default_lat = apply_filters( 'gron_map_default_lat',  4.2105 );
-		$default_lng = apply_filters( 'gron_map_default_lng', 101.9758 );
+		$default_lat = apply_filters( 'gron_map_default_lat',  0 );
+		$default_lng = apply_filters( 'gron_map_default_lng', 0 );
 
 		if( !IS_GRON_VENDOR ) {
 			try {

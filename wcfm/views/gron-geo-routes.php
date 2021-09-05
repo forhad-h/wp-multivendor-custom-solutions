@@ -36,11 +36,21 @@ $wcfm_google_map_api = isset( $wcfm_marketplace_options['wcfm_google_map_api'] )
 		</div>
 
 		<div class="wcfm-container">
-				<div id="delay"></div>
+				<!--<div id="delay"></div>-->
 				<div id="map"></div>
 	  </div>
 
     <div class="gron_route_details_wrapper">
+      <div class="gron_route_filter_options">
+        <label for="gron-route-travel-mode">Travel Mode: </label>
+        <select id="gron-route-travel-mode">
+          <option value="DRIVING">Driving</option>
+          <option value="WALKING">Walking</option>
+          <option value="BICYCLING">Bicycling</option>
+          <option value="TRANSIT">Transit</option>
+        </select>
+
+      </div>
 
       <div id="gron-route-details-panel">
         <ul></ul>
