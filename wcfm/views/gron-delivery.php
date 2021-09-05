@@ -13,8 +13,12 @@ if( $_GET && !empty( $_GET['tab'] ) ) {
   $get_tab = esc_attr( $_GET['tab'] );
 }
 
+
+
 ?>
 <input type="hidden" id="gron-current-tab" value="<?php echo $get_tab; ?>" />
+<input type="hidden" id="gron-count-shop-timings" value="<?php echo $grondb->count_shop_timings(); ?>" />
+<input type="hidden" id="gron-count-delivery-slots" value="<?php echo $grondb->count_delivery_slots(); ?>" />
 
 <div class="collapse wcfm-collapse" id="gron-geo-routes">
 

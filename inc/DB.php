@@ -48,7 +48,7 @@ class DB {
       dbDelta( $query_delivery_slots );
 
       // insert initial values for shop timings
-      if( !$this->has_shop_timings_data( false ) ) {
+      if( !$this->count_shop_timings( false ) ) {
         $this->insert_shop_timings();
       }
 
@@ -191,10 +191,10 @@ class DB {
   }
 
   /**
-    * Has data in Shop Timings
-    * @return NULL|Boolean
+   * count shop timings
+   * @return NULL|Int
   */
-  public function has_shop_timings_data( $active_only = true ) {
+  public function count_shop_timings( $active_only = true ) {
 
     $sql = "SELECT COUNT(*) FROM {$this->shop_timings_tb_name}";
 
@@ -204,19 +204,20 @@ class DB {
 
     $result = $this->db->get_var( $sql );
 
-    return (bool) $result;
+    return $result;
+
   }
 
   /**
     * Has data in Delivery Slots
     * @return NULL|Boolean
   */
-  public function has_delivery_slots_data() {
+  public function count_delivery_slots() {
 
     $sql = "SELECT COUNT(*) FROM {$this->delivery_slots_tb_name}";
     $result = $this->db->get_var( $sql );
 
-    return (bool) $result;
+    return $result;
   }
 
   /**

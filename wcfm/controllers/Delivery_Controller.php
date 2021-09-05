@@ -24,11 +24,12 @@ class Delivery_Controller {
   */
   public function update_shop_timings( $data_array ) {
 
+
 		foreach( $data_array as $data ) {
 			$update = $this->db->update_shop_timing( $data );
 		}
 
-		echo $update;
+		echo $this->db->count_shop_timings();
 
   }
 
@@ -39,7 +40,10 @@ class Delivery_Controller {
 	public function insert_delivery_slot( $data ) {
 
 		$insert = $this->db->insert_delivery_slot( $data );
-		echo $insert;
+
+		if( $insert ) {
+			echo $this->db->count_delivery_slots();
+		}
 
 	}
 
@@ -61,7 +65,10 @@ class Delivery_Controller {
   public function delete_delivery_slot( $data ) {
 
     $delete = $this->db->delete_delivery_slot( $data );
-		echo $delete;
+		
+		if( $delete ) {
+			echo $this->db->count_delivery_slots();
+		}
 
 	}
 

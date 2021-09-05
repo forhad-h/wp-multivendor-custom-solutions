@@ -22,24 +22,6 @@ class Notice {
   }
 
   /**
-  * Show notice to store manager
-  */
-  public function show_notice() {
-
-/*    $has_shop_timing = $this->db->has_shop_timings_data();
-    $has_delivery_slot = $this->db->has_delivery_slots_data( true );*/
-
-/*    if( !$has_shop_timing ) {
-      echo $this->shop_timing_notice();
-    }
-
-    if( !$has_delivery_slot ) {
-      echo $this->delivery_slot_notice();
-    }*/
-
-  }
-
-  /**
   * Notice for Shop Timings
   */
   public function shop_timing_notice() {

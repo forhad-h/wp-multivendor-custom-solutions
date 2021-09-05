@@ -7,7 +7,6 @@ use GRON\WCFM\Ajax_Controller;
 use GRON\Notice;
 
 
-
 class Store_Manager {
 
   private $notice;
@@ -54,8 +53,6 @@ class Store_Manager {
   public function show_gron_delivery_notices() {
 
     // Show Delivery Notices
-
-
     echo $this->notice->shop_timing_notice();
     echo $this->notice->delivery_slot_notice();
 
