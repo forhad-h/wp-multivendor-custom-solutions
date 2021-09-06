@@ -1,13 +1,17 @@
+
+#wcfm-main-contentainer table.gron_table tbody td {
+  background-color: transparent;
+}
+.gron_table > tbody > tr:nth-of-type(odd) {
+  background-color: #f9f9f9;
+}
+
 #gron-delivery-settings-save-button {
   margin-right: 21px;
 }
 
 #wcfm-main-contentainer table.gron_table {
   margin-top: 0;
-}
-.wcfm-tabWrap.gron_tab_wrap {
-  opacity: 0;
-  transition: 0.3s linear;
 }
 .wcfm-action-icon {
   text-align: center;
@@ -28,11 +32,11 @@
   max-width: 300px;
   width: 100%;
   padding: 20px;
-  position: absolute;
+  position: fixed;
   z-index: 9999999;
   background: #fff;
-  right: 145px;
-  top: 0;
+  left: calc(50% - 150px);
+  top: 30vh;
 }
 .gron_modal .ci_modal_title {
   display: block;
@@ -44,4 +48,7 @@
 }
 .gron_modal #gron-delivery-slots-form .gron_each_field input[type=time] {
   width: calc( 100% - 117px );
+}
+#gron-delivery-slot-template {
+  display: none;
 }

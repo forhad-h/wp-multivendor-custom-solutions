@@ -16,7 +16,6 @@ if( $_GET && !empty( $_GET['tab'] ) ) {
 
 
 ?>
-<input type="hidden" id="gron-current-tab" value="<?php echo $get_tab; ?>" />
 <input type="hidden" id="gron-count-shop-timings" value="<?php echo $grondb->count_shop_timings(); ?>" />
 <input type="hidden" id="gron-count-delivery-slots" value="<?php echo $grondb->count_delivery_slots(); ?>" />
 
@@ -153,7 +152,36 @@ if( $_GET && !empty( $_GET['tab'] ) ) {
                 </tr>
               </thead>
 
-              <tbody>
+              <tbody id="gron-delivery-slot-table">
+                <tr class="gron_each_slot" id="gron-delivery-slot-template">
+
+                  <td class="slot_sl_no"></td>
+                  <td class="slot_time_form"></td>
+                  <td class="slot_time_to"></td>
+                  <td>
+
+                    <a
+                      class="wcfm-action-icon gron_modal_trigger_button gron_delivery_slot_edit_button"
+                      href="#"
+                      data-target="#gron-modal"
+                      data-slot-id=""
+                      data-time-from=""
+                      data-time-to=""
+                    >
+                      <span class="wcfmfa fa-edit text_tip" data-tip="Edit"></span>
+                    </a>
+
+                    <a
+                      class="wcfm-action-icon gron_delivery_slot_delete_button"
+                      href="#"
+                      data-slot-id=""
+                    >
+                      <span class="wcfmfa fa-trash-alt text_tip" data-tip="Delete"></span>
+                    </a>
+
+                  </td>
+                </tr>
+
                 <?php
                   $delivery_slots = $grondb->get_delivery_slots();
                   $i = 0;
@@ -163,11 +191,11 @@ if( $_GET && !empty( $_GET['tab'] ) ) {
                     $time_from = esc_html( $slot->time_from );
                     $time_to = esc_html( $slot->time_to );
                 ?>
-                  <tr>
+                  <tr class="gron_each_slot">
 
-                    <td><?php echo $i; ?></td>
-                    <td><?php echo Utils::time_format( $time_from ); ?></td>
-                    <td><?php echo Utils::time_format( $time_to ); ?></td>
+                    <td class="slot_sl_no"><?php echo $i; ?></td>
+                    <td class="slot_time_form"><?php echo Utils::time_format( $time_from ); ?></td>
+                    <td class="slot_time_to"><?php echo Utils::time_format( $time_to ); ?></td>
                     <td>
 
                       <a

@@ -1,5 +1,6 @@
 jQuery(document).ready(function($) {
 
+  var bodyElm = $('body');
 
   var shopTimingNotice = $('#gron-shop-timing-notice');
   var deliverySlotNotice = $('#gron-delivery-slot-notice');
@@ -17,30 +18,6 @@ jQuery(document).ready(function($) {
     deliverySlotNotice.fadeIn( animSpeed );
   }
 
-
-  var currentTab = $('#gron-current-tab').val();
-  var tabWrap = $(".gron_tab_wrap");
-
-  if( currentTab ) {
-
-    setTimeout( function() {
-
-      if( currentTab === "delivery_slots" ) {
-        $("#gron-delivery-slots").trigger("click");
-      }
-
-      setTimeout( function() {
-        tabWrap.css('opacity', '1');
-      }, 200)
-
-    }, 1000)
-
-  }else {
-
-    tabWrap.css('opacity', '1');
-
-  }
-
   var animationTime = 150;
   var modalElm = $('.gron_modal');
   var backdroElm = $('.gron_backdrop');
@@ -48,7 +25,7 @@ jQuery(document).ready(function($) {
   modalElm.hide();
   backdroElm.hide();
 
-  $('.gron_delivery_slot_edit_button').on( 'click', function( e ) {
+  bodyElm.on('click', '.gron_delivery_slot_edit_button', function( e ) {
 
     e.preventDefault();
 
@@ -68,7 +45,7 @@ jQuery(document).ready(function($) {
     $('#gron-delivery-slot-save-button').removeAttr( 'data-slot-id' );
   })
 
-  $('.gron_modal_trigger_button').on( 'click', function( e ) {
+  bodyElm.on( 'click', '.gron_modal_trigger_button', function( e ) {
 
     e.preventDefault();
 
@@ -167,7 +144,8 @@ jQuery(document).ready(function($) {
     };
 
     if( isUpdate ) {
-      data.id = _this.attr( 'data-slot-id' );
+      var slot_id = _this.attr( 'data-slot-id' );
+      data.id = slot_id;
       task = 'update-delivery-slot';
     }
 
@@ -182,15 +160,66 @@ jQuery(document).ready(function($) {
       }
     })
     .done( function (res) {
+
       if(res) {
 
-        if( res > 0 ) {
+        var resObj = JSON.parse( res );
+
+        if( isUpdate ) {
+
+          var data = resObj.data;
+
+          var updatedBtnElm = $('.gron_delivery_slot_edit_button[data-slot-id=' + data.id + ']');
+          var updatedElm = updatedBtnElm.closest('tr');
+
+          updatedBtnElm.attr( 'data-time-from', data.raw.time_from );
+          updatedBtnElm.attr( 'data-time-to', data.raw.time_to );
+
+
+          updatedElm.find('.slot_time_form').text( data.formatted.time_from );
+          updatedElm.find('.slot_time_to').text( data.formatted.time_to );
+
+          return false;
+        }
+
+
+        var countSlots = resObj.data.count_slots;
+        var info = resObj.data.info;
+        var slotTableElm = $('#gron-delivery-slot-table');
+        var slotTemplateElm = $('#gron-delivery-slot-template');
+        var slotTemplateClonElm = slotTemplateElm.clone();
+
+        // show/hide required notice
+        if( countSlots > 0 ) {
           deliverySlotNotice.fadeOut( animSpeed );
         }else {
           deliverySlotNotice.fadeIn( animSpeed );
         }
 
+        if( !$.isEmptyObject(info) ) {
+
+          // append new entry
+          var previousSLNo = +slotTableElm.find('tr.gron_each_slot').last().find('td').first().text();
+
+          var editButtonElm = slotTemplateClonElm.find('.gron_delivery_slot_edit_button');
+
+
+          editButtonElm.attr( 'data-slot-id', info.id );
+          editButtonElm.attr( 'data-time-from', info.raw.time_from );
+          editButtonElm.attr( 'data-time-to', info.raw.time_to );
+
+          slotTemplateClonElm.find('.slot_sl_no').text( previousSLNo + 1 );
+          slotTemplateClonElm.find('.slot_time_form').text( info.formatted.time_from );
+          slotTemplateClonElm.find('.slot_time_to').text( info.formatted.time_to );
+
+          slotTemplateClonElm.find('.gron_delivery_slot_delete_button').attr( 'data-slot-id', info.id );
+
+          slotTemplateClonElm.attr( 'id', '' ).appendTo( slotTableElm );
+
+        }
+
       }
+
     } )
     .fail( function ( err ) {
       console.error( "Error in AJAX: ", err )
@@ -204,9 +233,8 @@ jQuery(document).ready(function($) {
   });
 
   // delete delivery slot
-  var deliverySlotDeleteBtnElms = $('.gron_delivery_slot_delete_button');
 
-  deliverySlotDeleteBtnElms.on( 'click', function( event ) {
+  bodyElm.on( 'click', '.gron_delivery_slot_delete_button', function( event ) {
     event.preventDefault();
 
     _this = $(this);
@@ -229,14 +257,21 @@ jQuery(document).ready(function($) {
       }
     })
     .done( function (res) {
-      
+
       if(res) {
 
-        if( res > 0 ) {
+        var resObj = JSON.parse( res );
+        var countSlots = resObj.data.count_slots;
+        var id = resObj.data.id;
+
+        if( res.countSlots > 0 ) {
           deliverySlotNotice.fadeOut( animSpeed );
         }else {
           deliverySlotNotice.fadeIn( animSpeed );
         }
+
+        var deltedElm = $('.gron_delivery_slot_delete_button[data-slot-id=' + id + ']');
+        deltedElm.closest( 'tr' ).removeClass('gron_each_slot').empty().html('<td>Deleted!</td><td></td><td></td><td></td>');
 
       }
 

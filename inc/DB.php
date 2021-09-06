@@ -208,6 +208,7 @@ class DB {
 
   }
 
+
   /**
     * Has data in Delivery Slots
     * @return NULL|Boolean
@@ -272,11 +273,10 @@ class DB {
     /**
      * delete delivery slot
      * @return NULL|Bollean
+     * @param Int $id
      * @version 2.0.3
     */
-    public function delete_delivery_slot( $data ) {
-
-      $id = esc_sql( $data['id'] );
+    public function delete_delivery_slot( $id ) {
 
       $delete = $this->db->delete(
         $this->delivery_slots_tb_name,
@@ -301,6 +301,21 @@ class DB {
       $results = $this->db->get_results( $sql );
 
       return $results;
+
+    }
+
+    /**
+     * get delivery slot by id
+     * @return NULL|Array
+     * @param Int $id
+    */
+    public function get_delivery_slot_by_id( $id ) {
+
+      $sql = "SELECT * FROM {$this->delivery_slots_tb_name} WHERE id=$id";
+
+      $result = $this->db->get_row( $sql );
+
+      return $result;
 
     }
 
