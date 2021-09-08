@@ -264,7 +264,7 @@ jQuery(document).ready(function($) {
         var countSlots = resObj.data.count_slots;
         var id = resObj.data.id;
 
-        if( res.countSlots > 0 ) {
+        if( countSlots > 0 ) {
           deliverySlotNotice.fadeOut( animSpeed );
         }else {
           deliverySlotNotice.fadeIn( animSpeed );
