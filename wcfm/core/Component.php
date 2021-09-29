@@ -15,7 +15,7 @@ class Component {
   private $slug;
 
   private $endpoint_geo_routes = GRON_ENDPOINT_GEO_ROUTES;
-  private $endpoint_delivery = GRON_ENDPOINT_DELIVERY;
+  private $endpoint_settings = GRON_ENDPOINT_SETTINGS;
 
   private $get_map_locations = 'get_map_locations';
 

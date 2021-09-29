@@ -39,10 +39,10 @@ class Store_Manager {
 
     // create Delivery menu in WCFM store-manager
     new Component(array(
-      'label' => __( 'GRON - Delivery','gron-custom' ),
+      'label' => __( 'GRON - Settings','gron-custom' ),
       'icon' => 'truck-loading',
-      'endpoint' => GRON_ENDPOINT_DELIVERY,
-      'slug' => GRON_ENDPOINT_DELIVERY,
+      'endpoint' => GRON_ENDPOINT_SETTINGS,
+      'slug' => GRON_ENDPOINT_SETTINGS,
     ));
 
   }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Delivery_Controller controllers
+ * Settings_Controller controllers
  */
 namespace GRON\WCFM\controllers;
 
@@ -11,7 +11,7 @@ use GRON\Utils;
 
 
 
-class Delivery_Controller {
+class Settings_Controller {
 
 	private $db;
 	private $wpdb;

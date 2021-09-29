@@ -7,7 +7,7 @@ namespace GRON\WCFM;
 defined('ABSPATH') or exit;
 
 use GRON\WCFM\controllers\GEO_Routes_Controller;
-use GRON\WCFM\controllers\Delivery_Controller;
+use GRON\WCFM\controllers\Settings_Controller;
 
 class Ajax_Controller {
 
@@ -49,9 +49,9 @@ class Ajax_Controller {
     }
 
     // Controller for Delivery options
-    if( $controller === GRON_ENDPOINT_DELIVERY ) {
+    if( $controller === GRON_ENDPOINT_SETTINGS ) {
 
-      $delivery_controller = new Delivery_Controller();
+      $delivery_controller = new Settings_Controller();
 
 
       if( $task == $this->task['update_shop_timings'] && $data ) {

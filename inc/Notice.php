@@ -30,7 +30,7 @@ class Notice {
       'title' => 'Shop Timing is Required!',
       'description' => 'Please set up at least one Shop Timing: &nbsp; ',
       'path' => array(
-        array( 'icon' => 'truck-loading', 'name' => 'GRON - Delivery' ),
+        array( 'icon' => 'truck-loading', 'name' => 'GRON - Settings' ),
         array( 'icon' => 'business-time', 'name' => 'Shop Timings' ),
       ),
       'id' => 'gron-shop-timing-notice',
@@ -50,7 +50,7 @@ class Notice {
       'title' => 'Delivery Slot is Required!',
       'description' => 'Please set up at least one Delivery Slot: &nbsp; ',
       'path' => array(
-        array( 'icon' => 'truck-loading', 'name' => 'GRON - Delivery' ),
+        array( 'icon' => 'truck-loading', 'name' => 'GRON - Settings' ),
         array( 'icon' => 'clock', 'name' => 'Delivery Slots' ),
       ),
       'id' => 'gron-delivery-slot-notice',

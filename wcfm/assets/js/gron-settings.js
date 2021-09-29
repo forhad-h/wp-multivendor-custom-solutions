@@ -99,7 +99,7 @@ jQuery(document).ready(function($) {
       url: wcfm_params.ajax_url,
       data: {
         action: 'wcfm_ajax_controller',
-        controller: 'gron-delivery',
+        controller: 'gron-settings',
         task: 'update-shop-timings',
         data: data
       }
@@ -154,7 +154,7 @@ jQuery(document).ready(function($) {
       url: wcfm_params.ajax_url,
       data: {
         action: 'wcfm_ajax_controller',
-        controller: 'gron-delivery',
+        controller: 'gron-settings',
         task: task,
         data: data
       }
@@ -249,7 +249,7 @@ jQuery(document).ready(function($) {
       url: wcfm_params.ajax_url,
       data: {
         action: 'wcfm_ajax_controller',
-        controller: 'gron-delivery',
+        controller: 'gron-settings',
         task: 'delete-delivery-slot',
         data: {
           id: $(this).attr( 'data-slot-id' )
