@@ -44,7 +44,8 @@ function gron_init() {
     new Store_Manager();
     add_filter( 'wcfm_menus', function( $menus ){
 
-
+      //wcfm_is_delivery_boy()
+      
         $requests = array(
           'wcfm-requests' => array(
             'label'      => __( 'Requests', 'wc-frontend-manager-delivery'),
