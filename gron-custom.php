@@ -42,6 +42,20 @@ function gron_init() {
 
     // Include wcfm integration
     new Store_Manager();
+    add_filter( 'wcfm_menus', function( $menus ){
+
+
+        $requests = array(
+          'wcfm-requests' => array(
+            'label'      => __( 'Requests', 'wc-frontend-manager-delivery'),
+            'url'        => 'http://localhost:8080/store-manager/requests/',
+            'icon'       => 'shipping-fast',
+            'priority'   => 53
+           ) );
+
+
+      return array_merge( $menus, $requests );
+    }, 301 );
 
 }
 
