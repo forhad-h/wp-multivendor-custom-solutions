@@ -42,10 +42,10 @@ function gron_init() {
 
     // Include wcfm integration
     new Store_Manager();
-    add_filter( 'wcfm_menus', function( $menus ){
+/*    add_filter( 'wcfm_menus', function( $menus ){
 
       //wcfm_is_delivery_boy()
-      
+
         $requests = array(
           'wcfm-requests' => array(
             'label'      => __( 'Requests', 'wc-frontend-manager-delivery'),
@@ -56,7 +56,7 @@ function gron_init() {
 
 
       return array_merge( $menus, $requests );
-    }, 301 );
+    }, 301 );*/
 
 }
 

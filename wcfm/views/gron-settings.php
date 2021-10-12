@@ -8,18 +8,11 @@ $wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
 
 $grondb = new DB();
 
-$get_tab = '';
-if( $_GET && !empty( $_GET['tab'] ) ) {
-  $get_tab = esc_attr( $_GET['tab'] );
-}
-
-
-
 ?>
 <input type="hidden" id="gron-count-shop-timings" value="<?php echo $grondb->count_shop_timings(); ?>" />
 <input type="hidden" id="gron-count-delivery-slots" value="<?php echo $grondb->count_delivery_slots(); ?>" />
 
-<div class="collapse wcfm-collapse" id="gron-geo-routes">
+<div class="collapse wcfm-collapse" id="gron-settings">
 
   <div class="wcfm-page-headig">
 		<span class="wcfmfa fa-street-view"></span>
@@ -45,13 +38,13 @@ if( $_GET && !empty( $_GET['tab'] ) ) {
       <div class="wcfm-tabWrap gron_tab_wrap">
 
         <!-- collapsible -->
-        <div class="page_collapsible" id="gron-delivery-shop-timing">
+        <div class="page_collapsible" id="gron-settings-shop-timing">
           <label class="wcfmfa fa-business-time"></label>
           <?php _e('Shop Timings', 'wc-frontend-manager'); ?><span></span>
         </div>
 
         <div class="wcfm-container">
-          <div id="gron-delivery-shop-timing" class="wcfm-content">
+          <div id="gron-settings-shop-timing" class="wcfm-content">
             <h2><?php _e('Shop Timings', 'wc-frontend-manager'); ?></h2>
             <div class="wcfm_clearfix"></div>
             <form
@@ -100,13 +93,13 @@ if( $_GET && !empty( $_GET['tab'] ) ) {
         <!-- end collapsible -->
 
         <!-- collapsible -->
-        <div class="page_collapsible" id="gron-delivery-slots">
+        <div class="page_collapsible" id="gron-settings-delivery-slots">
           <label class="wcfmfa fa-clock"></label>
           <?php _e('Delivery Slots', 'wc-frontend-manager'); ?><span></span>
         </div>
 
         <div class="wcfm-container">
-          <div id="gron-delivery-slots" class="wcfm-content">
+          <div id="gron-settings-delivery-slots" class="wcfm-content">
             <h2><?php _e('Delivery Slots', 'wc-frontend-manager'); ?></h2>
             <div class="wcfm_clearfix"></div>
 
@@ -199,7 +192,7 @@ if( $_GET && !empty( $_GET['tab'] ) ) {
                     <td>
 
                       <a
-                        class="wcfm-action-icon gron_modal_trigger_button gron_delivery_slot_edit_button"
+                        class="wcfm-action-icon icon-info gron_modal_trigger_button gron_delivery_slot_edit_button"
                         href="#"
                         data-target="#gron-modal"
                         data-slot-id="<?php echo $id; ?>"
@@ -210,11 +203,11 @@ if( $_GET && !empty( $_GET['tab'] ) ) {
                       </a>
 
                       <a
-                        class="wcfm-action-icon gron_delivery_slot_delete_button"
+                        class="wcfm-action-icon icon-danger gron_delivery_slot_delete_button"
                         href="#"
                         data-slot-id="<?php echo $id; ?>"
                       >
-                        <span class="wcfmfa fa-trash-alt text_tip" data-tip="Delete" data-hasqtip="102" aria-describedby="qtip-102"></span>
+                        <span class="wcfmfa fa-trash-alt text_tip" data-tip="Delete"></span>
                       </a>
 
                     </td>

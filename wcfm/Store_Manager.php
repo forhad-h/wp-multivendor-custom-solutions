@@ -40,10 +40,21 @@ class Store_Manager {
     // create Delivery menu in WCFM store-manager
     new Component(array(
       'label' => __( 'GRON - Settings','gron-custom' ),
-      'icon' => 'truck-loading',
+      'icon' => 'cog',
       'endpoint' => GRON_ENDPOINT_SETTINGS,
       'slug' => GRON_ENDPOINT_SETTINGS,
     ));
+
+    if( wcfm_is_delivery_boy() ) {
+      // create Delivery menu in WCFM store-manager
+      new Component(array(
+        'label' => __( 'GRON - Requests','gron-custom' ),
+        'icon' => 'inbox',
+        'endpoint' => GRON_ENDPOINT_DELIVERY_REQUEST,
+        'slug' => GRON_ENDPOINT_DELIVERY_REQUEST,
+        'priority' => 305
+      ));
+    }
 
   }
 

@@ -13,6 +13,7 @@ class Component {
   private $icon;
   private $endpoint;
   private $slug;
+  private $priority;
 
   private $endpoint_geo_routes = GRON_ENDPOINT_GEO_ROUTES;
   private $endpoint_settings = GRON_ENDPOINT_SETTINGS;
@@ -27,13 +28,14 @@ class Component {
     $this->icon = $options['icon'];
     $this->endpoint = $options['endpoint'];
     $this->slug = $options['slug'];
+    $this->priority = array_key_exists( 'priority', $options ) && $options['priority'] ? $options['priority'] : 51;
 
     add_action( 'init', array( $this, 'init' ), 50 );
     add_action( 'wcfm_load_scripts', array( $this, 'load_scripts' ) );
     add_action( 'wcfm_load_styles', array( $this, 'load_styles' ) );
     add_action( 'wcfm_load_views', array( $this, 'load_views' ), 50 );
 
-    add_filter( 'wcfm_menus', array( $this, 'add_menu' ), 20 );
+    add_filter( 'wcfm_menus', array( $this, 'add_menu' ), $this->priority );
     add_filter( 'wcfm_query_vars', array( $this, 'query_vars' ), 50 );
     add_filter( 'wcfm_endpoint_title', array( $this, 'endpoint_title' ), 50, 2 );
     add_filter( 'wcfm_endpoints_slug', array( $this, 'endpoints_slug' ) );

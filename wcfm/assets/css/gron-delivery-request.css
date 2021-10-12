@@ -1,0 +1,17 @@
+
+.icon-danger {
+  color: #e85656;
+}
+.icon-info {
+  color: #17a2b8;
+}
+.icon-success {
+  color: #168916;
+}
+
+.wcfm-action-icon {
+  text-align: center;
+}
+div#wcfm-main-contentainer #gron-delivery-requests .gron_table [class*=" fa-"]:before {
+  font-weight: 600;
+}

@@ -1,4 +1,14 @@
 
+.icon-danger {
+  color: #e85656;
+}
+.icon-info {
+  color: #17a2b8;
+}
+div#wcfm-main-contentainer #gron-settings .gron_table [class*=" fa-"]:before {
+  font-weight: 500;
+}
+
 #wcfm-main-contentainer table.gron_table tbody td {
   background-color: transparent;
 }
