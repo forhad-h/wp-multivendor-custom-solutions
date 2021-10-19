@@ -42,21 +42,18 @@ function gron_init() {
 
     // Include wcfm integration
     new Store_Manager();
-/*    add_filter( 'wcfm_menus', function( $menus ){
 
-      //wcfm_is_delivery_boy()
+    $args = array(
+      'role__in'     => array( 'wcfm_delivery_boy' ),
+      'orderby'      => 'ID',
+      'order'        => 'ASC',
+      'meta_key'     => '_wcfm_vendor',
+      'meta_value'   => 3
+     );
 
-        $requests = array(
-          'wcfm-requests' => array(
-            'label'      => __( 'Requests', 'wc-frontend-manager-delivery'),
-            'url'        => 'http://localhost:8080/store-manager/requests/',
-            'icon'       => 'shipping-fast',
-            'priority'   => 53
-           ) );
+    $wcfm_delivery_boys_array = get_users( $args );
 
-
-      return array_merge( $menus, $requests );
-    }, 301 );*/
+    //var_dump( $wcfm_delivery_boys_array );
 
 }
 

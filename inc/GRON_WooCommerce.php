@@ -11,10 +11,28 @@ defined('ABSPATH') or exit;
 use GRON\DB;
 use GRON\Utils;
 
+/**
+* GRON_WooCommerce - Woocommerce Implementation in GRON
+* @access public
+*/
+
 class GRON_WooCommerce {
 
+  /** @var DB $db instance of GRON\DB */
   private $db;
 
+  /**
+  * consturct function of GRON_WooCommerce
+  * Initialize Database connection
+  * Use woocommerce and WCFM hooks
+  ** 'woocommerce_billing_fields' - filter hook to add extra fields
+  ** 'woocommerce_checkout_update_order_meta' (action hook) - update custom fields value
+  ** 'wcfm_is_allow_order_data_after_billing_address' (filter hook) - allow custom data in WCFM order details page
+  ** 'woocommerce_admin_order_data_after_billing_address' (action hook) - show custom fields data in order details in admin panel
+  ** 'woocommerce_checkout_create_order' (action hook) - Provide notification to delivery guys after order completed
+  * @access public
+  * @return void
+  */
   public function __construct() {
 
     $this->db = new DB();
@@ -28,7 +46,30 @@ class GRON_WooCommerce {
       return $allow;
     } );
 
+    // Show custom fields data in order details in admin panel
     add_action( 'woocommerce_admin_order_data_after_billing_address', array( $this, 'gron_custom_checkout_field_display_admin_order_meta' ), 10, 1 );
+
+    // Provide notification to delivery guys after order processed
+    // Hooks file - wc-multivendor-marketplace/core/class-wcfmmp-commission.php
+    // WooCommerce Hook - woocommerce_checkout_order_processed
+    add_action( 'woocommerce_checkout_order_processed', function( $order_id, $order_posted, $order ) {
+      //wcfm_get_vendor_id_by_post( $product_id );
+
+      // Get delivery Boys
+/*      $args = array(
+                    'role__in'     => array( $delivery_boy_role ),
+                    'orderby'      => 'ID',
+                    'order'        => 'ASC',
+                    'offset'       => $offset,
+                    'number'       => $length,
+                    'count_total'  => false,
+                    'meta_key'     => '_wcfm_vendor'
+                    'meta_value'   => $_POST['delivery_boy_vendor']
+                   );
+
+      $wcfm_delivery_boys_array = get_users( $args );*/
+
+    }, 101 );
   }
 
   /**
@@ -166,5 +207,6 @@ class GRON_WooCommerce {
     echo '<p><strong>'.__('Deliver Date').':</strong> ' . ucfirst( $deliver_date ) . '</p>';
     echo '<p><strong>'.__('Deliver Time').':</strong> ' . $deliver_time . '</p>';
   }
+
 
 }
