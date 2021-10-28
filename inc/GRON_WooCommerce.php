@@ -52,24 +52,7 @@ class GRON_WooCommerce {
     // Provide notification to delivery guys after order processed
     // Hooks file - wc-multivendor-marketplace/core/class-wcfmmp-commission.php
     // WooCommerce Hook - woocommerce_checkout_order_processed
-    add_action( 'woocommerce_checkout_order_processed', function( $order_id, $order_posted, $order ) {
-      //wcfm_get_vendor_id_by_post( $product_id );
-
-      // Get delivery Boys
-/*      $args = array(
-                    'role__in'     => array( $delivery_boy_role ),
-                    'orderby'      => 'ID',
-                    'order'        => 'ASC',
-                    'offset'       => $offset,
-                    'number'       => $length,
-                    'count_total'  => false,
-                    'meta_key'     => '_wcfm_vendor'
-                    'meta_value'   => $_POST['delivery_boy_vendor']
-                   );
-
-      $wcfm_delivery_boys_array = get_users( $args );*/
-
-    }, 101 );
+    add_action( 'woocommerce_checkout_order_processed', array( $this, 'manage_notification' ), 101 );
   }
 
   /**
@@ -194,9 +177,10 @@ class GRON_WooCommerce {
 
   /**
    * Display field value on the order edit page
+   * @param Object $order Order object
    */
 
-  function gron_custom_checkout_field_display_admin_order_meta($order) {
+  function gron_custom_checkout_field_display_admin_order_meta( $order ) {
 
     $collection_type = get_post_meta( $order->get_id(), 'gron_collection_type', true );
     $deliver_date = get_post_meta( $order->get_id(), 'gron_deliver_date', true );
@@ -207,6 +191,83 @@ class GRON_WooCommerce {
     echo '<p><strong>'.__('Deliver Date').':</strong> ' . ucfirst( $deliver_date ) . '</p>';
     echo '<p><strong>'.__('Deliver Time').':</strong> ' . $deliver_time . '</p>';
   }
+
+  /**
+   * Manage Delivery notification after order processed
+   * @param Object $order Order object
+   */
+   public function manage_notification( $order_id, $order_posted, $order ) {
+
+     // Get vendor IDs from the $order
+     $vendor_ids = $this->get_vendor_ids( $order );
+
+     // Get devlivery boy IDs
+     if( !empty( $vendor_ids ) ) {
+       foreach( $vendor_ids as $vendor_id ) {
+         $delivery_boy_ids = $this->get_delivery_boy_ids( $vendor_id );
+       }
+     }
+
+   }
+
+   /**
+    * Get vendor IDs from $order Object
+    * @param Object $order Order object
+    * @return NULL|Array Arrays of vendor ids
+    */
+    private function get_vendor_ids( $order ) {
+
+      $vendor_ids = [];
+      $items = $order->get_items( 'line_item' );
+
+      if( !empty( $items ) ) {
+
+        foreach( $items as $item_id => $item ) {
+
+          $line_item = new WC_Order_Item_Product( $item );
+
+          $product_id = $line_item->get_product_id();
+
+          if( $product_id ) {
+
+            $vendor_id = wcfm_get_vendor_id_by_post( $product_id );
+
+            if( !in_array( $vendor_id, $vendor_ids ) ) {
+              array_push( $vendor_ids, $vendor_id );
+            }
+
+          }
+
+        }
+
+      }
+
+      return $vendor_ids;
+
+    }
+
+    /**
+     * Get devlivery boy IDs
+     * @param Int $vendor_id ID of the vendor
+     * @return NULL|Array Arrays of vendor ids
+     */
+     private function get_delivery_boy_ids( $vendor_id ) {
+
+       $delivery_boy_role = 'wcfm_delivery_boy';
+
+       $args = array(
+                 'role__in'     => array( $delivery_boy_role ),
+                 'orderby'      => 'ID',
+                 'order'        => 'ASC',
+                 'meta_key'     => '_wcfm_vendor',
+                 'meta_value'   => $vendor_id,
+                );
+
+       $delivery_boy_ids = get_users( $args );
+
+       return $delivery_boy_ids;
+
+     }
 
 
 }

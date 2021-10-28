@@ -8,12 +8,14 @@ class DB {
   private $db;
   private $shop_timings_tb_name;
   private $delivery_slots_tb_name;
+  private $delivery_notifications_tb_name;
 
   public function __construct() {
     global $wpdb;
     $this->db = $wpdb;
     $this->shop_timings_tb_name = $wpdb->prefix . 'gron_shop_timings';
     $this->delivery_slots_tb_name = $wpdb->prefix . 'gron_delivery_slots';
+    $this->delivery_notifications_tb_name = $wpdb->prefix . 'gron_delivery_notifications';
   }
 
   /**
@@ -28,7 +30,7 @@ class DB {
       $charset_collate = $this->db->get_charset_collate();
 
       $query_shop_timings = "CREATE TABLE $this->shop_timings_tb_name (
-        id INT NOT NULL AUTO_INCREMENT,
+        id BIGINT NOT NULL AUTO_INCREMENT,
         day_name VARCHAR(11) NOT NULL,
         start_time TIME,
         end_time TIME,
@@ -37,22 +39,34 @@ class DB {
       ) $charset_collate;";
 
       $query_delivery_slots = "CREATE TABLE $this->delivery_slots_tb_name (
-        id INT NOT NULL AUTO_INCREMENT,
+        id BIGINT NOT NULL AUTO_INCREMENT,
         time_from TIME NOT NULL,
         time_to TIME NOT NULL,
         PRIMARY KEY (id)
       ) $charset_collate;";
 
+      $query_delivery_notifications = "CREATE TABLE $this->delivery_notifications_tb_name (
+        id BIGINT NOT NULL AUTO_INCREMENT,
+        vendor_id BIGINT NOT NULL,
+        delivery_boy_id BIGINT,
+        order_id BIGINT,
+        status VARCHAR(10),
+        received_by VARCHAR(15),
+        order_created_at DATE,
+        PRIMARY KEY (id)
+      ) $charset_collate;";
+
       require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+
       dbDelta( $query_shop_timings );
       dbDelta( $query_delivery_slots );
+      dbDelta( $query_delivery_notifications );
 
       // insert initial values for shop timings
       if( !$this->count_shop_timings( false ) ) {
         $this->insert_shop_timings();
       }
 
-      //TODO: what happend if one or more row has been deleted
       if( get_option( 'gron_version' ) ) {
         update_option( 'gron_version', GRON_VERSION );
       }else {

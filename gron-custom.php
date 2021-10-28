@@ -3,11 +3,16 @@
   Plugin Name: GRON Custom Solutions
   Description: Functionality Extention  on top of WCFM
   Author: Forhad Hosain
-  Version: 2.1.0
+  Version: 2.0.8
   Text Domain: gron-custom
   Domain Path: /languages
 */
 defined('ABSPATH') or exit;
+
+/* TEMP:
+Reference
+check vendor - wcfm_is_vendor()
+*/
 
 // load config file
 require_once plugin_dir_path( __FILE__ ) . "config.php";
