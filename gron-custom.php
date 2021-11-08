@@ -20,9 +20,13 @@ require_once plugin_dir_path( __FILE__ ) . "config.php";
 // include class autoloader
 require_once GRON_DIR_PATH . "vendor/autoload.php";
 
+// Load environment variables
+$dotenv = Dotenv\Dotenv::createImmutable( __DIR__ );
+$dotenv->load();
+
 use GRON\Activation;
 use GRON\GRON_WooCommerce;
-use GRON\Register_Scripts;
+use GRON\Styles_And_Scripts;
 use GRON\REST_Controller;
 use GRON\WCFM\Store_Manager;
 
@@ -30,9 +34,8 @@ register_activation_hook( __FILE__, function() {
   new Activation();
 } );
 
-
 // Register styles and scripts
-new Register_Scripts();
+new Styles_And_Scripts();
 
 function gron_init() {
 
@@ -42,6 +45,7 @@ function gron_init() {
     if($user) {
        $is_vendor = $user->roles[0] == 'wcfm_vendor';
     }
+
 
     define( 'IS_GRON_VENDOR', $is_vendor );
 
@@ -58,7 +62,8 @@ function gron_init() {
 
     $wcfm_delivery_boys_array = get_users( $args );
 
-    //var_dump( $wcfm_delivery_boys_array );
+    // Load pusher service
+    //require_once GRON_DIR_PATH . 'services/pusher.php';
 
 }
 

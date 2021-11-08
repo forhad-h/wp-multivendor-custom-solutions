@@ -1,12 +1,13 @@
 <?php
-use GRON\DB;
+
+use GRON\CRUD_MySQL;
 use GRON\Utils;
 
 global $wpdb, $WCFM, $WCFMmp;
 
 $wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
 
-$grondb = new DB();
+$crud_opearation = new CRUD_MySQL();
 
 ?>
 

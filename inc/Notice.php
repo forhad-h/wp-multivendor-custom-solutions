@@ -2,17 +2,18 @@
 namespace GRON;
 defined('ABSPATH') or exit;
 
-use GRON\DB;
+use GRON\CRUD_MySQL;
 use GRON\Utils;
 
 // TODO: implement GEO Route notice like this
 class Notice {
 
-  private $db;
+  /** @var CRUD_MySQL $crud_operation instance of CRUD_MySQL */
+  private $crud_operation;
 
   public function __construct() {
 
-    $this->db = new DB();
+    $this->db = new CRUD_MySQL();
 
     add_action( 'wp_enqueue_scripts', function() {
       wp_enqueue_style( 'gron-wcfm-notice-css', GRON_DIR_URI . 'wcfm/assets/css/notice.css' );

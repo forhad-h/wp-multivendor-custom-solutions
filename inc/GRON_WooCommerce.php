@@ -8,7 +8,7 @@ namespace GRON;
 
 defined('ABSPATH') or exit;
 
-use GRON\DB;
+use GRON\CRUD_MySQL;
 use GRON\Utils;
 
 /**
@@ -18,8 +18,8 @@ use GRON\Utils;
 
 class GRON_WooCommerce {
 
-  /** @var DB $db instance of GRON\DB */
-  private $db;
+  /** @var CRUD_MySQL $crud_operation instance of CRUD_MySQL */
+  private $crud_operation;
 
   /**
   * consturct function of GRON_WooCommerce
@@ -35,7 +35,7 @@ class GRON_WooCommerce {
   */
   public function __construct() {
 
-    $this->db = new DB();
+    $this->crud_operation = new CRUD_MySQL();
     add_filter( 'woocommerce_billing_fields', array( $this, 'gron_billing_fileds' ) );
 
     add_action( 'woocommerce_checkout_update_order_meta', array( $this, 'gron_custom_checkout_field_update_order_meta' ) );
@@ -114,7 +114,7 @@ class GRON_WooCommerce {
   private function get_delivery_dates() {
 
     $options = array();
-    $shop_timings = $this->db->get_shop_timings( true );
+    $shop_timings = $this->crud_operation->get_shop_timings( true );
 
     foreach( $shop_timings as $timing ) {
 
@@ -136,7 +136,7 @@ class GRON_WooCommerce {
   private function get_delivery_times() {
 
     $options = array();
-    $slots = $this->db->get_delivery_slots();
+    $slots = $this->crud_operation->get_delivery_slots();
 
     foreach( $slots as $slot ) {
       $time_from = Utils::time_format( $slot->time_from );

@@ -2,14 +2,14 @@
 namespace GRON;
 defined('ABSPATH') or exit;
 
-use GRON\DB;
+use GRON\CRUD_MySQL;
 
 class Activation {
 
   public function __construct() {
 
     // Create Database
-    $db = new DB();
+    $db = new CRUD_MySQL();
     $db->create_tables();
 
   }

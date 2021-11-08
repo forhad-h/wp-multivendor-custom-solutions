@@ -6,19 +6,20 @@ defined( 'ABSPATH' ) or exit;
  * NOTE: NOT USED
 */
 
-use GRON\DB;
+use GRON\CRUD_MySQL;
 use WP_REST_Controller;
 use WP_REST_Server;
 
 class REST_Controller extends WP_REST_Controller {
 
-  private $db;
+  /** @var CRUD_MySQL $crud_operation instance of CRUD_MySQL */
+  private $crud_operation;
 
   public function __construct() {
 
     $namespace = 'gron/v1';
     $base = 'api';
-    $this->db = new DB();
+    $this->crud_operation = new CRUD_MySQL();
 
     register_rest_route(
       $namespace,
@@ -39,7 +40,7 @@ class REST_Controller extends WP_REST_Controller {
   */
   public function get_shop_timings( $request ) {
 
-    return $this->db->get_shop_timings();
+    return $this->crud_operation->get_shop_timings();
 
   }
 
