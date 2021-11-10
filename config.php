@@ -9,3 +9,5 @@ define( "GRON_VERSION", '2.0.8');
 define( "GRON_ENDPOINT_GEO_ROUTES", 'gron-geo-routes' );
 define( "GRON_ENDPOINT_SETTINGS", 'gron-settings' );
 define( "GRON_ENDPOINT_DELIVERY_REQUEST", 'gron-delivery-request' );
+
+define( "GRON_SQLITE_FILE_PATH", "sqlite:db/gronsqlite.db" );
