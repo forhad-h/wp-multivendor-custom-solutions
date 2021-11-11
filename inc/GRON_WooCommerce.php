@@ -9,6 +9,7 @@ namespace GRON;
 defined('ABSPATH') or exit;
 
 use GRON\CRUD_MySQL;
+use GRON\CRUD_SQLite;
 use GRON\Utils;
 
 /**
@@ -18,8 +19,11 @@ use GRON\Utils;
 
 class GRON_WooCommerce {
 
-  /** @var CRUD_MySQL $crud_operation instance of CRUD_MySQL */
-  private $crud_operation;
+  /** @var CRUD_MySQL $mysql_crud_operation instance of CRUD_MySQL */
+  private $mysql_crud_operation;
+
+  /** @var CRUD_SQLite $sqlite_crud_operation instance of CRUD_SQLite */
+  private $sqlite_crud_operation;
 
   /**
   * consturct function of GRON_WooCommerce
@@ -35,7 +39,9 @@ class GRON_WooCommerce {
   */
   public function __construct() {
 
-    $this->crud_operation = new CRUD_MySQL();
+    $this->mysql_crud_operation = new CRUD_MySQL();
+    $this->sqlite_crud_operation = new CRUD_SQLite();
+
     add_filter( 'woocommerce_billing_fields', array( $this, 'gron_billing_fileds' ) );
 
     add_action( 'woocommerce_checkout_update_order_meta', array( $this, 'gron_custom_checkout_field_update_order_meta' ) );
@@ -52,7 +58,8 @@ class GRON_WooCommerce {
     // Provide notification to delivery guys after order processed
     // Hooks file - wc-multivendor-marketplace/core/class-wcfmmp-commission.php
     // WooCommerce Hook - woocommerce_checkout_order_processed
-    add_action( 'woocommerce_checkout_order_processed', array( $this, 'manage_notification' ), 101 );
+    add_action( 'woocommerce_checkout_order_processed', array( $this, 'save_available_delivery_boy_ids' ), 101 );
+
   }
 
   /**
@@ -114,7 +121,7 @@ class GRON_WooCommerce {
   private function get_delivery_dates() {
 
     $options = array();
-    $shop_timings = $this->crud_operation->get_shop_timings( true );
+    $shop_timings = $this->mysql_crud_operation->get_shop_timings( true );
 
     foreach( $shop_timings as $timing ) {
 
@@ -136,7 +143,7 @@ class GRON_WooCommerce {
   private function get_delivery_times() {
 
     $options = array();
-    $slots = $this->crud_operation->get_delivery_slots();
+    $slots = $this->mysql_crud_operation->get_delivery_slots();
 
     foreach( $slots as $slot ) {
       $time_from = Utils::time_format( $slot->time_from );
@@ -196,78 +203,95 @@ class GRON_WooCommerce {
    * Manage Delivery notification after order processed
    * @param Object $order Order object
    */
-   public function manage_notification( $order_id, $order_posted, $order ) {
+  public function save_available_delivery_boy_ids( $order_id, $order_posted, $order ) {
 
-     // Get vendor IDs from the $order
-     $vendor_ids = $this->get_vendor_ids( $order );
+    // Get vendor IDs from the $order
+    $vendor_ids = $this->get_vendor_ids( $order );
 
-     // Get devlivery boy IDs
-     if( !empty( $vendor_ids ) ) {
-       foreach( $vendor_ids as $vendor_id ) {
-         $delivery_boy_ids = $this->get_delivery_boy_ids( $vendor_id );
+    // Get devlivery boy IDs
+    if( !empty( $vendor_ids ) ) {
+
+     foreach( $vendor_ids as $vendor_id ) {
+
+       $delivery_boy_ids = $this->get_delivery_boy_ids( $vendor_id );
+
+       foreach( $delivery_boy_ids as $boy_id ) {
+
+         $data = array(
+           'vendor_id' => $vendor_id,
+           'order_id'  => $order_id,
+           'boy_id'    => $boy_id
+         );
+
+         $this->sqlite_crud_operation->insert_available_delivery_boy( $data );
+
        }
+
      }
 
-   }
+    }
 
-   /**
-    * Get vendor IDs from $order Object
-    * @param Object $order Order object
-    * @return NULL|Array Arrays of vendor ids
-    */
-    private function get_vendor_ids( $order ) {
+  }
 
-      $vendor_ids = [];
-      $items = $order->get_items( 'line_item' );
+ /**
+  * Get vendor IDs from $order Object
+  * @param Object $order Order object
+  * @return NULL|Array Arrays of vendor ids
+  */
+  private function get_vendor_ids( $order ) {
 
-      if( !empty( $items ) ) {
+    $vendor_ids = [];
+    $items = $order->get_items( 'line_item' );
 
-        foreach( $items as $item_id => $item ) {
+    if( !empty( $items ) ) {
 
-          $line_item = new WC_Order_Item_Product( $item );
+      foreach( $items as $item_id => $item ) {
 
-          $product_id = $line_item->get_product_id();
+        $line_item = new WC_Order_Item_Product( $item );
 
-          if( $product_id ) {
+        $product_id = $line_item->get_product_id();
 
-            $vendor_id = wcfm_get_vendor_id_by_post( $product_id );
+        if( $product_id ) {
 
-            if( !in_array( $vendor_id, $vendor_ids ) ) {
-              array_push( $vendor_ids, $vendor_id );
-            }
+          $vendor_id = wcfm_get_vendor_id_by_post( $product_id );
 
+          if( !in_array( $vendor_id, $vendor_ids ) ) {
+            array_push( $vendor_ids, $vendor_id );
           }
 
         }
 
       }
 
-      return $vendor_ids;
-
     }
 
-    /**
-     * Get devlivery boy IDs
-     * @param Int $vendor_id ID of the vendor
-     * @return NULL|Array Arrays of vendor ids
-     */
-     private function get_delivery_boy_ids( $vendor_id ) {
+    return $vendor_ids;
 
-       $delivery_boy_role = 'wcfm_delivery_boy';
+  }
 
-       $args = array(
-                 'role__in'     => array( $delivery_boy_role ),
-                 'orderby'      => 'ID',
-                 'order'        => 'ASC',
-                 'meta_key'     => '_wcfm_vendor',
-                 'meta_value'   => $vendor_id,
-                );
+  /**
+   * Get devlivery boy IDs
+   * @param Int $vendor_id ID of the vendor
+   * @return NULL|Array Arrays of vendor ids
+   */
+   private function get_delivery_boy_ids( $vendor_id ) {
 
-       $delivery_boy_ids = get_users( $args );
+     $delivery_boy_role = 'wcfm_delivery_boy';
 
-       return $delivery_boy_ids;
+     $args = array(
+       'role__in'     => array( $delivery_boy_role ),
+       'orderby'      => 'ID',
+       'order'        => 'ASC',
+       'meta_key'     => '_wcfm_vendor',
+       'meta_value'   => $vendor_id,
+       'fields'       => "ID"
+      );
 
-     }
+     $delivery_boy_ids = get_users( $args );
+
+     return $delivery_boy_ids;
+
+   }
 
 
 }

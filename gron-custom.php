@@ -24,8 +24,6 @@ require_once GRON_DIR_PATH . "vendor/autoload.php";
 $dotenv = Dotenv\Dotenv::createImmutable( __DIR__ );
 $dotenv->load();
 
-new \GRON\CRUD_SQLite();
-
 use GRON\Activation;
 use GRON\GRON_WooCommerce;
 use GRON\Styles_And_Scripts;
