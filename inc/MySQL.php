@@ -3,19 +3,17 @@ namespace GRON;
 defined('ABSPATH') or exit;
 
 
-class CRUD_MySQL {
+class MySQL {
 
   private $db;
   private $shop_timings_tb_name;
   private $delivery_slots_tb_name;
-  private $delivery_notifications_tb_name;
 
   public function __construct() {
     global $wpdb;
     $this->db = $wpdb;
     $this->shop_timings_tb_name = $wpdb->prefix . 'gron_shop_timings';
     $this->delivery_slots_tb_name = $wpdb->prefix . 'gron_delivery_slots';
-    $this->delivery_notifications_tb_name = $wpdb->prefix . 'gron_delivery_notifications';
   }
 
   /**
@@ -23,6 +21,7 @@ class CRUD_MySQL {
   */
   public function create_tables() {
 
+    // exit if the current version and saved version are same
     if( get_option( 'gron_version' ) === GRON_VERSION ) return;
 
     try {
@@ -45,22 +44,10 @@ class CRUD_MySQL {
         PRIMARY KEY (id)
       ) $charset_collate;";
 
-      $query_delivery_notifications = "CREATE TABLE $this->delivery_notifications_tb_name (
-        id BIGINT NOT NULL AUTO_INCREMENT,
-        vendor_id BIGINT NOT NULL,
-        delivery_boy_id BIGINT,
-        order_id BIGINT,
-        status VARCHAR(10),
-        received_by VARCHAR(15),
-        order_created_at DATE,
-        PRIMARY KEY (id)
-      ) $charset_collate;";
-
       require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
       dbDelta( $query_shop_timings );
       dbDelta( $query_delivery_slots );
-      dbDelta( $query_delivery_notifications );
 
       // insert initial values for shop timings
       if( !$this->count_shop_timings( false ) ) {

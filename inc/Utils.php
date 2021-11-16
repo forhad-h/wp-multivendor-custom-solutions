@@ -37,4 +37,16 @@ class Utils {
     return $has_api;
   }
 
+  /**
+  * Write log in a file
+  * When normal output with var_dump/echo/print is not possible
+  * Use it
+  * @param $content Anything to write
+  * @return void
+  */
+  public static function log( $content ) {
+    $filename = GRON_DIR_PATH . 'dev_log.txt';
+    file_put_contents($filename, $content);
+  }
+
 }

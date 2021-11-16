@@ -6,20 +6,20 @@ namespace GRON\WCFM\controllers;
 
 defined('ABSPATH') or exit;
 
-use GRON\CRUD_MySQL;
+use GRON\MySQL;
 use GRON\Utils;
 
 
 
 class Settings_Controller {
 
-	/** @var CRUD_MySQL $crud_operation instance of CRUD_MySQL */
-	private $crud_operation;
+	/** @var MySQL $mysql instance of MySQL */
+	private $mysql;
 	private $wpdb;
 
 	public function __construct() {
 		global $wpdb;
-		$this->crud_operation = new CRUD_MySQL();
+		$this->mysql = new MySQL();
 		$this->wpdb = $wpdb;
 	}
 
@@ -31,10 +31,10 @@ class Settings_Controller {
 
 
 		foreach( $data_array as $data ) {
-			$update = $this->crud_operation->update_shop_timing( $data );
+			$update = $this->mysql->update_shop_timing( $data );
 		}
 
-		echo $this->crud_operation->count_shop_timings();
+		echo $this->mysql->count_shop_timings();
 
   }
 
@@ -44,14 +44,14 @@ class Settings_Controller {
   */
 	public function insert_delivery_slot( $data ) {
 
-		$insert = $this->crud_operation->insert_delivery_slot( $data );
+		$insert = $this->mysql->insert_delivery_slot( $data );
 
 		if( $insert ) {
 
-			$row = $this->crud_operation->get_delivery_slot_by_id( $this->wpdb->insert_id );
+			$row = $this->mysql->get_delivery_slot_by_id( $this->wpdb->insert_id );
 
 			$data = array(
-				'count_slots' => $this->crud_operation->count_delivery_slots(),
+				'count_slots' => $this->mysql->count_delivery_slots(),
 				'info' => array(
 					'id' => $row->id,
 					'raw' => array(
@@ -83,10 +83,10 @@ class Settings_Controller {
 
 		$id = esc_sql( $data['id'] );
 
-		$update = $this->crud_operation->update_delivery_slot( $data );
+		$update = $this->mysql->update_delivery_slot( $data );
 
 		if( $update ) {
-			$row = $this->crud_operation->get_delivery_slot_by_id( $id );
+			$row = $this->mysql->get_delivery_slot_by_id( $id );
 
 			$data = array(
 				'id' => $row->id,
@@ -118,11 +118,11 @@ class Settings_Controller {
 
 		$id = esc_sql( $data['id'] );
 
-    $delete = $this->crud_operation->delete_delivery_slot( $id );
+    $delete = $this->mysql->delete_delivery_slot( $id );
 
 		if( $delete ) {
 			$data = array(
-				'count_slots' => $this->crud_operation->count_delivery_slots(),
+				'count_slots' => $this->mysql->count_delivery_slots(),
 				'id' => $id
 			);
 

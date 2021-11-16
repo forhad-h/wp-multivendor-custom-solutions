@@ -1,16 +1,17 @@
 <?php
-use GRON\CRUD_MySQL;
+use GRON\MySQL;
 use GRON\Utils;
 
 global $wpdb, $WCFM, $WCFMmp;
 
 $wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
 
-$crud_operation = new CRUD_MySQL();
+$mysql = new MySQL();
+
 
 ?>
-<input type="hidden" id="gron-count-shop-timings" value="<?php echo $grondb->count_shop_timings(); ?>" />
-<input type="hidden" id="gron-count-delivery-slots" value="<?php echo $grondb->count_delivery_slots(); ?>" />
+<input type="hidden" id="gron-count-shop-timings" value="<?php echo $mysql->count_shop_timings(); ?>" />
+<input type="hidden" id="gron-count-delivery-slots" value="<?php echo $mysql->count_delivery_slots(); ?>" />
 
 <div class="collapse wcfm-collapse" id="gron-settings">
 
@@ -63,7 +64,7 @@ $crud_operation = new CRUD_MySQL();
                 <tbody>
                 <?php
 
-                  $shop_timings = $grondb->get_shop_timings();
+                  $shop_timings = $mysql->get_shop_timings();
 
                 ?>
 
@@ -176,7 +177,7 @@ $crud_operation = new CRUD_MySQL();
                 </tr>
 
                 <?php
-                  $delivery_slots = $grondb->get_delivery_slots();
+                  $delivery_slots = $mysql->get_delivery_slots();
                   $i = 0;
                   foreach( $delivery_slots as $slot ) {
                     $i++;

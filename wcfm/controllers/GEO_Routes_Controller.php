@@ -3,7 +3,7 @@
  * GEO_Routes_Controller controllers
  */
 namespace GRON\WCFM\controllers;
-use GRON\CRUD_MySQL;
+use GRON\MySQL;
 use GRON\Utils;
 
 defined('ABSPATH') or exit;
@@ -12,14 +12,14 @@ class GEO_Routes_Controller {
 
 	private $wcfm;
 
-	/** @var CRUD_MySQL $crud_operation instance of CRUD_MySQL */
-	private $crud_operation;
+	/** @var MySQL $mysql instance of MySQL */
+	private $mysql;
 
 	public function __construct() {
 		global $WCFM, $WCFMu;
 
 		$this->wcfm = $WCFM;
-		$this->crud_operation = new CRUD_MySQL();
+		$this->mysql = new MySQL();
 
 		$this->processing();
 	}
@@ -216,7 +216,7 @@ class GEO_Routes_Controller {
 		$api_key = $_POST['google_map_api_key'];
 
 		if( $api_key ) {
-			$this->crud_operation->save_option('gron_google_map_api_key', $api_key );
+			$this->mysql->save_option('gron_google_map_api_key', $api_key );
 		}
 
 	}

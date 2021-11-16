@@ -8,8 +8,8 @@ namespace GRON;
 
 defined('ABSPATH') or exit;
 
-use GRON\CRUD_MySQL;
-use GRON\CRUD_SQLite;
+use GRON\MySQL;
+use GRON\SQLite;
 use GRON\Utils;
 
 /**
@@ -19,10 +19,10 @@ use GRON\Utils;
 
 class GRON_WooCommerce {
 
-  /** @var CRUD_MySQL $mysql_crud_operation instance of CRUD_MySQL */
+  /** @var MySQL $mysql_crud_operation instance of MySQL */
   private $mysql_crud_operation;
 
-  /** @var CRUD_SQLite $sqlite_crud_operation instance of CRUD_SQLite */
+  /** @var SQLite $sqlite_crud_operation instance of SQLite */
   private $sqlite_crud_operation;
 
   /**
@@ -39,8 +39,8 @@ class GRON_WooCommerce {
   */
   public function __construct() {
 
-    $this->mysql_crud_operation = new CRUD_MySQL();
-    $this->sqlite_crud_operation = new CRUD_SQLite();
+    $this->mysql_crud_operation = new MySQL();
+    $this->sqlite_crud_operation = new SQLite();
 
     add_filter( 'woocommerce_billing_fields', array( $this, 'gron_billing_fileds' ) );
 
@@ -58,7 +58,7 @@ class GRON_WooCommerce {
     // Provide notification to delivery guys after order processed
     // Hooks file - wc-multivendor-marketplace/core/class-wcfmmp-commission.php
     // WooCommerce Hook - woocommerce_checkout_order_processed
-    add_action( 'woocommerce_checkout_order_processed', array( $this, 'save_available_delivery_boy_ids' ), 101 );
+    add_action( 'woocommerce_checkout_order_processed', array( $this, 'save_available_delivery_boy_ids' ), 101, 3 );
 
   }
 
@@ -120,7 +120,7 @@ class GRON_WooCommerce {
   */
   private function get_delivery_dates() {
 
-    $options = array();
+    $options = array( "" => "Select Delivery Date" );
     $shop_timings = $this->mysql_crud_operation->get_shop_timings( true );
 
     foreach( $shop_timings as $timing ) {
@@ -142,7 +142,7 @@ class GRON_WooCommerce {
   */
   private function get_delivery_times() {
 
-    $options = array();
+    $options = array( "" => "Select Delivery Times" );
     $slots = $this->mysql_crud_operation->get_delivery_slots();
 
     foreach( $slots as $slot ) {
@@ -211,6 +211,10 @@ class GRON_WooCommerce {
     // Get devlivery boy IDs
     if( !empty( $vendor_ids ) ) {
 
+     /**
+     * Nested loop is acceptable here
+     * As vendor numbers is very limited
+     */
      foreach( $vendor_ids as $vendor_id ) {
 
        $delivery_boy_ids = $this->get_delivery_boy_ids( $vendor_id );
@@ -241,15 +245,15 @@ class GRON_WooCommerce {
   private function get_vendor_ids( $order ) {
 
     $vendor_ids = [];
-    $items = $order->get_items( 'line_item' );
+    $line_items = $order->get_items( 'line_item' );
 
-    if( !empty( $items ) ) {
+    if( !empty( $line_items ) ) {
 
-      foreach( $items as $item_id => $item ) {
+      foreach( $line_items as $item_id => $item ) {
 
-        $line_item = new WC_Order_Item_Product( $item );
+        $product = new \WC_Order_Item_Product( $item_id );
 
-        $product_id = $line_item->get_product_id();
+        $product_id = $product->get_product_id();
 
         if( $product_id ) {
 
