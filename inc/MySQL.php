@@ -21,9 +21,6 @@ class MySQL {
   */
   public function create_tables() {
 
-    // exit if the current version and saved version are same
-    if( get_option( 'gron_version' ) === GRON_VERSION ) return;
-
     try {
 
       $charset_collate = $this->db->get_charset_collate();
@@ -53,14 +50,6 @@ class MySQL {
       if( !$this->count_shop_timings( false ) ) {
         $this->insert_shop_timings();
       }
-
-      if( get_option( 'gron_version' ) ) {
-        update_option( 'gron_version', GRON_VERSION );
-      }else {
-        add_option( 'gron_version', GRON_VERSION );
-      }
-
-
 
     }catch( Exception $e) {
 

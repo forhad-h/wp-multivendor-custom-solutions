@@ -15,16 +15,20 @@ class SQLite {
   /** @var $available_delivery_boys_table_name Table name of Delivery boy notofication queue */
   private $available_delivery_boys_table_name;
 
+  /** @var $order_notifications_table_name Table name of Order Notifications */
+  private $order_notifications_table_name;
+
 
   public function __construct() {
 
     if( $this->pdo == null ) {
-
-        $this->pdo = new \PDO( "sqlite:" . GRON_DIR_PATH . "db/delivery_notifications.db" );
+      // Initialize PDO with SQLite
+      $this->pdo = new \PDO( SQLite_FILE_PATH );
 
     }
 
     $this->available_delivery_boys_table_name = 'available_delivery_boys';
+    $this->order_notifications_table_name     = 'order_notifications';
 
   }
 
@@ -33,17 +37,27 @@ class SQLite {
   */
   public function create_tables() {
 
-    // exit if the current version and saved version are same
-    if( get_option( 'gron_version' ) === GRON_VERSION ) return;
+    $queries = array(
+      "CREATE TABLE {$this->available_delivery_boys_table_name} (
+      	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+      	vendor_id INTEGER NOT NULL,
+      	order_id INTEGER NOT NULL,
+      	boy_id INTEGER NOT NULL
+      )",
+      "CREATE TABLE {$this->order_notifications_table_name} (
+      	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+      	vendor_id INTEGER NOT NULL,
+      	order_id INTEGER NOT NULL,
+      	boy_id INTEGER NOT NULL,
+        status TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      )",
+    );
 
-    $query_available_delivery_boys = "CREATE TABLE {$this->available_delivery_boys_table_name} (
-    	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    	vendor_id INTEGER NOT NULL,
-    	order_id INTEGER NOT NULL,
-    	boy_id INTEGER NOT NULL
-    )";
-
-    $this->pdo->exec( $query_available_delivery_boys );
+    // Excecute all Queries
+    foreach( $queries as $query ) {
+      $this->pdo->exec( $query );
+    }
 
   }
 
