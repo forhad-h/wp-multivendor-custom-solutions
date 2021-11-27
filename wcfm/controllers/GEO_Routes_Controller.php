@@ -77,7 +77,7 @@ class GEO_Routes_Controller {
 		$default_lat = apply_filters( 'gron_map_default_lat',  0 );
 		$default_lng = apply_filters( 'gron_map_default_lng', 0 );
 
-		if( !IS_GRON_VENDOR ) {
+		if( !IS_WCFM_VENDOR ) {
 			try {
 	      global $WCFMmp;
 
@@ -129,7 +129,7 @@ class GEO_Routes_Controller {
 
 	private function get_order_locations() {
 
-		if( !IS_GRON_VENDOR ) {
+		if( !IS_WCFM_VENDOR ) {
 
 			$args = array(
 				'posts_per_page'   => -1,

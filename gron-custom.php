@@ -9,11 +9,6 @@
 */
 defined('ABSPATH') or exit;
 
-/* TEMP:
-Reference
-check vendor - wcfm_is_vendor()
-*/
-
 // load config file
 require_once plugin_dir_path( __FILE__ ) . "config.php";
 
@@ -39,31 +34,25 @@ new Styles_And_Scripts();
 
 function gron_init() {
 
-    $is_vendor = false;
-    $user = is_user_logged_in() ? wp_get_current_user() : '';
+  // required to init, to load WCFM funtionality
 
-    if($user) {
-       $is_vendor = $user->roles[0] == 'wcfm_vendor';
-    }
+  require_once GRON_DIR_PATH . 'wcfm-config.php';
 
+  // Include wcfm integration
+  new Store_Manager();
 
-    define( 'IS_GRON_VENDOR', $is_vendor );
+  $args = array(
+    'role__in'     => array( 'wcfm_delivery_boy' ),
+    'orderby'      => 'ID',
+    'order'        => 'ASC',
+    'meta_key'     => '_wcfm_vendor',
+    'meta_value'   => 3
+   );
 
-    // Include wcfm integration
-    new Store_Manager();
+  $wcfm_delivery_boys_array = get_users( $args );
 
-    $args = array(
-      'role__in'     => array( 'wcfm_delivery_boy' ),
-      'orderby'      => 'ID',
-      'order'        => 'ASC',
-      'meta_key'     => '_wcfm_vendor',
-      'meta_value'   => 3
-     );
-
-    $wcfm_delivery_boys_array = get_users( $args );
-
-    // Load pusher service
-    //require_once GRON_DIR_PATH . 'services/pusher.php';
+  // Load pusher service
+  //require_once GRON_DIR_PATH . 'services/pusher.php';
 
 }
 

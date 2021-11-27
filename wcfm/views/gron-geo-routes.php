@@ -21,11 +21,7 @@ $wcfm_google_map_api = isset( $wcfm_marketplace_options['wcfm_google_map_api'] )
 
       <?php
         $notice = new Notice();
-        if( !IS_GRON_VENDOR ) {
-          echo $notice->admin_map_api_setting_notice();
-        }else {
-          echo $notice->vendor_map_api_setting_notice();
-        }
+        echo $notice->vendor_geo_routes();
       ?>
 
 		<?php do_action( 'before_gron_geo_routes' ); ?>

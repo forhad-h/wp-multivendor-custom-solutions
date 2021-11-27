@@ -5,7 +5,6 @@ defined('ABSPATH') or exit;
 use GRON\MySQL;
 use GRON\Utils;
 
-// TODO: implement GEO Route notice like this
 class Notice {
 
   /** @var MySQL $mysql instance of MySQL */
@@ -65,7 +64,7 @@ class Notice {
   /**
   * Notice - Map API Settings for Admin
   */
-  public function admin_map_api_setting_notice() {
+  public function admin_google_map_api() {
 
     $options = array();
 
@@ -74,16 +73,16 @@ class Notice {
       $options['description'] = 'Make sure you have set your Google Map API Key: &nbsp;';
       $options['path'] = array(
         array( 'icon' => 'cogs', 'name' => 'Settings' ),
-        array( 'icon' => 'street-view', 'name' => 'GEO Location > Map Default Location' )
+        array( 'icon' => 'street-view', 'name' => 'GEO Location > Google Map API Key (Change the Map Library to "Google Map")' )
       );
-    }else {
+    }/*else {
       $options['title'] = 'Map Default Location is Required!';
       $options['description'] = 'Make sure you have set your Map Default Location: &nbsp;';
       $options['path'] = array(
         array( 'icon' => 'cogs', 'name' => 'Settings' ),
         array( 'icon' => 'street-view', 'name' => 'GEO Location > Map Default Location' )
       );
-    }
+    }*/
 
     $options['id'] = 'gron-map-settings-notice';
     $options['type_class'] = 'gron_warning_info';
@@ -94,19 +93,29 @@ class Notice {
   /**
   * Notice - Map API Settings for Vendor
   */
-  public function vendor_map_api_setting_notice() {
-    $options = array(
-      'title' => 'Map Default Location is Required!',
-      'description' => 'Make sure you have set your Map Default Location in: &nbsp; ',
-      'path' => array(
+  public function vendor_geo_routes() {
+
+    if( !Utils::has_map_api_key() ) {
+
+      $options['title']       = 'Google Map API Key is Required!';
+      $options['description'] = 'Please ask the admin to set the Google Map API Key: &nbsp;';
+
+    }else {
+
+      $options['title']       = 'Map Default Location is Required!';
+      $options['description'] = 'Make sure you have set your Map Default Location in: &nbsp; ';
+      $options['path']        = array(
         array( 'icon' => 'cogs', 'name' => 'Settings' ),
         array( 'icon' => 'globe', 'name' => 'Location > Store Location' ),
-      ),
-      'id' => 'gron-map-settings-notice',
-      'type_class' => 'gron_warning_info'
-    );
+      );
+
+    }
+
+    $options['id'] = 'gron-map-settings-notice';
+    $options['type_class'] = 'gron_warning_info';
 
     return $this->notice_markup( $options );
+    
   }
 
   /**

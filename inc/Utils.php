@@ -49,4 +49,31 @@ class Utils {
     file_put_contents($filename, $content);
   }
 
+  /**
+  * Check if the user is business owner or admin of GRON
+  * @return Boolean
+  */
+  public static function is_admin() {
+
+    $current_user = wp_get_current_user();
+
+    $allowed_roles = array( 'administrator' );
+
+    $is_allowed = array_intersect( $current_user->roles, $allowed_roles);
+
+    return !$is_allowed ? false : true;
+
+  }
+
+  /**
+  * Check if the user is a vendor
+  * With provided funtion from WCFM
+  * @return Boolean
+  */
+  public static function is_vendor() {
+
+    return wcfm_is_vendor();
+
+  }
+
 }

@@ -5,11 +5,14 @@ defined('ABSPATH') or exit;
 use GRON\WCFM\core\Component;
 use GRON\WCFM\Ajax_Controller;
 use GRON\Notice;
+use GRON\Utils;
 
 
 class Store_Manager {
 
+  /** @var Notice $notice Notice Builder instance */
   private $notice;
+
 
   public function __construct() {
 
@@ -18,7 +21,7 @@ class Store_Manager {
 
     $this->notice = new Notice();
     // Show notice before container of wcfm store manager
-    add_action( 'wcfm_main_contentainer_before', array( $this, 'show_gron_delivery_notices' ) );
+    add_action( 'wcfm_main_contentainer_before', array( $this, 'show_gron_notices' ) );
 
     // create components
     $this->create_components();
@@ -29,13 +32,19 @@ class Store_Manager {
   */
   public function create_components() {
 
-    // create GEO Routes menu in WCFM store-manager
-    new Component(array(
-      'label' => __( 'GRON - GEO Routes','gron-custom' ),
-      'icon' => 'street-view',
-      'endpoint' => GRON_ENDPOINT_GEO_ROUTES,
-      'slug' => GRON_ENDPOINT_GEO_ROUTES,
-    ));
+
+    if( wcfm_is_vendor() ) {
+
+      // create GEO Routes menu in WCFM store-manager
+      new Component(array(
+        'label' => __( 'GRON - GEO Routes','gron-custom' ),
+        'icon' => 'street-view',
+        'endpoint' => GRON_ENDPOINT_GEO_ROUTES,
+        'slug' => GRON_ENDPOINT_GEO_ROUTES,
+      ));
+
+    }
+
 
     // create Delivery menu in WCFM store-manager
     new Component(array(
@@ -61,11 +70,21 @@ class Store_Manager {
   /**
    * Create custom components
   */
-  public function show_gron_delivery_notices() {
+  public function show_gron_notices() {
 
-    // Show Delivery Notices
-    echo $this->notice->shop_timing_notice();
-    echo $this->notice->delivery_slot_notice();
+
+    if( Utils::is_admin() ) {
+
+      // Show notice for google map api key
+      echo $this->notice->admin_google_map_api();
+
+    }elseif( Utils::is_vendor() ) {
+
+      // Show Settings Notices
+      echo $this->notice->shop_timing_notice();
+      echo $this->notice->delivery_slot_notice();
+
+    }
 
   }
 
