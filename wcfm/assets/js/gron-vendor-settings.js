@@ -285,4 +285,42 @@ jQuery(document).ready(function($) {
 
   });
 
+  /**
+  * Update general settings
+  */
+  var submitBtnElm = $('#gron-general-settings-save-button');
+  var formElm = $('#gron-general-settings-form');
+
+  submitBtnElm.on( 'click', function() {
+
+    var deliveryByMeValue = $('input[name=delivery_by_me]:checked').val();
+
+    $(this).val('SAVING...');
+    _this = $(this);
+
+    var data = {
+      delivery_by_me: deliveryByMeValue
+    }
+    $.ajax({
+      type: "POST",
+      url: wcfm_params.ajax_url,
+      data: {
+        action: 'wcfm_ajax_controller',
+        controller: 'gron-admin-settings',
+        task: 'update-general-settings',
+        data: data
+      }
+    })
+    .done( function (res) {
+      //console.log( res );
+    })
+    .fail( function ( err ) {
+      console.log( err );
+    })
+    .always( function() {
+      _this.val('SAVE');
+    });
+
+  });
+
 } );

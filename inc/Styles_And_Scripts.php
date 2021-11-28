@@ -28,7 +28,6 @@ class Styles_And_Scripts {
   */
   public function register_view_styles() {
     wp_register_style( 'gron-woocommerce-style', GRON_DIR_URI . 'assets/css/gron-woocommerce.css');
-    wp_register_style( 'gron-wcfm-checkbox-offon-style', GRON_DIR_URI . 'wcfm/assets/css/checkbox-offon.css');
   }
 
   /**

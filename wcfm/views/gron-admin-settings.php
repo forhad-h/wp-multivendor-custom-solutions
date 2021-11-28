@@ -8,9 +8,6 @@ $wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
 
 $mysql = new MySQL();
 
-// Load stylesheet for checkbox off-on style
-wp_enqueue_style( 'gron-wcfm-checkbox-offon-style' );
-
 ?>
 <input type="hidden" id="gron-count-shop-timings" value="<?php echo $mysql->count_shop_timings(); ?>" />
 <input type="hidden" id="gron-count-delivery-slots" value="<?php echo $mysql->count_delivery_slots(); ?>" />
@@ -51,21 +48,37 @@ wp_enqueue_style( 'gron-wcfm-checkbox-offon-style' );
             <h2><?php _e('General Settings', 'gron-custom'); ?></h2>
             <div class="wcfm_clearfix"></div>
             <form
-              id="gron-general-settings-from"
+              id="gron-general-settings-form"
               class="wcfm"
             >
 
-              <div class="each_field">
+              <div class="each_field delivery_by_seller_field">
 
-                <p class="wcfm_capability_optionssubmit_products-submit_products wcfm_title checkbox_title"><strong>Delivery By Seller</strong></p>
-                <label class="screen-reader-text" for="wcfm_capability_optionssubmit_products-submit_products">Delivery By Seller</label>
-                <div class="onoffswitch  wcfm_capability_optionssubmit_products-submit_products_wrapper">
-                   <input type="checkbox" id="wcfm_capability_optionssubmit_products-submit_products" name="wcfm_capability_options[submit_products]" class="wcfm-checkbox wcfm_ele onoffswitch-checkbox" value="yes">
-                   <label class="onoffswitch-label" for="wcfm_capability_optionssubmit_products-submit_products">
-        					   <span class="onoffswitch-inner"></span>
-        						 <span class="onoffswitch-switch"></span>
-        					</label>
-                </div>
+                <?php
+                  $delivery_by_seller_setting = get_option( 'delivery_by_seller_' . get_current_user_id() );
+                  $delivery_by_seller_value = !$delivery_by_seller_setting ? 'no' : $delivery_by_seller_setting;
+                ?>
+                <p class="gron_delivery_by_seller wcfm_title checkbox_title"><strong>Delivery By Seller</strong></p>
+
+                <label>
+                  <input
+                    type="radio"
+                    name="delivery_by_seller"
+                    class="wcfm-radio"
+                    value="yes"
+                    <?php echo $delivery_by_seller_value === 'yes' ? 'checked' : '' ?>
+                  /> <span class="radio_text">Yes</span>
+                </label>
+
+                <label>
+                  <input
+                    type="radio"
+                    name="delivery_by_seller"
+                    class="wcfm-radio"
+                    value="no"
+                    <?php echo $delivery_by_seller_value === 'no' ? 'checked' : '' ?>
+                  /> <span class="radio_text">No</span>
+                </label>
 
               </div>
 

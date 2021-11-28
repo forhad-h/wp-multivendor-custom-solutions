@@ -1,3 +1,12 @@
 p.wcfm_title {
-  width: calc( 51% - 60px );
+  width: calc( 51% - 91px );
+}
+.delivery_by_seller_field label {
+  margin-left: 20px;
+  font-size: 15px;
+  cursor: pointer;
+}
+.delivery_by_seller_field label .radio_text {
+  position: relative;
+  top: -2px;
 }

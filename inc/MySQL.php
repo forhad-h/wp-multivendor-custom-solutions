@@ -34,6 +34,7 @@ class MySQL {
       $queries = array(
         "CREATE TABLE $this->shop_timings_tb_name (
           timing_id BIGINT NOT NULL AUTO_INCREMENT,
+          user_id BIGINT NOT NULL,
           day_name VARCHAR(11) NOT NULL,
           start_time TIME,
           end_time TIME,
@@ -42,6 +43,7 @@ class MySQL {
         ) $charset_collate;",
         "CREATE TABLE $this->delivery_slots_tb_name (
           slot_id BIGINT NOT NULL AUTO_INCREMENT,
+          user_id BIGINT NOT NULL,
           time_from TIME NOT NULL,
           time_to TIME NOT NULL,
           PRIMARY KEY (slot_id)
@@ -324,25 +326,6 @@ class MySQL {
       $result = $this->db->get_row( $sql );
 
       return $result;
-
-    }
-
-    /**
-     * Save vendor general settings
-     *
-     * @param Array $settings
-     *  ['name'] => 'Value'
-     * @return Array $settings return same settings array
-    */
-    public function save_vendor_general_settings( $settings ) {
-
-      foreach( $settings as $name => $value ) {
-
-        Utils::save_option( $name, $value );
-
-      }
-
-      return $settings;
 
     }
 

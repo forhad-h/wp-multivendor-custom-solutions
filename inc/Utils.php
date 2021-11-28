@@ -16,9 +16,9 @@ class Utils {
   public static function save_option( $name, $value ) {
 
     if( get_option( $name ) ) {
-      update_option( $name, $value );
+      return update_option( $name, $value );
     }else {
-      add_option( $name, $value );
+      return add_option( $name, $value );
     }
 
   }
@@ -94,5 +94,6 @@ class Utils {
     return wcfm_is_vendor();
 
   }
+
 
 }
