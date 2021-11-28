@@ -39,12 +39,12 @@ $crud_opearation = new MySQL();
         <!-- collapsible -->
         <div class="page_collapsible" id="gron-delivery-requests">
           <label class="wcfmfa fa-ellipsis-h"></label>
-          <?php _e('Pending', 'wc-frontend-manager'); ?><span></span>
+          <?php _e('Pending', 'gron-custom'); ?><span></span>
         </div>
 
         <div class="wcfm-container">
           <div id="gron-delivery-requests" class="wcfm-content">
-            <h2><?php _e('Pending Requests', 'wc-frontend-manager'); ?></h2>
+            <h2><?php _e('Pending Requests', 'gron-custom'); ?></h2>
             <div class="wcfm_clearfix"></div>
 
               <table class="gron_table">
@@ -99,12 +99,12 @@ $crud_opearation = new MySQL();
         <!-- collapsible -->
         <div class="page_collapsible" id="gron-delivery-slots">
           <label class="wcfmfa fa-user-check"></label>
-          <?php _e('Accepted', 'wc-frontend-manager'); ?><span></span>
+          <?php _e('Accepted', 'gron-custom'); ?><span></span>
         </div>
 
         <div class="wcfm-container">
           <div id="gron-delivery-slots" class="wcfm-content">
-            <h2><?php _e('Delivery Slots', 'wc-frontend-manager'); ?></h2>
+            <h2><?php _e('Delivery Slots', 'gron-custom'); ?></h2>
             <div class="wcfm_clearfix"></div>
 
               <table class="gron_table">

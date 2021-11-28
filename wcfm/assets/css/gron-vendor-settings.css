@@ -5,7 +5,11 @@
 .icon-info {
   color: #17a2b8;
 }
-div#wcfm-main-contentainer #gron-settings .gron_table [class*=" fa-"]:before {
+p.wcfm_title {
+  width: calc( 70% - 60px );
+}
+
+div#wcfm-main-contentainer #gron-vendor-settings .gron_table [class*=" fa-"]:before {
   font-weight: 500;
 }
 

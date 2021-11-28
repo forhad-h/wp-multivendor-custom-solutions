@@ -5,6 +5,25 @@ defined('ABSPATH') or exit;
 class Utils {
 
   /**
+  * Save option
+  * add option if not exists
+  * update option if exists
+  *
+  * @param String $name Option name
+  * @param Any $value Option value
+  * @return void
+  */
+  public static function save_option( $name, $value ) {
+
+    if( get_option( $name ) ) {
+      update_option( $name, $value );
+    }else {
+      add_option( $name, $value );
+    }
+
+  }
+
+  /**
   * Remove seconds from time
   * @param Time $time 00:00:00
   * @return Time $new_time 00:00

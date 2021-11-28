@@ -4,6 +4,7 @@ defined('ABSPATH') or exit;
 
 use GRON\MySQL;
 use GRON\SQLite;
+use GRON\Utils;
 
 class Activation {
 
@@ -21,11 +22,8 @@ class Activation {
     $sqlite->create_tables();
 
     // Update version
-    if( get_option( 'gron_version' ) ) {
-      update_option( 'gron_version', GRON_VERSION );
-    }else {
-      add_option( 'gron_version', GRON_VERSION );
-    }
+    Utils::save_option( 'gron_version', GRON_VERSION );
+
 
   }
 

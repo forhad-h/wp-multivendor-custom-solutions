@@ -28,13 +28,14 @@ class Styles_And_Scripts {
   */
   public function register_view_styles() {
     wp_register_style( 'gron-woocommerce-style', GRON_DIR_URI . 'assets/css/gron-woocommerce.css');
+    wp_register_style( 'gron-wcfm-checkbox-offon-style', GRON_DIR_URI . 'wcfm/assets/css/checkbox-offon.css');
   }
 
   /**
   * Register scripts for client side
   */
   public function register_view_scripts() {
-    wp_register_script( 'gron-woocommerce-js', GRON_DIR_URI . 'assets/js/gron-woocommerce.js', array( 'jquery' ), GRON_VERSION, true );
+    wp_register_script( 'gron-woocommerce-script', GRON_DIR_URI . 'assets/js/gron-woocommerce.js', array( 'jquery' ), GRON_VERSION, true );
   }
 
   /**

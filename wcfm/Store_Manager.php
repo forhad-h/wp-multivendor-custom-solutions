@@ -33,8 +33,7 @@ class Store_Manager {
   public function create_components() {
 
 
-    if( wcfm_is_vendor() ) {
-
+    if( Utils::is_vendor() ) {
       // create GEO Routes menu in WCFM store-manager
       new Component(array(
         'label' => __( 'GRON - GEO Routes','gron-custom' ),
@@ -43,16 +42,28 @@ class Store_Manager {
         'slug' => GRON_ENDPOINT_GEO_ROUTES,
       ));
 
+      // create Delivery menu in WCFM store-manager
+      new Component(array(
+        'label' => __( 'GRON - Settings','gron-custom' ),
+        'icon' => 'cog',
+        'endpoint' => GRON_VENDOR_ENDPOINT_SETTINGS,
+        'slug' => GRON_VENDOR_ENDPOINT_SETTINGS,
+      ));
+
     }
 
 
-    // create Delivery menu in WCFM store-manager
-    new Component(array(
-      'label' => __( 'GRON - Settings','gron-custom' ),
-      'icon' => 'cog',
-      'endpoint' => GRON_ENDPOINT_SETTINGS,
-      'slug' => GRON_ENDPOINT_SETTINGS,
-    ));
+    if( Utils::is_admin() ) {
+
+      // create Delivery menu in WCFM store-manager
+      new Component(array(
+        'label' => __( 'GRON - Settings','gron-custom' ),
+        'icon' => 'cog',
+        'endpoint' => GRON_ADMIN_ENDPOINT_SETTINGS,
+        'slug' => GRON_ADMIN_ENDPOINT_SETTINGS,
+      ));
+
+    }
 
     if( wcfm_is_delivery_boy() ) {
       // create Delivery menu in WCFM store-manager

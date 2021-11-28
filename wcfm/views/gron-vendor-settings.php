@@ -8,12 +8,14 @@ $wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
 
 $mysql = new MySQL();
 
+// Load stylesheet for checkbox off-on style
+wp_enqueue_style( 'gron-wcfm-checkbox-offon-style' );
 
 ?>
 <input type="hidden" id="gron-count-shop-timings" value="<?php echo $mysql->count_shop_timings(); ?>" />
 <input type="hidden" id="gron-count-delivery-slots" value="<?php echo $mysql->count_delivery_slots(); ?>" />
 
-<div class="collapse wcfm-collapse" id="gron-settings">
+<div class="collapse wcfm-collapse" id="gron-vendor-settings">
 
   <div class="wcfm-page-headig">
 		<span class="wcfmfa fa-street-view"></span>
@@ -39,14 +41,51 @@ $mysql = new MySQL();
       <div class="wcfm-tabWrap gron_tab_wrap">
 
         <!-- collapsible -->
-        <div class="page_collapsible" id="gron-settings-shop-timing">
+        <div class="page_collapsible" id="gron-vendor-settings-general">
           <label class="wcfmfa fa-business-time"></label>
-          <?php _e('Shop Timings', 'wc-frontend-manager'); ?><span></span>
+          <?php _e('General', 'gron-custom'); ?><span></span>
         </div>
 
         <div class="wcfm-container">
-          <div id="gron-settings-shop-timing" class="wcfm-content">
-            <h2><?php _e('Shop Timings', 'wc-frontend-manager'); ?></h2>
+          <div id="gron-vendor-settings-general" class="wcfm-content">
+            <h2><?php _e('General Settings', 'gron-custom'); ?></h2>
+            <div class="wcfm_clearfix"></div>
+            <form
+              id="gron-general-settings-form"
+              class="wcfm"
+            >
+
+              <div class="each_field">
+
+                <p class="wcfm_capability_optionssubmit_products-submit_products wcfm_title checkbox_title"><strong>Order Deliveries will be managed by me</strong></p>
+                <label class="screen-reader-text" for="wcfm_capability_optionssubmit_products-submit_products">Order Deliveries will be managed by me</label>
+                <div class="onoffswitch  wcfm_capability_optionssubmit_products-submit_products_wrapper">
+                   <input type="checkbox" id="wcfm_capability_optionssubmit_products-submit_products" name="wcfm_capability_options[submit_products]" class="wcfm-checkbox wcfm_ele onoffswitch-checkbox" value="yes">
+                   <label class="onoffswitch-label" for="wcfm_capability_optionssubmit_products-submit_products">
+                     <span class="onoffswitch-inner"></span>
+                     <span class="onoffswitch-switch"></span>
+                  </label>
+                </div>
+
+              </div>
+
+              <input type="button" name="save-data" value="Save" id="gron-general-settings-save-button" class="wcfm_submit_button">
+            </form>
+
+          </div>
+        </div>
+        <div class="wcfm_clearfix"></div>
+        <!-- end collapsible -->
+
+        <!-- collapsible -->
+        <div class="page_collapsible" id="gron-vendor-settings-shop-timing">
+          <label class="wcfmfa fa-business-time"></label>
+          <?php _e('Shop Timings', 'gron-custom'); ?><span></span>
+        </div>
+
+        <div class="wcfm-container">
+          <div id="gron-vendor-settings-shop-timing" class="wcfm-content">
+            <h2><?php _e('Shop Timings', 'gron-custom'); ?></h2>
             <div class="wcfm_clearfix"></div>
             <form
               id="gron-shop-timing-form"
@@ -94,14 +133,14 @@ $mysql = new MySQL();
         <!-- end collapsible -->
 
         <!-- collapsible -->
-        <div class="page_collapsible" id="gron-settings-delivery-slots">
+        <div class="page_collapsible" id="gron-vendor-settings-delivery-slots">
           <label class="wcfmfa fa-clock"></label>
-          <?php _e('Delivery Slots', 'wc-frontend-manager'); ?><span></span>
+          <?php _e('Delivery Slots', 'gron-custom'); ?><span></span>
         </div>
 
         <div class="wcfm-container">
-          <div id="gron-settings-delivery-slots" class="wcfm-content">
-            <h2><?php _e('Delivery Slots', 'wc-frontend-manager'); ?></h2>
+          <div id="gron-vendor-settings-delivery-slots" class="wcfm-content">
+            <h2><?php _e('Delivery Slots', 'gron-custom'); ?></h2>
             <div class="wcfm_clearfix"></div>
 
             <div class="gron_add_slot_wrapper">
@@ -181,7 +220,7 @@ $mysql = new MySQL();
                   $i = 0;
                   foreach( $delivery_slots as $slot ) {
                     $i++;
-                    $id = esc_attr( $slot->id );
+                    $slot_id = esc_attr( $slot->slot_id );
                     $time_from = esc_html( $slot->time_from );
                     $time_to = esc_html( $slot->time_to );
                 ?>
@@ -196,7 +235,7 @@ $mysql = new MySQL();
                         class="wcfm-action-icon icon-info gron_modal_trigger_button gron_delivery_slot_edit_button"
                         href="#"
                         data-target="#gron-modal"
-                        data-slot-id="<?php echo $id; ?>"
+                        data-slot-id="<?php echo $slot_id; ?>"
                         data-time-from="<?php echo $time_from; ?>"
                         data-time-to="<?php echo $time_to; ?>"
                       >
@@ -206,7 +245,7 @@ $mysql = new MySQL();
                       <a
                         class="wcfm-action-icon icon-danger gron_delivery_slot_delete_button"
                         href="#"
-                        data-slot-id="<?php echo $id; ?>"
+                        data-slot-id="<?php echo $slot_id; ?>"
                       >
                         <span class="wcfmfa fa-trash-alt text_tip" data-tip="Delete"></span>
                       </a>

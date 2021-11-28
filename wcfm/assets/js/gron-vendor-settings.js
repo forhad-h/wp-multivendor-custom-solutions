@@ -99,7 +99,7 @@ jQuery(document).ready(function($) {
       url: wcfm_params.ajax_url,
       data: {
         action: 'wcfm_ajax_controller',
-        controller: 'gron-settings',
+        controller: 'gron-vendor-settings',
         task: 'update-shop-timings',
         data: data
       }
@@ -145,7 +145,7 @@ jQuery(document).ready(function($) {
 
     if( isUpdate ) {
       var slot_id = _this.attr( 'data-slot-id' );
-      data.id = slot_id;
+      data.slot_id = slot_id;
       task = 'update-delivery-slot';
     }
 
@@ -154,7 +154,7 @@ jQuery(document).ready(function($) {
       url: wcfm_params.ajax_url,
       data: {
         action: 'wcfm_ajax_controller',
-        controller: 'gron-settings',
+        controller: 'gron-vendor-settings',
         task: task,
         data: data
       }
@@ -169,7 +169,7 @@ jQuery(document).ready(function($) {
 
           var data = resObj.data;
 
-          var updatedBtnElm = $('.gron_delivery_slot_edit_button[data-slot-id=' + data.id + ']');
+          var updatedBtnElm = $('.gron_delivery_slot_edit_button[data-slot-id=' + data.slot_id + ']');
           var updatedElm = updatedBtnElm.closest('tr');
 
           updatedBtnElm.attr( 'data-time-from', data.raw.time_from );
@@ -204,7 +204,7 @@ jQuery(document).ready(function($) {
           var editButtonElm = slotTemplateClonElm.find('.gron_delivery_slot_edit_button');
 
 
-          editButtonElm.attr( 'data-slot-id', info.id );
+          editButtonElm.attr( 'data-slot-id', info.slot_id );
           editButtonElm.attr( 'data-time-from', info.raw.time_from );
           editButtonElm.attr( 'data-time-to', info.raw.time_to );
 
@@ -212,7 +212,7 @@ jQuery(document).ready(function($) {
           slotTemplateClonElm.find('.slot_time_form').text( info.formatted.time_from );
           slotTemplateClonElm.find('.slot_time_to').text( info.formatted.time_to );
 
-          slotTemplateClonElm.find('.gron_delivery_slot_delete_button').attr( 'data-slot-id', info.id );
+          slotTemplateClonElm.find('.gron_delivery_slot_delete_button').attr( 'data-slot-id', info.slot_id );
 
           slotTemplateClonElm.attr( 'id', '' ).appendTo( slotTableElm );
 
@@ -249,7 +249,7 @@ jQuery(document).ready(function($) {
       url: wcfm_params.ajax_url,
       data: {
         action: 'wcfm_ajax_controller',
-        controller: 'gron-settings',
+        controller: 'gron-vendor-settings',
         task: 'delete-delivery-slot',
         data: {
           id: $(this).attr( 'data-slot-id' )
@@ -262,7 +262,7 @@ jQuery(document).ready(function($) {
 
         var resObj = JSON.parse( res );
         var countSlots = resObj.data.count_slots;
-        var id = resObj.data.id;
+        var slot_id = resObj.data.slot_id;
 
         if( countSlots > 0 ) {
           deliverySlotNotice.fadeOut( animSpeed );
@@ -270,7 +270,7 @@ jQuery(document).ready(function($) {
           deliverySlotNotice.fadeIn( animSpeed );
         }
 
-        var deltedElm = $('.gron_delivery_slot_delete_button[data-slot-id=' + id + ']');
+        var deltedElm = $('.gron_delivery_slot_delete_button[data-slot-id=' + slot_id + ']');
         deltedElm.closest( 'tr' ).removeClass('gron_each_slot').empty().html('<td>Deleted!</td><td></td><td></td><td></td>');
 
       }

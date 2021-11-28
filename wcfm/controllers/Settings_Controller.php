@@ -53,7 +53,7 @@ class Settings_Controller {
 			$data = array(
 				'count_slots' => $this->mysql->count_delivery_slots(),
 				'info' => array(
-					'id' => $row->id,
+					'slot_id' => $row->slot_id,
 					'raw' => array(
 						'time_from' => $row->time_from,
 						'time_to' => $row->time_to
@@ -81,7 +81,7 @@ class Settings_Controller {
   */
   public function update_delivery_slot( $data ) {
 
-		$id = esc_sql( $data['id'] );
+		$id = esc_sql( $data['slot_id'] );
 
 		$update = $this->mysql->update_delivery_slot( $data );
 
@@ -89,7 +89,7 @@ class Settings_Controller {
 			$row = $this->mysql->get_delivery_slot_by_id( $id );
 
 			$data = array(
-				'id' => $row->id,
+				'slot_id' => $row->slot_id,
 				'raw' => array(
 					'time_from' => $row->time_from,
 					'time_to' => $row->time_to
@@ -116,14 +116,14 @@ class Settings_Controller {
 	*/
   public function delete_delivery_slot( $data ) {
 
-		$id = esc_sql( $data['id'] );
+		$id = esc_sql( $data['slot_id'] );
 
     $delete = $this->mysql->delete_delivery_slot( $id );
 
 		if( $delete ) {
 			$data = array(
 				'count_slots' => $this->mysql->count_delivery_slots(),
-				'id' => $id
+				'slot_id' => $id
 			);
 
 			echo $this->response(

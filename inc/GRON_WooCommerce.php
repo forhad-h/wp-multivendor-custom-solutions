@@ -72,7 +72,7 @@ class GRON_WooCommerce {
     // load custom styles
     wp_enqueue_style( 'gron-woocommerce-style' );
     // Load script
-    wp_enqueue_script( 'gron-woocommerce-js' );
+    wp_enqueue_script( 'gron-woocommerce-script' );
 
     $collection_type_field = array(
         'type'        => 'radio',

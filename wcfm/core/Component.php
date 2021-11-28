@@ -16,7 +16,7 @@ class Component {
   private $priority;
 
   private $endpoint_geo_routes = GRON_ENDPOINT_GEO_ROUTES;
-  private $endpoint_settings = GRON_ENDPOINT_SETTINGS;
+  private $endpoint_settings = GRON_VENDOR_ENDPOINT_SETTINGS;
 
   private $get_map_locations = 'get_map_locations';
 
@@ -154,7 +154,7 @@ class Component {
         $deps = array('jquery', 'gron_map_implementation' );
       }
 
-  		wp_enqueue_script( 'gron_' . $this->slug . '_js', GRON_DIR_URI . 'wcfm/assets/js/' . $this->slug . '.js', $deps, GRON_VERSION, true );
+  		wp_enqueue_script( 'gron_' . $this->slug . '_script', GRON_DIR_URI . 'wcfm/assets/js/' . $this->slug . '.js', $deps, GRON_VERSION, true );
 
     }
 
@@ -164,7 +164,7 @@ class Component {
   function load_styles( $end_point ) {
 
     if( $end_point === $this->endpoint ) {
-      wp_enqueue_style( 'gron_' . $this->slug . '_css', GRON_DIR_URI . 'wcfm/assets/css/' . $this->slug . '.css', array(), GRON_VERSION );
+      wp_enqueue_style( 'gron_' . $this->slug . '_style', GRON_DIR_URI . 'wcfm/assets/css/' . $this->slug . '.css', array(), GRON_VERSION );
     }
 
   }

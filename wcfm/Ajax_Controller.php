@@ -49,7 +49,7 @@ class Ajax_Controller {
     }
 
     // Controller for Delivery options
-    if( $controller === GRON_ENDPOINT_SETTINGS ) {
+    if( $controller === GRON_VENDOR_ENDPOINT_SETTINGS ) {
 
       $delivery_controller = new Settings_Controller();
 

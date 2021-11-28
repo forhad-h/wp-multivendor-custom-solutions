@@ -2,18 +2,24 @@
 namespace GRON;
 defined('ABSPATH') or exit;
 
+use GRON\Utils;
 
 class MySQL {
 
+  /** @var wpdb $db instance of wpdb */
   private $db;
+
+  /** @var String $shop_timings_tb_name Name of the table, which store shop timings data*/
   private $shop_timings_tb_name;
+
+  /** @var String $delivery_slots_tb_name Name of the table, which stores delivery slot data*/
   private $delivery_slots_tb_name;
 
   public function __construct() {
     global $wpdb;
     $this->db = $wpdb;
-    $this->shop_timings_tb_name = $wpdb->prefix . 'gron_shop_timings';
-    $this->delivery_slots_tb_name = $wpdb->prefix . 'gron_delivery_slots';
+    $this->shop_timings_tb_name    = $wpdb->prefix . 'gron_shop_timings';
+    $this->delivery_slots_tb_name  = $wpdb->prefix . 'gron_delivery_slots';
   }
 
   /**
@@ -25,26 +31,28 @@ class MySQL {
 
       $charset_collate = $this->db->get_charset_collate();
 
-      $query_shop_timings = "CREATE TABLE $this->shop_timings_tb_name (
-        id BIGINT NOT NULL AUTO_INCREMENT,
-        day_name VARCHAR(11) NOT NULL,
-        start_time TIME,
-        end_time TIME,
-        is_active BOOLEAN DEFAULT 0,
-        PRIMARY KEY (id)
-      ) $charset_collate;";
-
-      $query_delivery_slots = "CREATE TABLE $this->delivery_slots_tb_name (
-        id BIGINT NOT NULL AUTO_INCREMENT,
-        time_from TIME NOT NULL,
-        time_to TIME NOT NULL,
-        PRIMARY KEY (id)
-      ) $charset_collate;";
-
+      $queries = array(
+        "CREATE TABLE $this->shop_timings_tb_name (
+          timing_id BIGINT NOT NULL AUTO_INCREMENT,
+          day_name VARCHAR(11) NOT NULL,
+          start_time TIME,
+          end_time TIME,
+          is_active BOOLEAN DEFAULT 0,
+          PRIMARY KEY (timing_id)
+        ) $charset_collate;",
+        "CREATE TABLE $this->delivery_slots_tb_name (
+          slot_id BIGINT NOT NULL AUTO_INCREMENT,
+          time_from TIME NOT NULL,
+          time_to TIME NOT NULL,
+          PRIMARY KEY (slot_id)
+        ) $charset_collate;",
+      );
       require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
-      dbDelta( $query_shop_timings );
-      dbDelta( $query_delivery_slots );
+      foreach( $queries as $query ) {
+        Utils::log($query);
+        dbDelta( $query );
+      }
 
       // insert initial values for shop timings
       if( !$this->count_shop_timings( false ) ) {
@@ -114,8 +122,9 @@ class MySQL {
 
   /**
    * Insert default value to shop timings
-   * @return NULL
+   *
    * @version 2.0.1
+   * @return NULL
   */
   private function insert_shop_timings() {
     $days = array( 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' );
@@ -132,8 +141,9 @@ class MySQL {
 
   /**
    * update shop timings
-   * @return NULL|Boolean
+   *
    * @version 2.0.1
+   * @return NULL|Boolean
   */
   public function update_shop_timing( $data ) {
 
@@ -165,8 +175,9 @@ class MySQL {
 
   /**
    * get shop timings
-   * @return NULL|Array
+   *
    * @version 2.0.1
+   * @return NULL|Array
   */
   public function get_shop_timings( $active_only = false ) {
 
@@ -182,6 +193,7 @@ class MySQL {
 
   /**
    * count shop timings
+   *
    * @return NULL|Int
   */
   public function count_shop_timings( $active_only = true ) {
@@ -201,6 +213,7 @@ class MySQL {
 
   /**
     * Has data in Delivery Slots
+    *
     * @return NULL|Boolean
   */
   public function count_delivery_slots() {
@@ -213,8 +226,9 @@ class MySQL {
 
   /**
    * insert delivery slot
-   * @return NULL|Bollean
+   *
    * @version 2.0.3
+   * @return NULL|Bollean
   */
   public function insert_delivery_slot( $data ) {
 
@@ -236,12 +250,13 @@ class MySQL {
 
     /**
      * update delivery slot
-     * @return NULL|Bollean
+     *
      * @version 2.0.3
+     * @return NULL|Bollean
     */
     public function update_delivery_slot( $data ) {
 
-      $id = esc_sql( $data['id'] );
+      $slot_id = esc_sql( $data['slot_id'] );
       $time_from = esc_sql( $data['time_from'] );
       $time_to = esc_sql( $data['time_to'] );
 
@@ -252,7 +267,7 @@ class MySQL {
             'time_to' => $time_to
           ),
           array(
-            'id' => $id
+            'slot_id' => $slot_id
           )
       );
 
@@ -262,16 +277,17 @@ class MySQL {
 
     /**
      * delete delivery slot
-     * @return NULL|Bollean
+     *
      * @param Int $id
      * @version 2.0.3
+     * @return NULL|Bollean
     */
-    public function delete_delivery_slot( $id ) {
+    public function delete_delivery_slot( $slot_id ) {
 
       $delete = $this->db->delete(
         $this->delivery_slots_tb_name,
         array(
-          'id' => $id
+          'slot_id' => $slot_id
         )
       );
 
@@ -282,8 +298,9 @@ class MySQL {
 
     /**
      * get delivery slots
-     * @return NULL|Array
+     *
      * @version 2.0.3
+     * @return NULL|Array
     */
     public function get_delivery_slots() {
 
@@ -296,16 +313,36 @@ class MySQL {
 
     /**
      * get delivery slot by id
-     * @return NULL|Array
+     *
      * @param Int $id
+     * @return NULL|Array
     */
-    public function get_delivery_slot_by_id( $id ) {
+    public function get_delivery_slot_by_id( $slot_id ) {
 
-      $sql = "SELECT * FROM {$this->delivery_slots_tb_name} WHERE id=$id";
+      $sql = "SELECT * FROM {$this->delivery_slots_tb_name} WHERE slot_id=$slot_id";
 
       $result = $this->db->get_row( $sql );
 
       return $result;
+
+    }
+
+    /**
+     * Save vendor general settings
+     *
+     * @param Array $settings
+     *  ['name'] => 'Value'
+     * @return Array $settings return same settings array
+    */
+    public function save_vendor_general_settings( $settings ) {
+
+      foreach( $settings as $name => $value ) {
+
+        Utils::save_option( $name, $value );
+
+      }
+
+      return $settings;
 
     }
 
