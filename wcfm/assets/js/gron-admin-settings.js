@@ -14,7 +14,7 @@ jQuery(document).ready(function($) {
      _this = $(this);
 
      var data = {
-       delivery_by_seller: deliveryBySellerValue
+       _gron_delivery_by_seller: deliveryBySellerValue
      }
      $.ajax({
        type: "POST",

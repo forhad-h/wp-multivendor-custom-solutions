@@ -2,7 +2,7 @@
 namespace GRON\WCFM;
 defined('ABSPATH') or exit;
 
-use GRON\WCFM\core\Component;
+use GRON\WCFM\Page;
 use GRON\WCFM\Ajax_Controller;
 use GRON\Notice;
 use GRON\Utils;
@@ -32,48 +32,68 @@ class Store_Manager {
   */
   public function create_components() {
 
-
-    if( Utils::is_vendor() ) {
-      // create GEO Routes menu in WCFM store-manager
-      new Component(array(
-        'label' => __( 'GRON - GEO Routes','gron-custom' ),
-        'icon' => 'street-view',
-        'endpoint' => GRON_ENDPOINT_GEO_ROUTES,
-        'slug' => GRON_ENDPOINT_GEO_ROUTES,
-      ));
-
-      // create Delivery menu in WCFM store-manager
-      new Component(array(
-        'label' => __( 'GRON - Settings','gron-custom' ),
-        'icon' => 'cog',
-        'endpoint' => GRON_VENDOR_ENDPOINT_SETTINGS,
-        'slug' => GRON_VENDOR_ENDPOINT_SETTINGS,
-      ));
-
-    }
-
-
     if( Utils::is_admin() ) {
 
-      // create Delivery menu in WCFM store-manager
-      new Component(array(
+      /* Create Store Manager pages for admin only */
+
+      // create Settings page
+      new Page(array(
         'label' => __( 'GRON - Settings','gron-custom' ),
         'icon' => 'cog',
         'endpoint' => GRON_ADMIN_ENDPOINT_SETTINGS,
         'slug' => GRON_ADMIN_ENDPOINT_SETTINGS,
       ));
 
-    }
-
-    if( wcfm_is_delivery_boy() ) {
-      // create Delivery menu in WCFM store-manager
-      new Component(array(
-        'label' => __( 'GRON - Requests','gron-custom' ),
+      // create Delivery Requests page
+      new Page(array(
+        'label' => __( 'GRON - Deliveries','gron-custom' ),
         'icon' => 'inbox',
-        'endpoint' => GRON_ENDPOINT_DELIVERY_REQUEST,
-        'slug' => GRON_ENDPOINT_DELIVERY_REQUEST,
+        'endpoint' => GRON_ADMIN_ENDPOINT_DELIVERY_REQUEST,
+        'slug' => GRON_ADMIN_ENDPOINT_DELIVERY_REQUEST,
+      ));
+
+    }elseif( Utils::is_vendor() ) {
+
+      /* Create Store Manager pages for vendor only */
+
+      // create GEO Routes page
+      new Page(array(
+        'label' => __( 'GRON - GEO Routes','gron-custom' ),
+        'icon' => 'street-view',
+        'endpoint' => GRON_ENDPOINT_GEO_ROUTES,
+        'slug' => GRON_ENDPOINT_GEO_ROUTES,
+      ));
+
+      // create Delivery page
+      new Page(array(
+        'label' => __( 'GRON - Settings','gron-custom' ),
+        'icon' => 'cog',
+        'endpoint' => GRON_VENDOR_ENDPOINT_SETTINGS,
+        'slug' => GRON_VENDOR_ENDPOINT_SETTINGS,
+      ));
+
+      // create page for Deliveries
+      new Page(array(
+        'label' => __( 'GRON - Deliveries','gron-custom' ),
+        'icon' => 'inbox',
+        'endpoint' => GRON_VENDOR_ENDPOINT_DELIVERY_REQUEST,
+        'slug' => GRON_VENDOR_ENDPOINT_DELIVERY_REQUEST,
         'priority' => 305
       ));
+
+    }elseif( wcfm_is_delivery_boy() ) {
+
+      /* Create Store Manager pages for delivery boy only */
+
+      // create page for Delivery Requests
+      new Page(array(
+        'label' => __( 'GRON - Requests','gron-custom' ),
+        'icon' => 'inbox',
+        'endpoint' => GRON_BOY_ENDPOINT_DELIVERY_REQUEST,
+        'slug' => GRON_BOY_ENDPOINT_DELIVERY_REQUEST,
+        'priority' => 305 // this priority allow make page for delivery boy
+      ));
+
     }
 
   }

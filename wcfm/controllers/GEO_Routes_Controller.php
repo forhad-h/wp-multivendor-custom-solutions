@@ -31,12 +31,7 @@ class GEO_Routes_Controller {
 
 			$this->get_locations();
 
-		}elseif( $_POST['task'] === 'save-admin-settings' ) {
-
-			$this->save_admin_settings();
-
-		}
-		else {
+		}else {
 			echo $this->response( 'no_task', 'No task found!' );
 		}
 
@@ -207,16 +202,6 @@ class GEO_Routes_Controller {
 				throw new WP_Error( 'not_found', 'Error: during get order location of admin user', $e );
 			}
 
-		}
-
-	}
-
-	private function save_admin_settings() {
-
-		$api_key = $_POST['google_map_api_key'];
-
-		if( $api_key ) {
-			$this->mysql->save_option('gron_google_map_api_key', $api_key );
 		}
 
 	}

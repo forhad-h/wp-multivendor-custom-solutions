@@ -217,7 +217,7 @@ class GRON_WooCommerce {
      */
      foreach( $vendor_ids as $vendor_id ) {
 
-       $delivery_boy_ids = $this->get_delivery_boy_ids( $vendor_id );
+       $delivery_boy_ids = $this->get_delivery_boy_ids_of_vendor( $vendor_id );
 
        foreach( $delivery_boy_ids as $boy_id ) {
 
@@ -278,7 +278,7 @@ class GRON_WooCommerce {
    * @param Int $vendor_id ID of the vendor
    * @return NULL|Array Arrays of vendor ids
    */
-   private function get_delivery_boy_ids( $vendor_id ) {
+   private function get_delivery_boy_ids_of_vendor( $vendor_id ) {
 
      $delivery_boy_role = 'wcfm_delivery_boy';
 
@@ -296,5 +296,28 @@ class GRON_WooCommerce {
      return $delivery_boy_ids;
 
    }
+
+   /**
+    * Get vendor's devlivery boy IDs
+    * @return NULL|Array Arrays of vendor ids
+    */
+    private function get_delivery_boy_ids_of_admin() {
+
+      $delivery_boy_role = 'wcfm_delivery_boy';
+
+      $args = array(
+        'role__in'     => array( $delivery_boy_role ),
+        'orderby'      => 'ID',
+        'order'        => 'ASC',
+        'meta_key'     => '_gron_admin',
+        'meta_value'   => 'yes',
+        'fields'       => "ID"
+       );
+
+      $delivery_boy_ids = get_users( $args );
+
+      return $delivery_boy_ids;
+
+    }
 
 }

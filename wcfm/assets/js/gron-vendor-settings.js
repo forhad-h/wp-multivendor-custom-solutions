@@ -302,7 +302,7 @@ jQuery(document).ready(function($) {
     _this = $(this);
 
     var data = {
-      delivery_by_me: deliveryByMeValue
+      _gron_delivery_by_me: deliveryByMeValue
     }
     $.ajax({
       type: "POST",
@@ -315,7 +315,7 @@ jQuery(document).ready(function($) {
       }
     })
     .done( function (res) {
-      console.log( res );
+      //console.log( res );
     })
     .fail( function ( err ) {
       console.log( err );

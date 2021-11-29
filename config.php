@@ -11,6 +11,8 @@ define( "GRON_ENDPOINT_GEO_ROUTES", 'gron-geo-routes' );
 define( "GRON_VENDOR_ENDPOINT_SETTINGS", 'gron-vendor-settings' );
 define( "GRON_ADMIN_ENDPOINT_SETTINGS", 'gron-admin-settings' );
 
-define( "GRON_ENDPOINT_DELIVERY_REQUEST", 'gron-delivery-request' );
+define( "GRON_ADMIN_ENDPOINT_DELIVERY_REQUEST", 'gron-admin-delivery-request' );
+define( "GRON_VENDOR_ENDPOINT_DELIVERY_REQUEST", 'gron-vendor-delivery-request' );
+define( "GRON_BOY_ENDPOINT_DELIVERY_REQUEST", 'gron-boy-delivery-request' );
 
 define( "SQLite_FILE_PATH", "sqlite:" . GRON_DIR_PATH . "db/delivery_notifications.db" );

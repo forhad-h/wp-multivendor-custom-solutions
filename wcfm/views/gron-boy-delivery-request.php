@@ -50,10 +50,9 @@ $crud_opearation = new MySQL();
               <table class="gron_table">
                 <thead>
                   <tr>
-                    <th></th>
                     <th>Vendor</th>
-                    <th>Vendor Address</th>
-                    <th>Delivery Address</th>
+                    <th>Order</th>
+                    <th>Delivery Day</th>
                     <th>Delivery Time</th>
                     <th>Action</th>
                   </tr>
@@ -62,10 +61,9 @@ $crud_opearation = new MySQL();
 
                   <tr>
 
-                    <td><input type="checkbox" class="wcfm-checkbox is_active" /></td>
                     <td class="vendor_name"><?php echo 'vendor one'; ?></td>
-                    <td class="vendor_address"><?php echo 'something at, Malaysia'; ?></td>
-                    <td class="delivery_address"><?php echo 'something at, Malaysia'; ?></td>
+                    <td class="order_id"><a href="#">#23<a></td>
+                    <td class="delivery_day">Sunday</td>
                     <td class="delivery_time"><?php echo '9:00am-12:00am'; ?></td>
                     <td>
 
@@ -97,13 +95,13 @@ $crud_opearation = new MySQL();
         <!-- end collapsible -->
 
         <!-- collapsible -->
-        <div class="page_collapsible" id="gron-delivery-slots">
+        <div class="page_collapsible" id="gron-delivery-requests-accepted">
           <label class="wcfmfa fa-user-check"></label>
           <?php _e('Accepted', 'gron-custom'); ?><span></span>
         </div>
 
         <div class="wcfm-container">
-          <div id="gron-delivery-slots" class="wcfm-content">
+          <div id="gron-delivery-requests-accepted" class="wcfm-content">
             <h2><?php _e('Delivery Slots', 'gron-custom'); ?></h2>
             <div class="wcfm_clearfix"></div>
 
@@ -111,8 +109,8 @@ $crud_opearation = new MySQL();
                 <thead>
                   <tr>
                     <th>Vendor</th>
-                    <th>Vendor Address</th>
-                    <th>Delivery Address</th>
+                    <th>Order</th>
+                    <th>Delivery Day</th>
                     <th>Delivery Time</th>
                     <th>Action</th>
                   </tr>
@@ -122,8 +120,8 @@ $crud_opearation = new MySQL();
                   <tr>
 
                     <td class="vendor_name"><?php echo 'vendor one'; ?></td>
-                    <td class="vendor_address"><?php echo 'something at, Malaysia'; ?></td>
-                    <td class="delivery_address"><?php echo 'something at, Malaysia'; ?></td>
+                    <td class="order_id"><a href="#">#23<a></td>
+                    <td class="delivery_day">Sunday</td>
                     <td class="delivery_time"><?php echo '9:00am-12:00am'; ?></td>
                     <td>
 

@@ -81,6 +81,13 @@ $mysql = new MySQL();
 
               </div>
 
+              <div class="each_field broadcast_time_limit">
+                <p class="store_ppp wcfm_title"><strong>Delivery notification broadcast time limit</strong></p>
+                <label class="screen-reader-text" for="store_ppp">Delivery notification broadcast time limit</label>
+                <input type="number" id="time-limit"" class="wcfm-text">
+                <p class="description wcfm_page_options_desc">Provide time limit as <strong>Minute</strong>.</p>
+              </div>
+
 
               <input type="button" name="save-data" value="Save" id="gron-general-settings-save-button" class="wcfm_submit_button">
             </form>

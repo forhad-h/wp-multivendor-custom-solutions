@@ -10,5 +10,12 @@ use GRON\Utils;
 
 add_action( 'wcfm_delivery_boys_manage' , function( $boy_id ) {
 
-  Utils::log( get_user_meta( $boy_id, '_wcfm_vendor' ) );
+  if( !get_user_meta( $boy_id, '_wcfm_vendor' ) ) {
+    // Link delivery boy with admin, if no vendor found
+    update_user_meta( $boy_id, '_gron_admin', 'yes' );
+  }else {
+    // Remove delivery boy from admin, as it has a vendor already
+    delete_user_meta( $boy_id, '_gron_admin' );
+  }
+
 });

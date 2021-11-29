@@ -85,7 +85,7 @@ class Utils {
   */
   public function is_delivery_by_seller() {
 
-    $setting = get_option( 'delivery_by_seller' );
+    $setting = get_option( '_gron_delivery_by_seller' );
 
     // If the setting is not set up, then default is true
     if( !$setting ) return true;
@@ -104,12 +104,12 @@ class Utils {
   */
   public function is_delivery_by_me( $vendor_id ) {
 
-    $setting = get_option( 'delivery_by_me_' . $vendor_id );
+    $setting = get_user_meta( $vendor_id, '_gron_delivery_by_me' );
 
     // If the setting is not set up, then default is true
-    if( !$setting ) return true;
-    elseif( $setting === 'yes' ) return true;
-    elseif( $setting === 'no' ) return false;
+    if( empty( $setting ) ) return true;
+    elseif( $setting[0] === 'yes' ) return true;
+    elseif( $setting[0] === 'no' ) return false;
 
   }
 

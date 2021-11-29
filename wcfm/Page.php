@@ -1,12 +1,13 @@
 <?php
 /**
- * class Component
+ * class Page
+ * Make page in store manager frontend of WCFM
 */
-namespace GRON\WCFM\core;
+namespace GRON\WCFM;
 
 defined('ABSPATH') or exit;
 
-class Component {
+class Page {
 
   private $wcfm;
   private $label;

@@ -145,16 +145,14 @@ class Vendor_Settings_Controller {
 
 		$saved_all = true;
 
-		foreach( $settings as $key => $value ) {
+		foreach( $settings as $name => $value ) {
 
-			// Only accept 'yes' or 'no' for 'delivery_by_me' setting
-			if( $key === 'delivery_by_me' ) {
+			// Only accept 'yes' or 'no' for '_gron_delivery_by_me' setting
+			if( $name === '_gron_delivery_by_me' ) {
 				if( !in_array( $value, array( 'yes', 'no' ) ) ) return;
 			}
 
-			$name = $key . '_' . get_current_user_id();
-
-			$save = update_option( esc_sql( $name ), esc_sql( $value ) );
+			$save = update_user_meta( get_current_user_id(), esc_sql( $name ), esc_sql( $value ) );
 
 			if( !$save ) {
 				$saved_all = false;

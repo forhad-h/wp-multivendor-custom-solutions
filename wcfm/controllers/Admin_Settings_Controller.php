@@ -37,8 +37,8 @@ class Admin_Settings_Controller {
 
 		foreach( $settings as $name => $value ) {
 
-			// Only accept 'yes' or 'no' for 'delivery_by_seller' setting
-			if( $name === 'delivery_by_seller' ) {
+			// Only accept 'yes' or 'no' for '_gron_delivery_by_seller' setting
+			if( $name === '_gron_delivery_by_seller' ) {
 				if( !in_array( $value, array( 'yes', 'no' ) ) ) return;
 			}
 
