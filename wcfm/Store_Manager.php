@@ -83,7 +83,6 @@ class Store_Manager {
   */
   public function show_gron_notices() {
 
-
     if( Utils::is_admin() ) {
 
       // Show notice for google map api key

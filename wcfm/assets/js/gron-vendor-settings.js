@@ -252,7 +252,7 @@ jQuery(document).ready(function($) {
         controller: 'gron-vendor-settings',
         task: 'delete-delivery-slot',
         data: {
-          id: $(this).attr( 'data-slot-id' )
+          slot_id: $(this).attr( 'data-slot-id' )
         }
       }
     })

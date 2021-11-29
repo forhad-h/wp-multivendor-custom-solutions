@@ -84,7 +84,7 @@ $mysql = new MySQL();
                   /> <span class="radio_text">No</span>
                 </label>
 
-                <p class="field_desc"><?php echo !$is_delivery_by_seller ? 'Delivery management by vendor is disabled by Admin' : ''; ?></p>
+                <p class="field_desc"><?php echo !$is_delivery_by_seller ? 'Delivery management is <strong>disabled</strong> by Admin for all vendors.' : ''; ?></p>
 
               </div>
 

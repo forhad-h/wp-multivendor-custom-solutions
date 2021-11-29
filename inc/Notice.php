@@ -33,7 +33,7 @@ class Notice {
         array( 'icon' => 'truck-loading', 'name' => 'GRON - Settings' ),
         array( 'icon' => 'business-time', 'name' => 'Shop Timings' ),
       ),
-      'timing_id' => 'gron-shop-timing-notice',
+      'id' => 'gron-shop-timing-notice',
       'type_class' => 'gron_notice_error'
     );
 
