@@ -154,7 +154,7 @@ class Vendor_Settings_Controller {
 
 			$name = $key . '_' . get_current_user_id();
 
-			$save = Utils::save_option( esc_sql( $name ), esc_sql( $value ) );
+			$save = update_option( esc_sql( $name ), esc_sql( $value ) );
 
 			if( !$save ) {
 				$saved_all = false;

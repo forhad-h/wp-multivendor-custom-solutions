@@ -41,15 +41,9 @@ function gron_init() {
   // Include wcfm integration
   new Store_Manager();
 
-  $args = array(
-    'role__in'     => array( 'wcfm_delivery_boy' ),
-    'orderby'      => 'ID',
-    'order'        => 'ASC',
-    'meta_key'     => '_wcfm_vendor',
-    'meta_value'   => 3
-   );
-
-  $wcfm_delivery_boys_array = get_users( $args );
+  // TODO: prevent excecute delivery boy related code, if the plugin is not found
+  // Delivery boy
+  require_once GRON_DIR_PATH . 'wcfm/delivery-boy.php';
 
   // Load pusher service
   //require_once GRON_DIR_PATH . 'services/pusher.php';

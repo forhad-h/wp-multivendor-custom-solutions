@@ -102,14 +102,6 @@ class MySQL {
     }
 
   }
-
-  public function save_option( $key ) {
-
-    if( get_option( $key ) ) update_option( $key, $value );
-    else add_option( $key, $value );
-
-  }
-
   /**
    * Print error
    * @param $code error code

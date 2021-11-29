@@ -22,7 +22,7 @@ class Activation {
     $sqlite->create_tables();
 
     // Update version
-    Utils::save_option( 'gron_version', GRON_VERSION );
+    update_option( 'gron_version', GRON_VERSION );
 
 
   }

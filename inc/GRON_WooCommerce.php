@@ -28,7 +28,7 @@ class GRON_WooCommerce {
   /**
   * consturct function of GRON_WooCommerce
   * Initialize Database connection
-  * Use woocommerce and WCFM hooks
+  * Used woocommerce and WCFM hooks
   ** 'woocommerce_billing_fields' - filter hook to add extra fields
   ** 'woocommerce_checkout_update_order_meta' (action hook) - update custom fields value
   ** 'wcfm_is_allow_order_data_after_billing_address' (filter hook) - allow custom data in WCFM order details page
@@ -274,7 +274,7 @@ class GRON_WooCommerce {
   }
 
   /**
-   * Get devlivery boy IDs
+   * Get vendor's devlivery boy IDs
    * @param Int $vendor_id ID of the vendor
    * @return NULL|Array Arrays of vendor ids
    */
@@ -296,6 +296,5 @@ class GRON_WooCommerce {
      return $delivery_boy_ids;
 
    }
-
 
 }

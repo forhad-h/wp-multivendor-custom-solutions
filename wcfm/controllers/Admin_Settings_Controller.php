@@ -42,7 +42,7 @@ class Admin_Settings_Controller {
 				if( !in_array( $value, array( 'yes', 'no' ) ) ) return;
 			}
 
-			$save = Utils::save_option( esc_sql( $name ), esc_sql( $value ) );
+			$save = update_option( esc_sql( $name ), esc_sql( $value ) );
 
 			if( !$save ) {
 				$saved_all = false;
