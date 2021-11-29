@@ -52,7 +52,6 @@ class MySQL {
       require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
       foreach( $queries as $query ) {
-        Utils::log($query);
         dbDelta( $query );
       }
 

@@ -295,6 +295,9 @@ jQuery(document).ready(function($) {
 
     var deliveryByMeValue = $('input[name=delivery_by_me]:checked').val();
 
+    // Only accept 'yes' or 'no'
+    if( $.inArray( deliveryByMeValue, [ 'yes', 'no' ] )  == -1 ) return;
+
     $(this).val('SAVING...');
     _this = $(this);
 
@@ -306,13 +309,13 @@ jQuery(document).ready(function($) {
       url: wcfm_params.ajax_url,
       data: {
         action: 'wcfm_ajax_controller',
-        controller: 'gron-admin-settings',
+        controller: 'gron-vendor-settings',
         task: 'update-general-settings',
         data: data
       }
     })
     .done( function (res) {
-      //console.log( res );
+      console.log( res );
     })
     .fail( function ( err ) {
       console.log( err );

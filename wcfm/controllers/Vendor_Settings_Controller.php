@@ -141,18 +141,20 @@ class Vendor_Settings_Controller {
    * @param Array $settings
 	 *  ['name'] => ['Value']
   */
-	//TODO: fix duplication of update_general_settings for admin and vendor
   public function update_general_settings( $settings ) {
 
 		$saved_all = true;
 
 		foreach( $settings as $key => $value ) {
 
+			// Only accept 'yes' or 'no' for 'delivery_by_me' setting
+			if( $key === 'delivery_by_me' ) {
+				if( !in_array( $value, array( 'yes', 'no' ) ) ) return;
+			}
+
 			$name = $key . '_' . get_current_user_id();
 
-			$data[$name] = $value;
-
-			$save = Utils::save_option( $name, $value );
+			$save = Utils::save_option( esc_sql( $name ), esc_sql( $value ) );
 
 			if( !$save ) {
 				$saved_all = false;

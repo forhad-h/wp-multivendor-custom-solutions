@@ -19,6 +19,11 @@ p.wcfm_title {
   position: relative;
   top: -2px;
 }
+.each_field .field_desc {
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 400;
+}
 
 div#wcfm-main-contentainer #gron-vendor-settings .gron_table [class*=" fa-"]:before {
   font-weight: 500;

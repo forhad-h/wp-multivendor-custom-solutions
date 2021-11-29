@@ -7,6 +7,9 @@ jQuery(document).ready(function($) {
 
      var deliveryBySellerValue = $('input[name=delivery_by_seller]:checked').val();
 
+     // Only accept 'yes' or 'no'
+     if( $.inArray( deliveryBySellerValue, [ 'yes', 'no' ] ) == -1 ) return;
+
      $(this).val('SAVING...');
      _this = $(this);
 

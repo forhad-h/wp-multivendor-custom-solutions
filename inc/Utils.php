@@ -95,5 +95,42 @@ class Utils {
 
   }
 
+  /**
+  * Get delivery by sellter setting
+  * If the setting are note set up
+  * Default will be yes
+  *
+  * @return Boolean
+  */
+  public function is_delivery_by_seller() {
+
+    $setting = get_option( 'delivery_by_seller' );
+
+    // If the setting is not set up, then default is true
+    if( !$setting ) return true;
+    elseif( $setting === 'yes' ) return true;
+    elseif( $setting === 'no' ) return false;
+
+  }
+
+  /**
+  * Get delivery by me (Vendor) setting
+  * If the setting are note set up
+  * Default will be yes
+  *
+  * @param Int $vendor_id ID of the current vendor
+  * @return Boolean
+  */
+  public function is_delivery_by_me( $vendor_id ) {
+
+    $setting = get_option( 'delivery_by_me_' . $vendor_id );
+
+    // If the setting is not set up, then default is true
+    if( !$setting ) return true;
+    elseif( $setting === 'yes' ) return true;
+    elseif( $setting === 'no' ) return false;
+
+  }
+
 
 }

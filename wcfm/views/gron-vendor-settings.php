@@ -55,8 +55,10 @@ $mysql = new MySQL();
               <div class="each_field delivery_by_me_field">
 
                 <?php
-                  $delivery_by_me_setting = get_option( 'delivery_by_me_' . get_current_user_id() );
-                  $delivery_by_me_value = !$delivery_by_me_setting ? 'no' : $delivery_by_me_setting;
+                  $is_delivery_by_seller = Utils::is_delivery_by_seller();
+
+                  $is_delivery_by_me = Utils::is_delivery_by_me( get_current_user_id() );
+
                 ?>
                 <p class="gron_delivery_by_me wcfm_title checkbox_title"><strong>Order Deliveries will be managed by me</strong></p>
 
@@ -66,7 +68,8 @@ $mysql = new MySQL();
                     name="delivery_by_me"
                     class="wcfm-radio"
                     value="yes"
-                    <?php echo $delivery_by_me_value === 'yes' ? 'checked' : '' ?>
+                    <?php echo !$is_delivery_by_seller ? 'disabled' : '' ?>
+                    <?php echo $is_delivery_by_me ? 'checked' : '' ?>
                   /> <span class="radio_text">Yes</span>
                 </label>
 
@@ -76,9 +79,12 @@ $mysql = new MySQL();
                     name="delivery_by_me"
                     class="wcfm-radio"
                     value="no"
-                    <?php echo $delivery_by_me_value === 'no' ? 'checked' : '' ?>
+                    <?php echo !$is_delivery_by_seller ? 'disabled' : '' ?>
+                    <?php echo !$is_delivery_by_me ? 'checked' : '' ?>
                   /> <span class="radio_text">No</span>
                 </label>
+
+                <p class="field_desc"><?php echo !$is_delivery_by_seller ? 'Delivery management by vendor is disabled by Admin' : ''; ?></p>
 
               </div>
 

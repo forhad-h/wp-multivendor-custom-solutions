@@ -55,8 +55,7 @@ $mysql = new MySQL();
               <div class="each_field delivery_by_seller_field">
 
                 <?php
-                  $delivery_by_seller_setting = get_option( 'delivery_by_seller_' . get_current_user_id() );
-                  $delivery_by_seller_value = !$delivery_by_seller_setting ? 'no' : $delivery_by_seller_setting;
+                  $is_delivery_by_seller = Utils::is_delivery_by_seller();
                 ?>
                 <p class="gron_delivery_by_seller wcfm_title checkbox_title"><strong>Delivery By Seller</strong></p>
 
@@ -66,7 +65,7 @@ $mysql = new MySQL();
                     name="delivery_by_seller"
                     class="wcfm-radio"
                     value="yes"
-                    <?php echo $delivery_by_seller_value === 'yes' ? 'checked' : '' ?>
+                    <?php echo $is_delivery_by_seller ? 'checked' : '' ?>
                   /> <span class="radio_text">Yes</span>
                 </label>
 
@@ -76,7 +75,7 @@ $mysql = new MySQL();
                     name="delivery_by_seller"
                     class="wcfm-radio"
                     value="no"
-                    <?php echo $delivery_by_seller_value === 'no' ? 'checked' : '' ?>
+                    <?php echo !$is_delivery_by_seller ? 'checked' : '' ?>
                   /> <span class="radio_text">No</span>
                 </label>
 

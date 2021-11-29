@@ -1,6 +1,0 @@
-CREATE TABLE wp_gron_delivery_slots (
-          slot_id BIGINT NOT NULL AUTO_INCREMENT,
-          time_from TIME NOT NULL,
-          time_to TIME NOT NULL,
-          PRIMARY KEY (slot_id)
-        ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci;

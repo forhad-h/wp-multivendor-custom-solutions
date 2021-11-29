@@ -35,13 +35,14 @@ class Admin_Settings_Controller {
 
 		$saved_all = true;
 
-		foreach( $settings as $key => $value ) {
+		foreach( $settings as $name => $value ) {
 
-			$name = $key . '_' . get_current_user_id();
+			// Only accept 'yes' or 'no' for 'delivery_by_seller' setting
+			if( $name === 'delivery_by_seller' ) {
+				if( !in_array( $value, array( 'yes', 'no' ) ) ) return;
+			}
 
-			$data[$name] = $value;
-
-			$save = Utils::save_option( $name, $value );
+			$save = Utils::save_option( esc_sql( $name ), esc_sql( $value ) );
 
 			if( !$save ) {
 				$saved_all = false;

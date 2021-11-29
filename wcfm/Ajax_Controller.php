@@ -52,43 +52,48 @@ class Ajax_Controller {
     }elseif( $controller === GRON_VENDOR_ENDPOINT_SETTINGS ) {
       // Controller for Delivery options
 
+      // Terminate if $data is empty
+      if( empty( $data ) ) return;
+
       $vendor_controller = new Vendor_Settings_Controller();
 
 
-      if( $task == $this->task['update_shop_timings'] && $data ) {
+      if( $task == $this->task['update_shop_timings'] ) {
 
         // update shop timings
         $vendor_controller->update_shop_timings( $data );
 
-      }elseif( $task == $this->task['insert_delivery_slot'] && $data ) {
+      }elseif( $task == $this->task['insert_delivery_slot'] ) {
 
         // insert delivery slot
         $vendor_controller->insert_delivery_slot( $data );
 
-      }elseif( $task == $this->task['update_delivery_slot'] && $data ) {
+      }elseif( $task == $this->task['update_delivery_slot'] ) {
 
         // insert delivery slot
         $vendor_controller->update_delivery_slot( $data );
 
-      }elseif( $task == $this->task['delete_delivery_slot'] && $data ) {
+      }elseif( $task == $this->task['delete_delivery_slot'] ) {
 
         // insert delivery slot
         $vendor_controller->delete_delivery_slot( $data );
 
-      }elseif( $task == $this->task['update_general_settings'] && $data ) {
+      }elseif( $task == $this->task['update_general_settings'] ) {
 
-        $vendor_controller->update_general_settings();
+        $vendor_controller->update_general_settings( $data );
 
       }
 
     }elseif( $controller === GRON_ADMIN_ENDPOINT_SETTINGS ) {
+
+      // Terminate if $data is empty
+      if( empty( $data ) ) return;
 
       $admin_controller = new Admin_Settings_Controller();
 
       if( $task === $this->task['update_general_settings'] && $data ) {
 
         $admin_controller->update_general_settings( $data );
-
 
       }
 
