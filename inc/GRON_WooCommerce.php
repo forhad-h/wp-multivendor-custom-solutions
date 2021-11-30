@@ -22,8 +22,8 @@ class GRON_WooCommerce {
   /** @var MySQL $mysql_crud_operation instance of MySQL */
   private $mysql_crud_operation;
 
-  /** @var SQLite $sqlite_crud_operation instance of SQLite */
-  private $sqlite_crud_operation;
+  /** @var SQLite $sqlite instance of SQLite */
+  private $sqlite;
 
   /**
   * consturct function of GRON_WooCommerce
@@ -40,7 +40,7 @@ class GRON_WooCommerce {
   public function __construct() {
 
     $this->mysql_crud_operation = new MySQL();
-    $this->sqlite_crud_operation = new SQLite();
+    $this->sqlite = new SQLite();
 
     add_filter( 'woocommerce_billing_fields', array( $this, 'gron_billing_fileds' ) );
 
@@ -56,9 +56,8 @@ class GRON_WooCommerce {
     add_action( 'woocommerce_admin_order_data_after_billing_address', array( $this, 'gron_custom_checkout_field_display_admin_order_meta' ), 10, 1 );
 
     // Provide notification to delivery guys after order processed
-    // Hooks file - wc-multivendor-marketplace/core/class-wcfmmp-commission.php
     // WooCommerce Hook - woocommerce_checkout_order_processed
-    add_action( 'woocommerce_checkout_order_processed', array( $this, 'save_available_delivery_boy_ids' ), 101, 3 );
+    add_action( 'woocommerce_checkout_order_processed', array( $this, 'order_processed' ), 101, 3 );
 
   }
 
@@ -200,10 +199,12 @@ class GRON_WooCommerce {
   }
 
   /**
-   * Manage Delivery notification after order processed
-   * @param Object $order Order object
+   * Mange notification after order processing
+   * @param Int $order_id Order ID
+   * @param Object $posted_data
+   * @param Object $order The Order Object
    */
-  public function save_available_delivery_boy_ids( $order_id, $order_posted, $order ) {
+  public function order_processed( $order_id, $posted_data, $order ) {
 
     // Get vendor IDs from the $order
     $vendor_ids = $this->get_vendor_ids( $order );
@@ -213,21 +214,24 @@ class GRON_WooCommerce {
 
      /**
      * Nested loop is acceptable here
-     * As vendor numbers is very limited
+     * As vendor numbers will be very limited
      */
      foreach( $vendor_ids as $vendor_id ) {
 
-       $delivery_boy_ids = $this->get_delivery_boy_ids_of_vendor( $vendor_id );
+       // Check if delivery manage by vendor
 
-       foreach( $delivery_boy_ids as $boy_id ) {
+       if( $this->is_delivery_manage_by_vendor() ) {
 
-         $data = array(
-           'vendor_id' => $vendor_id,
-           'order_id'  => $order_id,
-           'boy_id'    => $boy_id
-         );
+         // Delivery manage by vendor
 
-         $this->sqlite_crud_operation->insert_available_delivery_boy( $data );
+
+
+       }else {
+
+         // Delivery manage by admin
+
+         $delivery_boy_ids = $this->get_delivery_boy_ids_of_admin();
+
 
        }
 
@@ -317,6 +321,63 @@ class GRON_WooCommerce {
       $delivery_boy_ids = get_users( $args );
 
       return $delivery_boy_ids;
+
+    }
+
+    /**
+    * Save Deliveries
+    */
+    private function save_deliveries( $vendor_id, $order_id, $manage_by ) {
+
+      $delivery_boy_ids = array();
+
+      if( $manage_by === 'vendor' ) {
+
+        $delivery_boy_ids = $this->get_delivery_boy_ids_of_vendor( $vendor_id );
+
+      }elseif( $manage_by === 'admin' ) {
+
+        $delivery_boy_ids = $this->get_delivery_boy_ids_of_admin();
+
+      }
+
+      if( !empty( $delivery_boy_ids ) ) {
+        // If found delivery boys
+        foreach( $delivery_boy_ids as $boy_id ) {
+
+            $data = array(
+              'manage_by' => $manage_by,
+              'vendor_id' => $vendor_id,
+              'order_id'  => $order_id,
+              'boy_id'    => $boy_id,
+              'status'    => 'pending'
+            );
+
+            $this->sqlite->insert_order_deliveries( $data );
+
+        }
+      }else {
+        // If delivery boys not found
+        $data = array(
+          'manage_by' => $manage_by,
+          'vendor_id' => $vendor_id,
+          'order_id'  => $order_id,
+          'boy_id'    => null,
+          'status'    => 'No delivery boy!'
+        );
+
+        $this->sqlite->insert_order_deliveries( $data );
+      }
+
+    }
+
+    /**
+    * Check if delivery manage by vendor
+    */
+    private function is_delivery_manage_by_vendor() {
+
+      return Utils::is_delivery_by_seller() &&
+             Utils::is_delivery_by_me( $vendor_id );
 
     }
 

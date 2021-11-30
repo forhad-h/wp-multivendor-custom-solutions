@@ -108,19 +108,19 @@ $mysql = new MySQL();
         <!-- end collapsible -->
 
         <!-- collapsible -->
-        <div class="page_collapsible" id="gron-admin-settings-shop">
+        <!--<div class="page_collapsible" id="gron-admin-settings-shop">
           <label class="wcfmfa fa-clock"></label>
-          <?php _e('Shop', 'gron-custom'); ?><span></span>
+          <?php //_e('Shop', 'gron-custom'); ?><span></span>
         </div>
 
         <div class="wcfm-container">
           <div id="gron-admin-settings-shop" class="wcfm-content">
-            <h2><?php _e('Shop Settings', 'gron-custom'); ?></h2>
+            <h2><?php //_e('Shop Settings', 'gron-custom'); ?></h2>
             <div class="wcfm_clearfix"></div>
 
           </div>
         </div>
-        <div class="wcfm_clearfix"></div>
+        <div class="wcfm_clearfix"></div>-->
         <!-- end collapsible -->
 
       </div>

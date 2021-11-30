@@ -12,11 +12,8 @@ class SQLite {
   /** @var $pdo instance of SQLite */
   private $pdo;
 
-  /** @var $available_delivery_boys_table_name Table name of Delivery boy notofication queue */
-  private $available_delivery_boys_table_name;
-
-  /** @var $order_notifications_table_name Table name of Order Notifications */
-  private $order_notifications_table_name;
+  /** @var $order_deliveries Table name of Order Notifications */
+  private $order_deliveries;
 
 
   public function __construct() {
@@ -27,8 +24,7 @@ class SQLite {
 
     }
 
-    $this->available_delivery_boys_table_name = 'available_delivery_boys';
-    $this->order_notifications_table_name     = 'order_notifications';
+    $this->order_deliveries = 'order_deliveries';
 
   }
 
@@ -38,17 +34,12 @@ class SQLite {
   public function create_tables() {
 
     $queries = array(
-      "CREATE TABLE {$this->available_delivery_boys_table_name} (
-      	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+      "CREATE TABLE {$this->order_deliveries} (
+      	od_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+        manage_by TEXT NOT NULL,
       	vendor_id INTEGER NOT NULL,
       	order_id INTEGER NOT NULL,
-      	boy_id INTEGER NOT NULL
-      )",
-      "CREATE TABLE {$this->order_notifications_table_name} (
-      	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-      	vendor_id INTEGER NOT NULL,
-      	order_id INTEGER NOT NULL,
-      	boy_id INTEGER NOT NULL,
+      	boy_id INTEGER,
         status TEXT NOT NULL,
         created_at TEXT NOT NULL
       )",
@@ -65,28 +56,37 @@ class SQLite {
   * Insert Available Delivery boy
   * @param Array $data data to insert
   *
+  *    ['manage_by'] => (String) ID of the vendor
   *    ['vendor_id'] => (Int) ID of the vendor
   *    ['order_id'}  => (Int) ID of the order
   *    ['boy_id'}  => (Int) ID of the boy
+  *    ['status'] => (String) ID of the vendor
+  *    ['created_at'] => (DateTime) ID of the vendor
   *
   * @return Null|Int insert ID
   */
-  public function insert_available_delivery_boy( $data ) {
+  public function insert_order_deliveries( $data ) {
 
-    $vendor_id = $data['vendor_id'];
-    $order_id  = $data['order_id'];
-    $boy_id  = $data['boy_id'];
+    $manage_by  = $data['manage_by'];
+    $vendor_id  = $data['vendor_id'];
+    $order_id   = $data['order_id'];
+    $boy_id     = $data['boy_id'];
+    $status     = $data['status'];
+    $created_at = date('Y-m-d H:i:s');
 
-    $sql  = "INSERT INTO {$this->available_delivery_boys_table_name}(vendor_id,order_id,boy_id)";
-    $sql .= " VALUES(:vendor_id,:order_id,:boy_id)";
+    $sql  = "INSERT INTO {$this->order_deliveries}(manage_by,vendor_id,order_id,boy_id,status,created_at)";
+    $sql .= " VALUES(:manage_by,:vendor_id,:order_id,:boy_id,:status,:created_at)";
 
     $statement = $this->pdo->prepare( $sql );
 
     $statement->execute(
       array(
-        ':vendor_id' => $vendor_id,
-        ':order_id' => $order_id,
-        ':boy_id' => $boy_id,
+        ':manage_by'  => $manage_by,
+        ':vendor_id'  => $vendor_id,
+        ':order_id'   => $order_id,
+        ':boy_id'     => $boy_id,
+        ':status'     => $status,
+        ':created_at' => $created_at
       )
     );
 
