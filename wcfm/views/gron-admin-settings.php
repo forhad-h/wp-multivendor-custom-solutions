@@ -2,15 +2,9 @@
 use GRON\MySQL;
 use GRON\Utils;
 
-global $wpdb, $WCFM, $WCFMmp;
-
-$wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
-
 $mysql = new MySQL();
 
 ?>
-<input type="hidden" id="gron-count-shop-timings" value="<?php echo $mysql->count_shop_timings(); ?>" />
-<input type="hidden" id="gron-count-delivery-slots" value="<?php echo $mysql->count_delivery_slots(); ?>" />
 
 <div class="collapse wcfm-collapse" id="gron-vendor-settings">
 
@@ -52,41 +46,57 @@ $mysql = new MySQL();
               class="wcfm"
             >
 
-              <div class="each_field delivery_by_seller_field">
+              <!-- each field -->
+              <div class="each_field gron_checkbox_field">
 
                 <?php
                   $is_delivery_by_seller = Utils::is_delivery_by_seller();
                 ?>
-                <p class="gron_delivery_by_seller wcfm_title checkbox_title"><strong>Delivery By Seller</strong></p>
+                <p class="gron_field_title"><strong>Delivery By Seller</strong></p>
+                <label class="screen-reader-text">Delivery By Seller</label>
 
-                <label>
-                  <input
-                    type="radio"
-                    name="delivery_by_seller"
-                    class="wcfm-radio"
-                    value="yes"
-                    <?php echo $is_delivery_by_seller ? 'checked' : '' ?>
-                  /> <span class="radio_text">Yes</span>
-                </label>
+                <div class="field">
+                  <label>
+                    <input
+                      type="radio"
+                      name="delivery_by_seller"
+                      class="wcfm-radio"
+                      value="yes"
+                      <?php echo $is_delivery_by_seller ? 'checked' : ''; ?>
+                    /> <span class="radio_text">Yes</span>
+                  </label>
 
-                <label>
-                  <input
-                    type="radio"
-                    name="delivery_by_seller"
-                    class="wcfm-radio"
-                    value="no"
-                    <?php echo !$is_delivery_by_seller ? 'checked' : '' ?>
-                  /> <span class="radio_text">No</span>
-                </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="delivery_by_seller"
+                      class="wcfm-radio"
+                      value="no"
+                      <?php echo !$is_delivery_by_seller ? 'checked' : ''; ?>
+                    /> <span class="radio_text">No</span>
+                  </label>
+                </div>
 
               </div>
+              <!-- each field -->
 
-              <div class="each_field broadcast_time_limit">
-                <p class="store_ppp wcfm_title"><strong>Delivery notification broadcast time limit</strong></p>
+              <!-- each field -->
+              <div class="each_field gron_text_field">
+
+                <?php
+                  $time_limit = Utils::get_dn_boradcast_time_limit();
+                ?>
+
+                <p class="gron_field_title"><strong>Delivery notification broadcast time limit</strong></p>
                 <label class="screen-reader-text" for="store_ppp">Delivery notification broadcast time limit</label>
-                <input type="number" id="time-limit"" class="wcfm-text">
-                <p class="description wcfm_page_options_desc">Provide time limit as <strong>Minute</strong>.</p>
+
+                <div class="field">
+                  <input type="number" id="time-limit" class="wcfm-text" value="<?php echo $time_limit;?>">
+                  <p class="field_desc">Provide time limit as <strong>Minute</strong>.</p>
+                </div>
+
               </div>
+              <!-- each field -->
 
 
               <input type="button" name="save-data" value="Save" id="gron-general-settings-save-button" class="wcfm_submit_button">
@@ -112,7 +122,6 @@ $mysql = new MySQL();
         </div>
         <div class="wcfm_clearfix"></div>
         <!-- end collapsible -->
-
 
       </div>
 

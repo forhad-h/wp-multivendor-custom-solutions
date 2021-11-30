@@ -6,15 +6,20 @@ jQuery(document).ready(function($) {
    submitBtnElm.on( 'click', function() {
 
      var deliveryBySellerValue = $('input[name=delivery_by_seller]:checked').val();
+     var broadcastTimeLimitValue = $('#time-limit').val();
 
-     // Only accept 'yes' or 'no'
+     // Only accept 'yes' or 'no' for delivery by seller value
      if( $.inArray( deliveryBySellerValue, [ 'yes', 'no' ] ) == -1 ) return;
+
+     // Only accept number for broadcast time limit
+     if( !$.isNumeric( broadcastTimeLimitValue ) ) return;
 
      $(this).val('SAVING...');
      _this = $(this);
 
      var data = {
-       _gron_delivery_by_seller: deliveryBySellerValue
+       _gron_delivery_by_seller: deliveryBySellerValue,
+       _gron_dn_broadcast_time_limit: broadcastTimeLimitValue
      }
      $.ajax({
        type: "POST",

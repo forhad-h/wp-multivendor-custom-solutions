@@ -37,9 +37,13 @@ class Admin_Settings_Controller {
 
 		foreach( $settings as $name => $value ) {
 
-			// Only accept 'yes' or 'no' for '_gron_delivery_by_seller' setting
+
 			if( $name === '_gron_delivery_by_seller' ) {
+				// Only accept 'yes' or 'no' for '_gron_delivery_by_seller' setting
 				if( !in_array( $value, array( 'yes', 'no' ) ) ) return;
+			}elseif( $name === '_gron_dn_broadcast_time_limit' ) {
+				// Only accept Number for _gron_dn_broadcast_time_limit setting
+				if( !is_numeric( $value ) ) return;
 			}
 
 			$save = update_option( esc_sql( $name ), esc_sql( $value ) );

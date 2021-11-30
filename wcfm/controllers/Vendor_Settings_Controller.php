@@ -147,9 +147,12 @@ class Vendor_Settings_Controller {
 
 		foreach( $settings as $name => $value ) {
 
-			// Only accept 'yes' or 'no' for '_gron_delivery_by_me' setting
 			if( $name === '_gron_delivery_by_me' ) {
+				// Only accept 'yes' or 'no' for '_gron_delivery_by_me' setting
 				if( !in_array( $value, array( 'yes', 'no' ) ) ) return;
+			}elseif( $name === '_gron_dn_broadcast_time_limit' ) {
+				// Only accept Number for _gron_dn_broadcast_time_limit setting
+				if( !is_numeric( $value ) ) return;
 			}
 
 			$save = update_user_meta( get_current_user_id(), esc_sql( $name ), esc_sql( $value ) );

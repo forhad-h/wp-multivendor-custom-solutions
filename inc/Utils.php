@@ -113,5 +113,39 @@ class Utils {
 
   }
 
+  /**
+  * Get boradcast time limit
+  *
+  * Default is 5 minutes
+  * @param Int $vendor_id [Optional] ID of the current vendor
+  * @return Int the time limit minutes
+  */
+  public function get_dn_boradcast_time_limit( $vendor_id = null ) {
+
+    $default_time_limit = 5; // Default time limit is 5 minute
+
+    if( !$vendor_id ) {
+
+      // for admin
+
+      $time_limit = get_option( '_gron_dn_broadcast_time_limit' );
+
+      // if the time limit is not set up then default time limit will return
+      if( !$time_limit ) return $default_time_limit;
+      else return $time_limit;
+
+    }elseif( $vendor_id > 0 ) {
+
+      // for vendor
+      $time_limit = get_user_meta( $vendor_id, '_gron_dn_broadcast_time_limit' );
+
+      // if the time limit is not set up then default time limit will return
+      if( empty( $time_limit ) ) return $default_time_limit;
+      else return $time_limit[0];
+
+    }
+
+  }
+
 
 }

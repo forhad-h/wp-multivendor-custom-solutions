@@ -2,11 +2,9 @@
 use GRON\MySQL;
 use GRON\Utils;
 
-global $wpdb, $WCFM, $WCFMmp;
-
-$wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
-
 $mysql = new MySQL();
+
+$vendor_id = get_current_user_id();
 
 ?>
 <input type="hidden" id="gron-count-shop-timings" value="<?php echo $mysql->count_shop_timings(); ?>" />
@@ -47,46 +45,67 @@ $mysql = new MySQL();
           <div id="gron-vendor-settings-general" class="wcfm-content">
             <h2><?php _e('General Settings', 'gron-custom'); ?></h2>
             <div class="wcfm_clearfix"></div>
-            <form
-              id="gron-general-settings-form"
-              class="wcfm"
-            >
+            <form id="gron-general-settings-form" class="wcfm">
 
-              <div class="each_field delivery_by_me_field">
+              <!-- each field -->
+              <div class="each_field gron_checkbox_field">
 
                 <?php
                   $is_delivery_by_seller = Utils::is_delivery_by_seller();
 
-                  $is_delivery_by_me = Utils::is_delivery_by_me( get_current_user_id() );
+                  $is_delivery_by_me = Utils::is_delivery_by_me( $vendor_id );
 
                 ?>
-                <p class="gron_delivery_by_me wcfm_title checkbox_title"><strong>Order Deliveries will be managed by me</strong></p>
+                <p class="gron_field_title"><strong>Order Deliveries will be managed by me</strong></p>
+                <label class="screen-reader-text">Order Deliveries will be managed by me</label>
 
-                <label>
-                  <input
-                    type="radio"
-                    name="delivery_by_me"
-                    class="wcfm-radio"
-                    value="yes"
-                    <?php echo !$is_delivery_by_seller ? 'disabled' : '' ?>
-                    <?php echo $is_delivery_by_me ? 'checked' : '' ?>
-                  /> <span class="radio_text">Yes</span>
-                </label>
+                <div class="field">
+                  <label>
+                    <input
+                      type="radio"
+                      name="delivery_by_me"
+                      class="wcfm-radio"
+                      value="yes"
+                      <?php echo !$is_delivery_by_seller ? 'disabled' : '' ?>
+                      <?php echo $is_delivery_by_me ? 'checked' : '' ?>
+                    /> <span class="radio_text">Yes</span>
+                  </label>
 
-                <label>
-                  <input
-                    type="radio"
-                    name="delivery_by_me"
-                    class="wcfm-radio"
-                    value="no"
-                    <?php echo !$is_delivery_by_seller ? 'disabled' : '' ?>
-                    <?php echo !$is_delivery_by_me ? 'checked' : '' ?>
-                  /> <span class="radio_text">No</span>
-                </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="delivery_by_me"
+                      class="wcfm-radio"
+                      value="no"
+                      <?php echo !$is_delivery_by_seller ? 'disabled' : '' ?>
+                      <?php echo !$is_delivery_by_me ? 'checked' : '' ?>
+                    /> <span class="radio_text">No</span>
+                  </label>
 
-                <p class="field_desc"><?php echo !$is_delivery_by_seller ? 'Delivery management is <strong>disabled</strong> by Admin for all vendors.' : ''; ?></p>
+                  <p class="field_desc"><?php echo !$is_delivery_by_seller ? 'Delivery management is <strong>disabled</strong> by Admin for all vendors.' : ''; ?></p>
+
+                </div>
 
               </div>
+              <!-- each field -->
+
+              <!-- each field -->
+              <div class="each_field gron_text_field">
+
+                <?php
+                  $time_limit = Utils::get_dn_boradcast_time_limit( $vendor_id );
+                ?>
+
+                <p class="gron_field_title"><strong>Delivery notification broadcast time limit</strong></p>
+                <label class="screen-reader-text" for="store_ppp">Delivery notification broadcast time limit</label>
+
+                <div class="field">
+                  <input type="number" id="time-limit" class="wcfm-text" value="<?php echo $time_limit;?>">
+                  <p class="field_desc">Provide time limit as <strong>Minute</strong>.</p>
+                </div>
+
+              </div>
+              <!-- each field -->
 
               <input type="button" name="save-data" value="Save" id="gron-general-settings-save-button" class="wcfm_submit_button">
             </form>
@@ -280,7 +299,6 @@ $mysql = new MySQL();
         </div>
         <div class="wcfm_clearfix"></div>
         <!-- end collapsible -->
-
 
       </div>
 
