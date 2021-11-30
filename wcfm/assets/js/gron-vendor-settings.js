@@ -105,9 +105,7 @@ jQuery(document).ready(function($) {
       }
     })
     .done( function (res) {
-
-      console.log( res );
-
+      
       if(res) {
 
         if( res > 0 ) {
@@ -162,8 +160,6 @@ jQuery(document).ready(function($) {
       }
     })
     .done( function (res) {
-
-      console.log( res );
 
       if(res) {
 

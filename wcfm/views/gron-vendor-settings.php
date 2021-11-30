@@ -8,7 +8,7 @@ $vendor_id = get_current_user_id();
 
 ?>
 <input type="hidden" id="gron-count-shop-timings" value="<?php echo $mysql->count_shop_timings(); ?>" />
-<input type="hidden" id="gron-count-delivery-slots" value="<?php echo $mysql->count_delivery_slots( $vendor_id ); ?>" />
+<input type="hidden" id="gron-count-delivery-slots" value="<?php echo $mysql->count_delivery_slots(); ?>" />
 
 <div class="collapse wcfm-collapse" id="gron-vendor-settings">
 

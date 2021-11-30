@@ -188,9 +188,10 @@ class GRON_WooCommerce {
 
   function gron_custom_checkout_field_update_order_meta( $order_id ) {
 
+
       $order = wc_get_order( $order_id );
 
-      $vendor_ids = $this->get_vendor_ids( $order_id );
+      $vendor_ids = $this->get_vendor_ids( $order );
 
       foreach( $vendor_ids as $vendor_id ) {
 
@@ -223,6 +224,8 @@ class GRON_WooCommerce {
 
     $vendor_ids = $this->get_vendor_ids( $order );
 
+    echo '<h3 style="color:#17a2b8;font-weight: 500;font-size: 13px;border-bottom: 1px solid #ccc;padding-bottom: 11px;">Delivery Details:</h3>';
+
     foreach( $vendor_ids as $vendor_id ) {
 
       $collection_type = get_post_meta( $order->get_id(), 'gron_collection_type_' . $vendor_id, true );
@@ -231,8 +234,7 @@ class GRON_WooCommerce {
 
       $store_name = get_user_meta( $vendor_id, 'store_name' )[0];
 
-      echo '<h2>' . $store_name .'</h2>';
-      echo '<h3 style="color: #17a2b8;border-bottom: 1px solid #ccc;font-weight: 500;font-size: 13px;padding-bottom: 11px;">Delivery Details:</h3>';
+      echo '<h3 style="color:#333;font-weight: 600;font-size: 15px;margin-bottom: 3px;">' . $store_name . '</h3>';
       echo '<p><strong>'.__('Collection Type').':</strong> ' . Utils::underscore_to_capitalize( $collection_type ) . '</p>';
       echo '<p><strong>'.__('Deliver Date').':</strong> ' . ucfirst( $deliver_date ) . '</p>';
       echo '<p><strong>'.__('Deliver Time').':</strong> ' . $deliver_time . '</p>';

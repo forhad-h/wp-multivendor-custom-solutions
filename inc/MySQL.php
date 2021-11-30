@@ -187,6 +187,8 @@ class MySQL {
   /**
    * get shop timings
    *
+   * @param Boolean $active_only
+   * @param Int $user_id ID of the user
    * @version 2.0.1
    * @return NULL|Array
   */
@@ -196,7 +198,7 @@ class MySQL {
     $data = array();
 
     if( $active_only ) {
-      $sql .= " WHERE is_active=1";
+      $sql .= " AND is_active=1";
     }
 
     $results = $this->db->get_results( $sql );
@@ -230,10 +232,10 @@ class MySQL {
   */
   public function count_shop_timings( $active_only = true ) {
 
-    $sql = "SELECT COUNT(*) FROM {$this->shop_timings_tb_name}";
+    $sql = "SELECT COUNT(*) FROM {$this->shop_timings_tb_name} WHERE user_id={$this->current_user_id}";
 
     if( $active_only ) {
-      $sql .= " WHERE is_active=1";
+      $sql .= " AND is_active=1";
     }
 
     $result = $this->db->get_var( $sql );
@@ -246,12 +248,11 @@ class MySQL {
   /**
     * Has data in Delivery Slots
     *
-    * @param Int $user_id ID of the user
     * @return NULL|Boolean
   */
-  public function count_delivery_slots( $user_id ) {
+  public function count_delivery_slots() {
 
-    $sql = "SELECT COUNT(*) FROM {$this->delivery_slots_tb_name} WHERE user_id={$user_id}";
+    $sql = "SELECT COUNT(*) FROM {$this->delivery_slots_tb_name} WHERE user_id={$this->current_user_id}";
     $result = $this->db->get_var( $sql );
 
     return $result;

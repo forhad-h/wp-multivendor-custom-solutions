@@ -15,7 +15,10 @@ class Vendor_Settings_Controller {
 
 	/** @var MySQL $mysql instance of MySQL */
 	private $mysql;
+
+	/** @var wpdb $wpdb instance of wpdb */
 	private $wpdb;
+
 
 	public function __construct() {
 		global $wpdb;
@@ -65,7 +68,7 @@ class Vendor_Settings_Controller {
 			$row = $this->mysql->get_delivery_slot_by_id( $this->wpdb->insert_id );
 
 			$data = array(
-				'count_slots' => $this->mysql->count_delivery_slots( $row->user_id ),
+				'count_slots' => $this->mysql->count_delivery_slots(),
 				'info' => array(
 					'slot_id' => $row->slot_id,
 					'raw' => array(
@@ -130,14 +133,14 @@ class Vendor_Settings_Controller {
 	*/
   public function delete_delivery_slot( $data ) {
 
-		$id = esc_sql( $data['slot_id'] );
+		$slot_id = esc_sql( $data['slot_id'] );
 
-    $delete = $this->mysql->delete_delivery_slot( $id );
+    $delete = $this->mysql->delete_delivery_slot( $slot_id );
 
 		if( $delete ) {
 			$data = array(
 				'count_slots' => $this->mysql->count_delivery_slots(),
-				'slot_id' => $id
+				'slot_id' => $slot_id
 			);
 
 			echo $this->response(
