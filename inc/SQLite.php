@@ -12,8 +12,8 @@ class SQLite {
   /** @var $pdo instance of SQLite */
   private $pdo;
 
-  /** @var $order_deliveries Table name of Order Notifications */
-  private $order_deliveries;
+  /** @var $delivery_notifications Table name of Order Notifications */
+  private $delivery_notifications;
 
 
   public function __construct() {
@@ -24,7 +24,7 @@ class SQLite {
 
     }
 
-    $this->order_deliveries = 'order_deliveries';
+    $this->delivery_notifications = 'delivery_notifications';
 
   }
 
@@ -34,7 +34,7 @@ class SQLite {
   public function create_tables() {
 
     $queries = array(
-      "CREATE TABLE {$this->order_deliveries} (
+      "CREATE TABLE {$this->delivery_notifications} (
       	od_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         manage_by TEXT NOT NULL,
       	vendor_id INTEGER NOT NULL,
@@ -65,7 +65,7 @@ class SQLite {
   *
   * @return Null|Int insert ID
   */
-  public function insert_order_deliveries( $data ) {
+  public function insert_delivery_notification( $data ) {
 
     $manage_by  = $data['manage_by'];
     $vendor_id  = $data['vendor_id'];
@@ -74,7 +74,7 @@ class SQLite {
     $status     = $data['status'];
     $created_at = date('Y-m-d H:i:s');
 
-    $sql  = "INSERT INTO {$this->order_deliveries}(manage_by,vendor_id,order_id,boy_id,status,created_at)";
+    $sql  = "INSERT INTO {$this->delivery_notifications}(manage_by,vendor_id,order_id,boy_id,status,created_at)";
     $sql .= " VALUES(:manage_by,:vendor_id,:order_id,:boy_id,:status,:created_at)";
 
     $statement = $this->pdo->prepare( $sql );

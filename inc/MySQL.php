@@ -190,9 +190,9 @@ class MySQL {
    * @version 2.0.1
    * @return NULL|Array
   */
-  public function get_shop_timings( $active_only = false ) {
+  public function get_shop_timings( $active_only = false, $user_id ) {
 
-    $sql = "SELECT * FROM {$this->shop_timings_tb_name}";
+    $sql = "SELECT * FROM {$this->shop_timings_tb_name} WHERE user_id='{$user_id}'";
     $data = array();
 
     if( $active_only ) {

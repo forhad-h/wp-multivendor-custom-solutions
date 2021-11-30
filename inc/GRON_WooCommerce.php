@@ -19,11 +19,14 @@ use GRON\Utils;
 
 class GRON_WooCommerce {
 
-  /** @var MySQL $mysql_crud_operation instance of MySQL */
-  private $mysql_crud_operation;
+  /** @var MySQL $mysql instance of MySQL */
+  private $mysql;
 
   /** @var SQLite $sqlite instance of SQLite */
   private $sqlite;
+
+  /** @var WC $wc WooCommerce instance */
+  private $wc;
 
   /**
   * consturct function of GRON_WooCommerce
@@ -39,8 +42,9 @@ class GRON_WooCommerce {
   */
   public function __construct() {
 
-    $this->mysql_crud_operation = new MySQL();
+    $this->mysql = new MySQL();
     $this->sqlite = new SQLite();
+    $this->wc = WC();
 
     add_filter( 'woocommerce_billing_fields', array( $this, 'gron_billing_fileds' ) );
 
@@ -73,54 +77,66 @@ class GRON_WooCommerce {
     // Load script
     wp_enqueue_script( 'gron-woocommerce-script' );
 
-    $collection_type_field = array(
-        'type'        => 'radio',
-        'label'       => __( 'Collection Type', 'gron-custom' ),
-        'required'    => true,
-        'class'       => array( 'gron_collection_type' ),
-        'clear'       => true,
-        'options'     => array(
-          'self_collection'     => 'Self Collection',
-          'deliver_to_home'     => 'Deliver to Home'
-        ),
-        'priority' => 201
-    );
-    $fields['gron_collection_type'] = $collection_type_field;
+    $get_carts = $this->wc->cart->get_cart();
+    $priority = 200;
 
-    $date_filed = array(
-        'type'        => 'select',
-        'label'       => __( 'Deliver Date', 'gron-custom' ),
-        'required'    => true,
-        'class'       => array( 'select2', 'gron_deliver_date' ),
-        'clear'       => true,
-        'options'     => $this->get_delivery_dates(),
-        'priority' => 202
-    );
-    $fields['gron_deliver_date'] = $date_filed;
+    foreach ( $get_carts as $cart_item_key => $cart_item ) {
 
-    $time_filed = array(
-        'type'        => 'select',
-        'label'       => __( 'Deliver Time', 'gron-custom' ),
-        'required'    => true,
-        'class'       => array( 'gron_deliver_time' ),
-        'clear'       => true,
-        'options'     => $this->get_delivery_times(),
-        'priority' => 203
-    );
-    $fields['gron_deliver_time'] = $time_filed;
+      $product_id = $cart_item['product_id'];
+      $author_id = get_post_field( 'post_author', $product_id );
+
+      $store_name = get_user_meta( $author_id, 'store_name' )[0];
+
+      $collection_type_field = array(
+          'type'        => 'radio',
+          'label'       => sprintf( '<span class="gron_cp_store_name">%1$s</span> %2$s', $store_name, __( 'Collection Type from', 'gron-custom' ) ),
+          'required'    => true,
+          'class'       => array( 'gron_collection_type' ),
+          'clear'       => true,
+          'options'     => array(
+            'self_collection'     => 'Self Collection',
+            'deliver_to_home'     => 'Deliver to Home'
+          ),
+          'priority'    => ++$priority
+      );
+      $fields[ 'gron_collection_type_' . $author_id ] = $collection_type_field;
+
+      $date_filed = array(
+          'type'        => 'select',
+          'label'       => __( 'Deliver Date', 'gron-custom' ),
+          'required'    => true,
+          'class'       => array( 'select2', 'gron_deliver_date' ),
+          'clear'       => true,
+          'options'     => $this->get_delivery_days(),
+          'priority'    => ++$priority
+      );
+      $fields[ 'gron_deliver_date_' . $author_id] = $date_filed;
+
+      $time_filed = array(
+          'type'        => 'select',
+          'label'       => __( 'Deliver Time', 'gron-custom' ),
+          'required'    => true,
+          'class'       => array( 'gron_deliver_time' ),
+          'clear'       => true,
+          'options'     => $this->get_delivery_times(),
+          'priority'    => ++$priority
+      );
+      $fields[ 'gron_deliver_time_' . $author_id ] = $time_filed;
+
+    }
 
     return $fields;
 
   }
 
   /**
-   * Get delivery dates
-   * @return Array options of delivery date filed
+   * Get Delivery Days
+   * @return Array options of Delivery Day filed
   */
-  private function get_delivery_dates() {
+  private function get_delivery_days() {
 
-    $options = array( "" => "Select Delivery Date" );
-    $shop_timings = $this->mysql_crud_operation->get_shop_timings( true );
+    $options = array( "" => "Select Delivery Day" );
+    $shop_timings = $this->mysql->get_shop_timings( true, 2 );
 
     foreach( $shop_timings as $timing ) {
 
@@ -142,7 +158,7 @@ class GRON_WooCommerce {
   private function get_delivery_times() {
 
     $options = array( "" => "Select Delivery Times" );
-    $slots = $this->mysql_crud_operation->get_delivery_slots();
+    $slots = $this->mysql->get_delivery_slots();
 
     foreach( $slots as $slot ) {
       $time_from = Utils::time_format( $slot->time_from );
@@ -218,20 +234,15 @@ class GRON_WooCommerce {
      */
      foreach( $vendor_ids as $vendor_id ) {
 
-       // Check if delivery manage by vendor
-
-       if( $this->is_delivery_manage_by_vendor() ) {
+       if( $this->is_delivery_manage_by_vendor( $vendor_id ) ) {
 
          // Delivery manage by vendor
-
-
+         $this->save_deliveriy_notification( $vendor_id, $order_id, 'vendor' );
 
        }else {
 
          // Delivery manage by admin
-
-         $delivery_boy_ids = $this->get_delivery_boy_ids_of_admin();
-
+         $this->save_deliveriy_notification( $vendor_id, $order_id, 'admin' );
 
        }
 
@@ -327,7 +338,7 @@ class GRON_WooCommerce {
     /**
     * Save Deliveries
     */
-    private function save_deliveries( $vendor_id, $order_id, $manage_by ) {
+    private function save_deliveriy_notification( $vendor_id, $order_id, $manage_by ) {
 
       $delivery_boy_ids = array();
 
@@ -353,7 +364,7 @@ class GRON_WooCommerce {
               'status'    => 'pending'
             );
 
-            $this->sqlite->insert_order_deliveries( $data );
+            $this->sqlite->insert_delivery_notification( $data );
 
         }
       }else {
@@ -366,15 +377,16 @@ class GRON_WooCommerce {
           'status'    => 'No delivery boy!'
         );
 
-        $this->sqlite->insert_order_deliveries( $data );
+        $this->sqlite->insert_delivery_notification( $data );
       }
 
     }
 
     /**
     * Check if delivery manage by vendor
+    * @param Int $vendor_id ID of vendor
     */
-    private function is_delivery_manage_by_vendor() {
+    private function is_delivery_manage_by_vendor( $vendor_id ) {
 
       return Utils::is_delivery_by_seller() &&
              Utils::is_delivery_by_me( $vendor_id );
