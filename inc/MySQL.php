@@ -246,11 +246,12 @@ class MySQL {
   /**
     * Has data in Delivery Slots
     *
+    * @param Int $user_id ID of the user
     * @return NULL|Boolean
   */
-  public function count_delivery_slots() {
+  public function count_delivery_slots( $user_id ) {
 
-    $sql = "SELECT COUNT(*) FROM {$this->delivery_slots_tb_name}";
+    $sql = "SELECT COUNT(*) FROM {$this->delivery_slots_tb_name} WHERE user_id={$user_id}";
     $result = $this->db->get_var( $sql );
 
     return $result;
@@ -278,7 +279,6 @@ class MySQL {
     );
 
     return $insert;
-
 
   }
 
@@ -338,12 +338,11 @@ class MySQL {
     /**
      * get delivery slots
      *
+     * @param Int $user_id ID of the user
      * @version 2.0.3
      * @return NULL|Array
     */
-    public function get_delivery_slots() {
-
-      $user_id = $this->current_user_id;
+    public function get_delivery_slots( $user_id ) {
 
       $sql = "SELECT * FROM {$this->delivery_slots_tb_name} WHERE user_id={$user_id}";
       $results = $this->db->get_results( $sql );

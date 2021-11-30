@@ -79,17 +79,24 @@ class GRON_WooCommerce {
 
     $get_carts = $this->wc->cart->get_cart();
     $priority = 200;
+    $vendor_ids = array();
 
     foreach ( $get_carts as $cart_item_key => $cart_item ) {
-
       $product_id = $cart_item['product_id'];
       $author_id = get_post_field( 'post_author', $product_id );
+      array_push( $vendor_ids, $author_id );
+    }
 
-      $store_name = get_user_meta( $author_id, 'store_name' )[0];
+    // remove duplicates
+    $vendor_ids = array_unique( $vendor_ids );
+
+    foreach ( $vendor_ids as $vendor_id ) {
+
+      $store_name = get_user_meta( $vendor_id, 'store_name' )[0];
 
       $collection_type_field = array(
           'type'        => 'radio',
-          'label'       => sprintf( '<span class="gron_cp_store_name">%1$s</span> %2$s', $store_name, __( 'Collection Type from', 'gron-custom' ) ),
+          'label'       => sprintf( '<span class="gron_cp_store_name">%1$s</span> %2$s', $store_name, __( 'Collection Type:', 'gron-custom' ) ),
           'required'    => true,
           'class'       => array( 'gron_collection_type' ),
           'clear'       => true,
@@ -99,29 +106,29 @@ class GRON_WooCommerce {
           ),
           'priority'    => ++$priority
       );
-      $fields[ 'gron_collection_type_' . $author_id ] = $collection_type_field;
+      $fields[ 'gron_collection_type_' . $vendor_id ] = $collection_type_field;
 
       $date_filed = array(
           'type'        => 'select',
-          'label'       => __( 'Deliver Date', 'gron-custom' ),
+          'label'       => __( 'Deliver Date:', 'gron-custom' ),
           'required'    => true,
-          'class'       => array( 'select2', 'gron_deliver_date' ),
+          'class'       => array( 'select2', 'gron_deliver_day' ),
           'clear'       => true,
-          'options'     => $this->get_delivery_days(),
+          'options'     => $this->get_delivery_days( $vendor_id ),
           'priority'    => ++$priority
       );
-      $fields[ 'gron_deliver_date_' . $author_id] = $date_filed;
+      $fields[ 'gron_deliver_day_' . $vendor_id ] = $date_filed;
 
       $time_filed = array(
           'type'        => 'select',
-          'label'       => __( 'Deliver Time', 'gron-custom' ),
+          'label'       => __( 'Deliver Time:', 'gron-custom' ),
           'required'    => true,
           'class'       => array( 'gron_deliver_time' ),
           'clear'       => true,
-          'options'     => $this->get_delivery_times(),
+          'options'     => $this->get_delivery_times( $vendor_id ),
           'priority'    => ++$priority
       );
-      $fields[ 'gron_deliver_time_' . $author_id ] = $time_filed;
+      $fields[ 'gron_deliver_time_' . $vendor_id ] = $time_filed;
 
     }
 
@@ -131,12 +138,13 @@ class GRON_WooCommerce {
 
   /**
    * Get Delivery Days
+   * @param Int $vendor_id ID of the vendor
    * @return Array options of Delivery Day filed
   */
-  private function get_delivery_days() {
+  private function get_delivery_days( $vendor_id ) {
 
     $options = array( "" => "Select Delivery Day" );
-    $shop_timings = $this->mysql->get_shop_timings( true, 2 );
+    $shop_timings = $this->mysql->get_shop_timings( true, $vendor_id );
 
     foreach( $shop_timings as $timing ) {
 
@@ -153,12 +161,13 @@ class GRON_WooCommerce {
 
   /**
    * Get delivery times
+   * @param Int $vendor_id ID of the vendor
    * @return Array options of delivery time filed
   */
-  private function get_delivery_times() {
+  private function get_delivery_times( $vendor_id ) {
 
     $options = array( "" => "Select Delivery Times" );
-    $slots = $this->mysql->get_delivery_slots();
+    $slots = $this->mysql->get_delivery_slots( $vendor_id );
 
     foreach( $slots as $slot ) {
       $time_from = Utils::time_format( $slot->time_from );
@@ -179,20 +188,28 @@ class GRON_WooCommerce {
 
   function gron_custom_checkout_field_update_order_meta( $order_id ) {
 
-      $collection_type = esc_sql( $_POST['gron_collection_type'] );
-      $deliver_date = esc_sql( $_POST['gron_deliver_date'] );
-      $deliver_time = esc_sql( $_POST['gron_deliver_time'] );
+      $order = wc_get_order( $order_id );
 
-      if ( ! empty( $collection_type ) ) {
-          update_post_meta( $order_id, 'gron_collection_type', sanitize_text_field( $collection_type ) );
-      }
+      $vendor_ids = $this->get_vendor_ids( $order_id );
 
-      if ( ! empty( $deliver_date ) ) {
-          update_post_meta( $order_id, 'gron_deliver_date', sanitize_text_field( $deliver_date ) );
-      }
+      foreach( $vendor_ids as $vendor_id ) {
 
-      if ( ! empty( $deliver_time ) ) {
-          update_post_meta( $order_id, 'gron_deliver_time', sanitize_text_field( $deliver_time ) );
+        $collection_type = esc_sql( $_POST[ 'gron_collection_type_' . $vendor_id ] );
+        $deliver_date = esc_sql( $_POST[ 'gron_deliver_day_' . $vendor_id ] );
+        $deliver_time = esc_sql( $_POST[ 'gron_deliver_time_' . $vendor_id ] );
+
+        if ( ! empty( $collection_type ) ) {
+            update_post_meta( $order_id, 'gron_collection_type_' . $vendor_id, sanitize_text_field( $collection_type ) );
+        }
+
+        if ( ! empty( $deliver_date ) ) {
+            update_post_meta( $order_id, 'gron_deliver_day_' . $vendor_id, sanitize_text_field( $deliver_date ) );
+        }
+
+        if ( ! empty( $deliver_time ) ) {
+            update_post_meta( $order_id, 'gron_deliver_time_' . $vendor_id, sanitize_text_field( $deliver_time ) );
+        }
+
       }
 
   }
@@ -204,14 +221,24 @@ class GRON_WooCommerce {
 
   function gron_custom_checkout_field_display_admin_order_meta( $order ) {
 
-    $collection_type = get_post_meta( $order->get_id(), 'gron_collection_type', true );
-    $deliver_date = get_post_meta( $order->get_id(), 'gron_deliver_date', true );
-    $deliver_time = get_post_meta( $order->get_id(), 'gron_deliver_time', true );
+    $vendor_ids = $this->get_vendor_ids( $order );
 
-    echo '<h3 style="color: #17a2b8;border-bottom: 1px solid #ccc;font-weight: 500;font-size: 13px;padding-bottom: 11px;">Delivery Details:</h3>';
-    echo '<p><strong>'.__('Collection Type').':</strong> ' . Utils::underscore_to_capitalize( $collection_type ) . '</p>';
-    echo '<p><strong>'.__('Deliver Date').':</strong> ' . ucfirst( $deliver_date ) . '</p>';
-    echo '<p><strong>'.__('Deliver Time').':</strong> ' . $deliver_time . '</p>';
+    foreach( $vendor_ids as $vendor_id ) {
+
+      $collection_type = get_post_meta( $order->get_id(), 'gron_collection_type_' . $vendor_id, true );
+      $deliver_date = get_post_meta( $order->get_id(), 'gron_deliver_day_' . $vendor_id, true );
+      $deliver_time = get_post_meta( $order->get_id(), 'gron_deliver_time_' . $vendor_id, true );
+
+      $store_name = get_user_meta( $vendor_id, 'store_name' )[0];
+
+      echo '<h2>' . $store_name .'</h2>';
+      echo '<h3 style="color: #17a2b8;border-bottom: 1px solid #ccc;font-weight: 500;font-size: 13px;padding-bottom: 11px;">Delivery Details:</h3>';
+      echo '<p><strong>'.__('Collection Type').':</strong> ' . Utils::underscore_to_capitalize( $collection_type ) . '</p>';
+      echo '<p><strong>'.__('Deliver Date').':</strong> ' . ucfirst( $deliver_date ) . '</p>';
+      echo '<p><strong>'.__('Deliver Time').':</strong> ' . $deliver_time . '</p>';
+
+    }
+
   }
 
   /**

@@ -163,6 +163,8 @@ jQuery(document).ready(function($) {
     })
     .done( function (res) {
 
+      console.log( res );
+
       if(res) {
 
         var resObj = JSON.parse( res );

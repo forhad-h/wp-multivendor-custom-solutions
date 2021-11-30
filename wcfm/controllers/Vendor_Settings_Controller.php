@@ -65,7 +65,7 @@ class Vendor_Settings_Controller {
 			$row = $this->mysql->get_delivery_slot_by_id( $this->wpdb->insert_id );
 
 			$data = array(
-				'count_slots' => $this->mysql->count_delivery_slots(),
+				'count_slots' => $this->mysql->count_delivery_slots( $row->user_id ),
 				'info' => array(
 					'slot_id' => $row->slot_id,
 					'raw' => array(

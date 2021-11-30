@@ -12,6 +12,9 @@
 .gron_collection_type .woocommerce-input-wrapper input[type=radio] {
   display: none;
 }
+.woocommerce form .form-row.gron_collection_type .woocommerce-input-wrapper label {
+  display: inline-block;
+}
 .gron_collection_type .woocommerce-input-wrapper label {
   display: inline-block;
   background-color: #eee;
@@ -30,21 +33,21 @@
   background-color: #3AB57B;
   color: #fff;
 }
-.gron_collection_type .woocommerce-input-wrapper #gron_collection_type_deliver_to_home + label {
+.gron_collection_type .woocommerce-input-wrapper input[value=deliver_to_home] + label {
   margin-left: 3px;
 }
 
-#gron_deliver_date_field,
-#gron_deliver_time_field {
+.gron_deliver_day,
+.gron_deliver_time {
   width: 45%;
   display: inline-block;
 }
-#gron_deliver_time_field {
+.woocommerce form .form-row.gron_deliver_time {
   margin-left: 5%;
 }
 
-#gron_deliver_date,
-#gron_deliver_time {
+.gron_deliver_day select,
+.gron_deliver_time select {
   border: 1px solid #ccc;
   padding: 3px 16px;
   border-radius: 0;

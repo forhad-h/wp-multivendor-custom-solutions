@@ -8,7 +8,7 @@ $vendor_id = get_current_user_id();
 
 ?>
 <input type="hidden" id="gron-count-shop-timings" value="<?php echo $mysql->count_shop_timings(); ?>" />
-<input type="hidden" id="gron-count-delivery-slots" value="<?php echo $mysql->count_delivery_slots(); ?>" />
+<input type="hidden" id="gron-count-delivery-slots" value="<?php echo $mysql->count_delivery_slots( $vendor_id ); ?>" />
 
 <div class="collapse wcfm-collapse" id="gron-vendor-settings">
 
@@ -142,7 +142,7 @@ $vendor_id = get_current_user_id();
                 <?php
 
                   $day_names = array( 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' );
-                  $shop_timings = $mysql->get_shop_timings();
+                  $shop_timings = $mysql->get_shop_timings( false, $vendor_id );
 
                 ?>
 
@@ -255,7 +255,7 @@ $vendor_id = get_current_user_id();
                 </tr>
 
                 <?php
-                  $delivery_slots = $mysql->get_delivery_slots();
+                  $delivery_slots = $mysql->get_delivery_slots( $vendor_id );
                   $i = 0;
                   foreach( $delivery_slots as $slot ) {
                     $i++;

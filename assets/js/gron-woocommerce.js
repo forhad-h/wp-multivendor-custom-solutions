@@ -1,15 +1,16 @@
 !( function($) {
 
-  /* Collection Type */
-  var collectionTypeLabelElms = $('#gron_collection_type_field .woocommerce-input-wrapper label');
-
-  var deliverToHomeRadioElm = $('#gron_collection_type_deliver_to_home');
+  /* Default collection type selection */
+  var deliverToHomeRadioElm = $('input[value=deliver_to_home]');
 
   deliverToHomeRadioElm.prop( 'checked', true );
   deliverToHomeRadioElm.next( 'label' ).addClass( 'active' );
 
+  /* Collection Type */
+  var collectionTypeLabelElms = $('.gron_collection_type .woocommerce-input-wrapper label');
+
   collectionTypeLabelElms.on( 'click', function() {
-    collectionTypeLabelElms.removeClass( 'active' );
+    $(this).siblings().removeClass( 'active' );
     $(this).addClass( 'active' );
   });
 
