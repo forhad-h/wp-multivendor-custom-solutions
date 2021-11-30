@@ -15,9 +15,13 @@ class MySQL {
   /** @var String $delivery_slots_tb_name Name of the table, which stores delivery slot data*/
   private $delivery_slots_tb_name;
 
+  /** @var Int $current_user_id ID of the current user */
+  private $current_user_id;
+
   public function __construct() {
     global $wpdb;
     $this->db = $wpdb;
+    $this->current_user_id = get_current_user_id();
     $this->shop_timings_tb_name    = $wpdb->prefix . 'gron_shop_timings';
     $this->delivery_slots_tb_name  = $wpdb->prefix . 'gron_delivery_slots';
   }
@@ -53,11 +57,6 @@ class MySQL {
 
       foreach( $queries as $query ) {
         dbDelta( $query );
-      }
-
-      // insert initial values for shop timings
-      if( !$this->count_shop_timings( false ) ) {
-        $this->insert_shop_timings();
       }
 
     }catch( Exception $e) {
@@ -114,20 +113,36 @@ class MySQL {
   }
 
   /**
-   * Insert default value to shop timings
+   * update shop timings
    *
+   * @param Array $data
    * @version 2.0.1
-   * @return NULL
+   * @return NULL|Boolean
   */
-  private function insert_shop_timings() {
-    $days = array( 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' );
+  public function insert_shop_timing( $data ) {
 
-    foreach( $days as $day ) {
+    $user_id = $this->current_user_id;
+    $day_name = esc_sql( $data['day_name'] );
+    $start_time = esc_sql( $data['start_time'] );
+    $end_time = esc_sql( $data['end_time'] );
+    $is_active = $data['is_active'] !== 'true' ? false : true;
 
-      $this->db->insert( $this->shop_timings_tb_name, array(
-        'day_name' => $day
-      ) );
+    try {
+      $insert = $this->db->insert(
+        $this->shop_timings_tb_name,
+        array(
+          'user_id' => $user_id,
+          'day_name' => $day_name,
+          'start_time' => $start_time,
+          'end_time' => $end_time,
+          'is_active' => $is_active
+        )
+      );
 
+      return $insert;
+
+    }catch( Exception $e ) {
+      $this->print_error( 'not-inserted', 'shop timing not inserted!' );
     }
 
   }
@@ -135,15 +150,17 @@ class MySQL {
   /**
    * update shop timings
    *
+   * @param Array $data
    * @version 2.0.1
    * @return NULL|Boolean
   */
   public function update_shop_timing( $data ) {
 
+    $user_id = $this->current_user_id;
+    $day_name = esc_sql( $data['day_name'] );
     $start_time = esc_sql( $data['start_time'] );
     $end_time = esc_sql( $data['end_time'] );
-    $is_active = esc_sql( $data['is_active'] );
-    $day_name = esc_sql( $data['day_name'] );
+    $is_active = $data['is_active'] !== 'true' ? false : true;
 
     try {
       $update = $this->db->update(
@@ -151,9 +168,10 @@ class MySQL {
         array(
           'start_time' => $start_time,
           'end_time' => $end_time,
-          'is_active' => $is_active == 'true' ? true : false
+          'is_active' => $is_active
         ),
         array(
+          'user_id' => $user_id,
           'day_name' => $day_name
         )
       );
@@ -175,13 +193,34 @@ class MySQL {
   public function get_shop_timings( $active_only = false ) {
 
     $sql = "SELECT * FROM {$this->shop_timings_tb_name}";
+    $data = array();
 
     if( $active_only ) {
       $sql .= " WHERE is_active=1";
     }
 
-    $result = $this->db->get_results( $sql );
-    return $result;
+    $results = $this->db->get_results( $sql );
+
+    foreach( $results as $result ) {
+      $data[$result->day_name] = $result;
+    }
+
+    return $data;
+  }
+
+  /**
+   * Check if shop timing exists
+   *
+   * @version 2.1.2
+   * @return Boolean
+  */
+  public function has_shop_timing( $day_name ) {
+
+    $sql = "SELECT timing_id FROM {$this->shop_timings_tb_name} WHERE user_id={$this->current_user_id} AND day_name='{$day_name}'";
+
+    $result = $this->db->get_var( $sql );
+
+    return !$result ? false : true;
   }
 
   /**
@@ -225,14 +264,16 @@ class MySQL {
   */
   public function insert_delivery_slot( $data ) {
 
+    $user_id   = $this->current_user_id;
     $time_from = esc_sql( $data['time_from'] );
     $time_to = esc_sql( $data['time_to'] );
 
     $insert = $this->db->insert(
         $this->delivery_slots_tb_name,
         array(
+          'user_id'   => $user_id,
           'time_from' => $time_from,
-          'time_to' => $time_to
+          'time_to'   => $time_to
         )
     );
 
@@ -249,9 +290,10 @@ class MySQL {
     */
     public function update_delivery_slot( $data ) {
 
-      $slot_id = esc_sql( $data['slot_id'] );
+      $user_id   = $this->current_user_id;
+      $slot_id   = esc_sql( $data['slot_id'] );
       $time_from = esc_sql( $data['time_from'] );
-      $time_to = esc_sql( $data['time_to'] );
+      $time_to   = esc_sql( $data['time_to'] );
 
       $update = $this->db->update(
           $this->delivery_slots_tb_name,
@@ -260,7 +302,8 @@ class MySQL {
             'time_to' => $time_to
           ),
           array(
-            'slot_id' => $slot_id
+            'slot_id' => $slot_id,
+            'user_id' => $user_id
           )
       );
 
@@ -277,10 +320,13 @@ class MySQL {
     */
     public function delete_delivery_slot( $slot_id ) {
 
+      $user_id = $this->current_user_id;
+
       $delete = $this->db->delete(
         $this->delivery_slots_tb_name,
         array(
-          'slot_id' => $slot_id
+          'slot_id' => $slot_id,
+          'user_id' => $user_id
         )
       );
 
@@ -297,7 +343,9 @@ class MySQL {
     */
     public function get_delivery_slots() {
 
-      $sql = "SELECT * FROM {$this->delivery_slots_tb_name}";
+      $user_id = $this->current_user_id;
+
+      $sql = "SELECT * FROM {$this->delivery_slots_tb_name} WHERE user_id={$user_id}";
       $results = $this->db->get_results( $sql );
 
       return $results;
@@ -312,7 +360,9 @@ class MySQL {
     */
     public function get_delivery_slot_by_id( $slot_id ) {
 
-      $sql = "SELECT * FROM {$this->delivery_slots_tb_name} WHERE slot_id=$slot_id";
+      $user_id = $this->current_user_id;
+
+      $sql = "SELECT * FROM {$this->delivery_slots_tb_name} WHERE slot_id={$slot_id} AND user_id={$user_id}";
 
       $result = $this->db->get_row( $sql );
 

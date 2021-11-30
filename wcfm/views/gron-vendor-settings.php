@@ -141,20 +141,21 @@ $vendor_id = get_current_user_id();
                 <tbody>
                 <?php
 
+                  $day_names = array( 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' );
                   $shop_timings = $mysql->get_shop_timings();
 
                 ?>
 
                 <?php
-                  foreach( $shop_timings as $timing ):
-                    $day = esc_html($timing->day_name);
-                    $start_time =  esc_attr($timing->start_time);
-                    $end_time =  esc_attr($timing->end_time);
-                    $is_active =  esc_attr($timing->is_active);
+                  foreach( $day_names as $day_name ):
+                    $timing     = $shop_timings[$day_name];
+                    $start_time = !$timing->start_time ? null : esc_attr($timing->start_time);
+                    $end_time   = !$timing->end_time ? null : esc_attr($timing->end_time);
+                    $is_active  = !$timing->is_active ? false : esc_attr($timing->is_active);
                 ?>
                   <tr class="gron_single_titming">
                     <td><input type="checkbox" class="wcfm-checkbox is_active" <?php echo $is_active ? 'checked' : ''; ?>></td>
-                    <td class="day_name"><?php echo ucfirst( $day ); ?></td>
+                    <td class="day_name"><?php echo $day_name; ?></td>
                     <td><input type="time" class="start_time" value="<?php echo $start_time; ?>" /></td>
                     <td><input type="time" class="end_time" value="<?php echo $end_time; ?>" /></td>
                   </tr>

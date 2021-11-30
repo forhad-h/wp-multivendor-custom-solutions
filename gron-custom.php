@@ -3,7 +3,7 @@
   Plugin Name: GRON Custom Solutions
   Description: Functionality Extention  on top of WCFM
   Author: Forhad Hosain
-  Version: 2.0.8
+  Version: 2.1.2
   Text Domain: gron-custom
   Domain Path: /languages
 */

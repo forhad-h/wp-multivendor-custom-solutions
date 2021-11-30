@@ -29,9 +29,23 @@ class Vendor_Settings_Controller {
   */
   public function update_shop_timings( $data_array ) {
 
-
 		foreach( $data_array as $data ) {
-			$update = $this->mysql->update_shop_timing( $data );
+
+			$day_name = esc_sql( $data['day_name'] );
+			$has_shop_timing = $this->mysql->has_shop_timing( $day_name );
+
+			if( !$has_shop_timing ) {
+
+				// Insert if no entry for the specific shop timing
+				$update = $this->mysql->insert_shop_timing( $data );
+
+			}else {
+
+				// Update if the shop timeing exists
+				$update = $this->mysql->update_shop_timing( $data );
+
+			}
+
 		}
 
 		echo $this->mysql->count_shop_timings();
