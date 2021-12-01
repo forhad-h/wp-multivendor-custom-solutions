@@ -57,11 +57,9 @@ class Utils {
 
     $current_user = wp_get_current_user();
 
-    $allowed_roles = array( 'administrator' );
+    $is_admin = in_array( 'administrator', $current_user->roles );
 
-    $is_allowed = array_intersect( $current_user->roles, $allowed_roles);
-
-    return !$is_allowed ? false : true;
+    return !$is_admin ? false : true;
 
   }
 
@@ -144,6 +142,18 @@ class Utils {
       else return $time_limit[0];
 
     }
+
+  }
+
+  /**
+  * Get current user role
+  * @return String role of the user
+  */
+  public static function current_user_role() {
+
+    $current_user = wp_get_current_user();
+
+    return $current_user->roles[0];
 
   }
 

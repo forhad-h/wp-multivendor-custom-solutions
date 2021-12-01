@@ -49,8 +49,9 @@ class Styles_And_Scripts {
     wp_enqueue_script( 'gron-pusher-js', GRON_DIR_URI . 'assets/js/services/pusher.js', array( 'jquery' ), GRON_VERSION, true );
 
     wp_localize_script( 'gron-pusher-js', 'pusherObj', array(
-      'key' => $_ENV[ 'PUSHER_KEY' ],
-      'cluster' => $_ENV[ 'PUSHER_CLUSTER']
+      'key'      => $_ENV[ 'PUSHER_KEY' ],
+      'cluster'  => $_ENV[ 'PUSHER_CLUSTER'],
+      'userRole' => Utils::current_user_role()
     ) );
 
     wp_enqueue_script( 'gron-main-js', GRON_DIR_URI . 'assets/js/main.js', array( 'jquery' ), GRON_VERSION, true );

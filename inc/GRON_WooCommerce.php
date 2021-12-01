@@ -11,6 +11,7 @@ defined('ABSPATH') or exit;
 use GRON\MySQL;
 use GRON\SQLite;
 use GRON\Utils;
+use GRON\Services;
 
 /**
 * GRON_WooCommerce - Woocommerce Implementation in GRON
@@ -188,30 +189,29 @@ class GRON_WooCommerce {
 
   function gron_custom_checkout_field_update_order_meta( $order_id ) {
 
+    $order = wc_get_order( $order_id );
 
-      $order = wc_get_order( $order_id );
+    $vendor_ids = $this->get_vendor_ids( $order );
 
-      $vendor_ids = $this->get_vendor_ids( $order );
+    foreach( $vendor_ids as $vendor_id ) {
 
-      foreach( $vendor_ids as $vendor_id ) {
+      $collection_type = esc_sql( $_POST[ 'gron_collection_type_' . $vendor_id ] );
+      $deliver_day = esc_sql( $_POST[ 'gron_deliver_day_' . $vendor_id ] );
+      $deliver_time = esc_sql( $_POST[ 'gron_deliver_time_' . $vendor_id ] );
 
-        $collection_type = esc_sql( $_POST[ 'gron_collection_type_' . $vendor_id ] );
-        $deliver_day = esc_sql( $_POST[ 'gron_deliver_day_' . $vendor_id ] );
-        $deliver_time = esc_sql( $_POST[ 'gron_deliver_time_' . $vendor_id ] );
-
-        if ( ! empty( $collection_type ) ) {
-            update_post_meta( $order_id, 'gron_collection_type_' . $vendor_id, sanitize_text_field( $collection_type ) );
-        }
-
-        if ( ! empty( $deliver_day ) ) {
-            update_post_meta( $order_id, 'gron_deliver_day_' . $vendor_id, sanitize_text_field( $deliver_day ) );
-        }
-
-        if ( ! empty( $deliver_time ) ) {
-            update_post_meta( $order_id, 'gron_deliver_time_' . $vendor_id, sanitize_text_field( $deliver_time ) );
-        }
-
+      if ( ! empty( $collection_type ) ) {
+          update_post_meta( $order_id, 'gron_collection_type_' . $vendor_id, sanitize_text_field( $collection_type ) );
       }
+
+      if ( ! empty( $deliver_day ) ) {
+          update_post_meta( $order_id, 'gron_deliver_day_' . $vendor_id, sanitize_text_field( $deliver_day ) );
+      }
+
+      if ( ! empty( $deliver_time ) ) {
+          update_post_meta( $order_id, 'gron_deliver_time_' . $vendor_id, sanitize_text_field( $deliver_time ) );
+      }
+
+    }
 
   }
 
@@ -265,18 +265,19 @@ class GRON_WooCommerce {
 
        $collection_type = get_post_meta( $order_id, 'gron_collection_type_' . $vendor_id, true );
 
+       // No delivery notification for self collection type
        if( $collection_type === 'self_collection' ) return;
 
        // Delivery notification process
        if( $this->is_delivery_manage_by_vendor( $vendor_id ) ) {
 
          // Delivery manage by vendor
-         $this->save_deliveriy_notification( $vendor_id, $order_id, 'vendor' );
+         $this->deliveriy_notification_process( $vendor_id, $order_id, 'vendor' );
 
        }else {
 
          // Delivery manage by admin
-         $this->save_deliveriy_notification( $vendor_id, $order_id, 'admin' );
+         $this->deliveriy_notification_process( $vendor_id, $order_id, 'admin' );
 
        }
 
@@ -323,108 +324,126 @@ class GRON_WooCommerce {
   }
 
   /**
-   * Get vendor's devlivery boy IDs
-   * @param Int $vendor_id ID of the vendor
-   * @return NULL|Array Arrays of vendor ids
-   */
-   private function get_delivery_boy_ids_of_vendor( $vendor_id ) {
+  * Get vendor's devlivery boy IDs
+  * @param Int $vendor_id ID of the vendor
+  * @return NULL|Array Arrays of vendor ids
+  */
+  private function get_delivery_boy_ids_of_vendor( $vendor_id ) {
 
-     $delivery_boy_role = 'wcfm_delivery_boy';
+   $delivery_boy_role = 'wcfm_delivery_boy';
 
-     $args = array(
-       'role__in'     => array( $delivery_boy_role ),
-       'orderby'      => 'ID',
-       'order'        => 'ASC',
-       'meta_key'     => '_wcfm_vendor',
-       'meta_value'   => $vendor_id,
-       'fields'       => "ID"
-      );
+   $args = array(
+     'role__in'     => array( $delivery_boy_role ),
+     'orderby'      => 'ID',
+     'order'        => 'ASC',
+     'meta_key'     => '_wcfm_vendor',
+     'meta_value'   => $vendor_id,
+     'fields'       => "ID"
+    );
 
-     $delivery_boy_ids = get_users( $args );
+   $delivery_boy_ids = get_users( $args );
 
-     return $delivery_boy_ids;
+   return $delivery_boy_ids;
 
-   }
+  }
 
-   /**
-    * Get vendor's devlivery boy IDs
-    * @return NULL|Array Arrays of vendor ids
-    */
-    private function get_delivery_boy_ids_of_admin() {
+  /**
+  * Get vendor's devlivery boy IDs
+  * @return NULL|Array Arrays of vendor ids
+  */
+  private function get_delivery_boy_ids_of_admin() {
 
-      $delivery_boy_role = 'wcfm_delivery_boy';
+    $delivery_boy_role = 'wcfm_delivery_boy';
 
-      $args = array(
-        'role__in'     => array( $delivery_boy_role ),
-        'orderby'      => 'ID',
-        'order'        => 'ASC',
-        'meta_key'     => '_gron_admin',
-        'meta_value'   => 'yes',
-        'fields'       => "ID"
-       );
+    $args = array(
+      'role__in'     => array( $delivery_boy_role ),
+      'orderby'      => 'ID',
+      'order'        => 'ASC',
+      'meta_key'     => '_gron_admin',
+      'meta_value'   => 'yes',
+      'fields'       => "ID"
+     );
 
-      $delivery_boy_ids = get_users( $args );
+    $delivery_boy_ids = get_users( $args );
 
-      return $delivery_boy_ids;
+    return $delivery_boy_ids;
+
+  }
+
+  /**
+  * Delivery Notification Process
+  *
+  * @param Int $vendor_id ID of the vendor
+  * @param Int $order_id ID of the order
+  * @param String $manage_by delivery manage by 'admin' or 'vendor'
+  */
+  private function deliveriy_notification_process( $vendor_id, $order_id, $manage_by ) {
+
+    $delivery_boy_ids = array();
+
+    if( $manage_by === 'vendor' ) {
+
+      $delivery_boy_ids = $this->get_delivery_boy_ids_of_vendor( $vendor_id );
+
+    }elseif( $manage_by === 'admin' ) {
+
+      $delivery_boy_ids = $this->get_delivery_boy_ids_of_admin();
 
     }
 
-    /**
-    * Save Deliveries
-    */
-    private function save_deliveriy_notification( $vendor_id, $order_id, $manage_by ) {
+    $data = array(
+      'manage_by' => $manage_by,
+      'vendor_id' => $vendor_id,
+      'order_id'  => $order_id,
+      'status'    => 'pending'
+    );
 
-      $delivery_boy_ids = array();
+    if( !empty( $delivery_boy_ids ) ) {
 
-      if( $manage_by === 'vendor' ) {
+      // If found delivery boys
+      foreach( $delivery_boy_ids as $boy_id ) {
 
-        $delivery_boy_ids = $this->get_delivery_boy_ids_of_vendor( $vendor_id );
+        $data['boy_id'] = $boy_id;
 
-      }elseif( $manage_by === 'admin' ) {
-
-        $delivery_boy_ids = $this->get_delivery_boy_ids_of_admin();
-
-      }
-
-      if( !empty( $delivery_boy_ids ) ) {
-        // If found delivery boys
-        foreach( $delivery_boy_ids as $boy_id ) {
-
-            $data = array(
-              'manage_by' => $manage_by,
-              'vendor_id' => $vendor_id,
-              'order_id'  => $order_id,
-              'boy_id'    => $boy_id,
-              'status'    => 'pending'
-            );
-
-            $this->sqlite->insert_delivery_notification( $data );
-
-        }
-      }else {
-        // If delivery boys not found
-        $data = array(
-          'manage_by' => $manage_by,
-          'vendor_id' => $vendor_id,
-          'order_id'  => $order_id,
-          'boy_id'    => null,
-          'status'    => 'No delivery boy!'
-        );
-
+        // save notification info
         $this->sqlite->insert_delivery_notification( $data );
+
+        // Notify delivery boy
+        Services::pusher()->trigger( 'delivery-boy', 'new-order', array(
+          'order_id'  => $order_id,
+          'boy_id' => $boy_id
+        ) );
+
       }
 
+    }else {
+
+      // If delivery boys not found
+      $data['boy_id'] = null;
+      $data['status_msg'] = 'No delivery boy!';
+
+      // save notification info
+      $this->sqlite->insert_delivery_notification( $data );
+
+      // Notify admin or vendor
+      Services::pusher()->trigger( $manage_by, 'new-order', array(
+        'order_id'  => $order_id,
+        'vendor_id' => $vendor_id
+      ) );
+
     }
 
-    /**
-    * Check if delivery manage by vendor
-    * @param Int $vendor_id ID of vendor
-    */
-    private function is_delivery_manage_by_vendor( $vendor_id ) {
+  }
 
-      return Utils::is_delivery_by_seller() &&
-             Utils::is_delivery_by_me( $vendor_id );
+  /**
+  * Check if delivery manage by vendor
+  * @param Int $vendor_id ID of vendor
+  */
+  private function is_delivery_manage_by_vendor( $vendor_id ) {
 
-    }
+    return Utils::is_delivery_by_seller() &&
+           Utils::is_delivery_by_me( $vendor_id );
+
+  }
 
 }

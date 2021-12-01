@@ -3,16 +3,51 @@
 
   $(document).ready( function() {
 
-/*    var pusher = new Pusher( pusherObj.key, {
+    // Initialize pusher
+    var pusher = new Pusher( pusherObj.key, {
       cluster: pusherObj.cluster
     });
 
-    var channel = pusher.subscribe('my-channel');
+    switch( pusherObj.userRole ) {
 
-    channel.bind('my-event', function(data) {
-      alert(JSON.stringify(data));
-    });
-*/
+      case 'administrator':
+
+        // initialize channel for 'admin'
+        var channel = pusher.subscribe('admin');
+
+        channel.bind('new-order', function( data ) {
+          console.log(JSON.stringify(data));
+        });
+
+        break;
+
+      case 'wcfm_vendor':
+
+        // initialize channel for 'vendor'
+        var channel = pusher.subscribe('vendor');
+
+        channel.bind('new-order', function( data ) {
+          console.log(JSON.stringify(data));
+        });
+
+        break;
+
+      case 'wcfm_delivery_boy':
+
+        // initialize channel for 'vendor'
+        var channel = pusher.subscribe('delivery_boy');
+
+        channel.bind('new-order', function( data ) {
+          console.log(JSON.stringify(data));
+        });
+
+        break;
+
+      default:
+        // do nothing for others
+        return;
+    }
+
   });
 
 })(jQuery)

@@ -2,10 +2,6 @@
 namespace GRON;
 defined( 'ABSPATH' ) or exit;
 
-/**
- * NOTE: NOT USED
-*/
-
 use GRON\SQLite;
 use WP_REST_Controller;
 use WP_REST_Server;

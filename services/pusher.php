@@ -2,6 +2,8 @@
 // prevent direct access
 defined( 'ABSPATH' ) or exit;
 
+// TODO:: remove it, implementation moved to Services class
+
 $options = array(
   'cluster' => $_ENV['PUSHER_CLUSTER'],
   'useTLS' => true
