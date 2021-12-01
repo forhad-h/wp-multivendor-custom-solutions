@@ -6,6 +6,7 @@ jQuery(document).ready( function($) {
     user_id: userId,
     get_for: 'delivery_boy',
   }
+
   // Render pending list
   data.status = 'pending';
   gron_delivery_notifications_ajax_request( $, data );
@@ -13,6 +14,7 @@ jQuery(document).ready( function($) {
   // Render accepted list
   data.status = 'accepted';
   gron_delivery_notifications_ajax_request( $, data );
+
 
 } );
 

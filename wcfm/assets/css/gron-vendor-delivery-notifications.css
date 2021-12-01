@@ -18,11 +18,11 @@
 
 .gron_table_wrapper {
   position: relative;
-  height: 191px;
+  height: 175px;
 }
 .gron_table_preloader {
   width: 100%;
-  height: 191px;
+  height: 175px;
   background: rgba(255,255,255,0.5);
   position: absolute;
   left: 0;

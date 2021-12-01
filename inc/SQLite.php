@@ -97,14 +97,14 @@ class SQLite {
 
   /**
   * Get delivery notifications
-  * @param Int $user_id Id of the user
+  * @param Int $user_id [Optional] Id of the user
   * @param Int $order_id [Optional] Id of the order
   * @param String $get_for Notifications for admin, vendor or delivery boy
   * @param String $status status of the notification pending, accepted etc.
   * @version 2.1.3
   * @return NULL|Array
   */
-  public function get_delivery_notifications( $user_id, $order_id = null, $get_for, $status ){
+  public function get_delivery_notifications( $user_id = null, $order_id = null, $get_for, $status ){
 
     $sql = "SELECT * FROM {$this->delivery_notifications} WHERE status='{$status}'";
 

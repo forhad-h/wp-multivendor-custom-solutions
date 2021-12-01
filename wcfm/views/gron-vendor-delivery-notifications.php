@@ -90,7 +90,7 @@ $current_user_id = get_current_user_id();
 
         <!-- collapsible -->
         <div class="page_collapsible" id="gron-dr-accepted">
-          <label class="wcfmfa fa-ellipsis-h"></label>
+          <label class="wcfmfa fa-user-check"></label>
           <?php _e('Accepted', 'gron-custom'); ?><span></span>
         </div>
 
