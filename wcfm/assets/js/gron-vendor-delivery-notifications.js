@@ -2,21 +2,17 @@ jQuery(document).ready( function($) {
 
   var userId = $( '#current-user-id' ).val();
 
-  // Render pending list
-  var dataForPending = {
+  var data = {
     user_id: userId,
-    get_for: 'delivery_boy',
-    status: 'pending'
+    get_for: 'vendor',
   }
-  gron_delivery_notifications_ajax_request( $, dataForPending );
+  // Render pending list
+  data.status = 'pending';
+  gron_delivery_notifications_ajax_request( $, data );
 
   // Render accepted list
-  var dataForAccepted = {
-    user_id: userId,
-    get_for: 'delivery_boy',
-    status: 'accepted'
-  }
-  gron_delivery_notifications_ajax_request( $, dataForAccepted );
+  data.status = 'accepted';
+  gron_delivery_notifications_ajax_request( $, data );
 
 } );
 
@@ -55,10 +51,6 @@ function gron_delivery_notifications_ajax_request( $, data ) {
 
         // Fill with response data
 
-        // set store name
-        rowClonedElm.find( '.store' )
-        .text( data.store_name );
-
         // set order ID
         rowClonedElm.find( '.order' )
         .find('a')
@@ -76,6 +68,21 @@ function gron_delivery_notifications_ajax_request( $, data ) {
         // set delivery day
         rowClonedElm.find( '.delivery_time' )
         .text( data.delivery_time );
+
+        // set status
+        rowClonedElm.find( '.status' )
+        .text( data.status_msg ? data.status_msg : data.status );
+
+        // set accepted by name
+        rowClonedElm.find( '.accepted_by' )
+        .find('a')
+        .text( data.accepted_by_name );
+
+        // set accepted by link
+        rowClonedElm.find( '.accepted_by' )
+        .find('a')
+        .attr( 'href', data.accepted_by_link );
+
 
         tableBodyElm.append( rowClonedElm );
 

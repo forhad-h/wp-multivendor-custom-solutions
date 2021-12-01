@@ -49,16 +49,29 @@ class REST_Controller extends WP_REST_Controller {
 
     foreach( $notifications as $notification ) {
 
-
-      //$user_data = get_userdata( $notification['vendor_id'] );
       $site_url = get_site_url();
       $vendor_id = $notification['vendor_id'];
       $order_id = $notification['order_id'];
+      $delivery_boy_id = $notification['boy_id'];
 
       $data_item['store_name'] = get_user_meta( $vendor_id, 'store_name', true );
 
       if( $get_for !== 'admin' ) {
+        // do not expose vendor manage URL for delivery boy and vendor
         $data_item['store_link'] = "{$site_url}/store-manager/vendors-manage/{$vendor_id}/";
+      }
+
+      if( $get_for === 'admin' || $get_for === 'vendor' ) {
+        $data_item['status'] = $notification['status'];
+        $data_item['status_msg'] = $notification['status_msg'];
+
+        if( $delivery_boy_id ) {
+          $user_data = get_userdata( $delivery_boy_id );
+
+          $data_item['accepted_by_name'] = $user_data->display_name;
+          $data_item['accepted_by_link'] = "{$site_url}/store-manager/delivery-boys-stats/{$delivery_boy_id}/";
+        }
+
       }
 
       $data_item['order_id'] = $order_id;

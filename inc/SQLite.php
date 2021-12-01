@@ -129,6 +129,7 @@ class SQLite {
         'vendor_id'  => $row['vendor_id'],
         'order_id'  => $row['order_id'],
         'boy_id'  => $row['boy_id'],
+        'status_msg'  => $row['status_msg'],
         'status'  => $row['status'],
         'created_at'  => $row['created_at'],
       );

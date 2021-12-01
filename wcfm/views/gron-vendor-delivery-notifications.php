@@ -3,12 +3,6 @@
 use GRON\MySQL;
 use GRON\Utils;
 
-global $wpdb, $WCFM, $WCFMmp;
-
-$wcfm_marketplace_options = $WCFMmp->wcfmmp_marketplace_options;
-
-$crud_opearation = new MySQL();
-
 $current_user_id = get_current_user_id();
 
 ?>
@@ -26,8 +20,6 @@ $current_user_id = get_current_user_id();
 	<div class="wcfm-collapse-content">
 
 	  <div id="wcfm_page_load"></div>
-
-		<?php do_action( 'before_gron_geo_routes' ); ?>
 
 		<div class="wcfm-container wcfm-top-element-container">
 			<h2><?php _e('GRON Delivery Requests', 'gron-custom' ); ?></h2>
@@ -54,27 +46,10 @@ $current_user_id = get_current_user_id();
               <table style="display:none;visibility:hidden;">
                 <tr id="gron-dr-pending-row-template">
 
-                  <td class="store"></td>
                   <td class="order"><a href="#"></a></td>
                   <td class="delivery_day"></td>
                   <td class="delivery_time"></td>
-                  <td>
-
-                    <a
-                      class="wcfm-action-icon icon-success"
-                      href="#"
-                    >
-                      <span class="wcfmfa fa-check text_tip" data-tip="Accept"></span>
-                    </a>
-
-                    <a
-                      class="wcfm-action-icon icon-danger"
-                      href="#"
-                    >
-                      <span class="wcfmfa fa-times text_tip" data-tip="Reject"></span>
-                    </a>
-
-                  </td>
+                  <td class="status"></td>
 
                 </tr>
               </table>
@@ -87,11 +62,10 @@ $current_user_id = get_current_user_id();
 
                   <thead>
                     <tr>
-                      <th>Store</th>
                       <th>Order</th>
                       <th>Delivery Day</th>
                       <th>Delivery Time</th>
-                      <th>Action</th>
+                      <th>Status</th>
                     </tr>
                   </thead>
 
@@ -99,11 +73,10 @@ $current_user_id = get_current_user_id();
 
                   <tfoot>
                     <tr>
-                      <th>Store</th>
                       <th>Order</th>
                       <th>Delivery Day</th>
                       <th>Delivery Time</th>
-                      <th>Action</th>
+                      <th>Status</th>
                     </tr>
                   </tfoot>
 
@@ -129,20 +102,10 @@ $current_user_id = get_current_user_id();
               <table style="display:none;visibility:hidden;">
                 <tr id="gron-dr-accepted-row-template">
 
-                  <td class="store"></td>
                   <td class="order"><a href="#"></a></td>
                   <td class="delivery_day"></td>
                   <td class="delivery_time"></td>
-                  <td>
-
-                    <a
-                      class="wcfm-action-icon icon-danger"
-                      href="#"
-                    >
-                      <span class="wcfmfa fa-times text_tip" data-tip="Reject"></span>
-                    </a>
-
-                  </td>
+                  <td class="accepted_by"><a href="#"></a></td>
 
                 </tr>
               </table>
@@ -155,11 +118,10 @@ $current_user_id = get_current_user_id();
 
                   <thead>
                     <tr>
-                      <th>Store</th>
                       <th>Order</th>
                       <th>Delivery Day</th>
                       <th>Delivery Time</th>
-                      <th>Action</th>
+                      <th>Accepted By</th>
                     </tr>
                   </thead>
 
@@ -167,11 +129,10 @@ $current_user_id = get_current_user_id();
 
                   <tfoot>
                     <tr>
-                      <th>Store</th>
                       <th>Order</th>
                       <th>Delivery Day</th>
                       <th>Delivery Time</th>
-                      <th>Action</th>
+                      <th>Accepted By</th>
                     </tr>
                   </tfoot>
 
