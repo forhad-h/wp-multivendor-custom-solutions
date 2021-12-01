@@ -87,7 +87,7 @@ class Store_Manager {
 
       // create page for Delivery Requests
       new Page(array(
-        'label' => __( 'GRON - Requests','gron-custom' ),
+        'label' => __( 'GRON - Deliveries','gron-custom' ),
         'icon' => 'inbox',
         'endpoint' => GRON_BOY_ENDPOINT_DELIVERY_REQUEST,
         'slug' => GRON_BOY_ENDPOINT_DELIVERY_REQUEST,

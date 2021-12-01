@@ -25,6 +25,11 @@ use GRON\Styles_And_Scripts;
 use GRON\REST_Controller;
 use GRON\WCFM\Store_Manager;
 
+/* TODO: Security Issue
+  Single vendor management exposed to Delivery boy
+  Example Link: http://localhost:8080/store-manager/vendors-manage/2/
+*/
+
 register_activation_hook( __FILE__, function() {
   new Activation();
 } );

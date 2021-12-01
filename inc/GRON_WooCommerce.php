@@ -92,7 +92,7 @@ class GRON_WooCommerce {
 
     foreach ( $vendor_ids as $vendor_id ) {
 
-      $store_name = get_user_meta( $vendor_id, 'store_name' )[0];
+      $store_name = get_user_meta( $vendor_id, 'store_name', true );
 
       $collection_type_field = array(
           'type'        => 'radio',
@@ -196,15 +196,15 @@ class GRON_WooCommerce {
       foreach( $vendor_ids as $vendor_id ) {
 
         $collection_type = esc_sql( $_POST[ 'gron_collection_type_' . $vendor_id ] );
-        $deliver_date = esc_sql( $_POST[ 'gron_deliver_day_' . $vendor_id ] );
+        $deliver_day = esc_sql( $_POST[ 'gron_deliver_day_' . $vendor_id ] );
         $deliver_time = esc_sql( $_POST[ 'gron_deliver_time_' . $vendor_id ] );
 
         if ( ! empty( $collection_type ) ) {
             update_post_meta( $order_id, 'gron_collection_type_' . $vendor_id, sanitize_text_field( $collection_type ) );
         }
 
-        if ( ! empty( $deliver_date ) ) {
-            update_post_meta( $order_id, 'gron_deliver_day_' . $vendor_id, sanitize_text_field( $deliver_date ) );
+        if ( ! empty( $deliver_day ) ) {
+            update_post_meta( $order_id, 'gron_deliver_day_' . $vendor_id, sanitize_text_field( $deliver_day ) );
         }
 
         if ( ! empty( $deliver_time ) ) {
@@ -229,14 +229,14 @@ class GRON_WooCommerce {
     foreach( $vendor_ids as $vendor_id ) {
 
       $collection_type = get_post_meta( $order->get_id(), 'gron_collection_type_' . $vendor_id, true );
-      $deliver_date = get_post_meta( $order->get_id(), 'gron_deliver_day_' . $vendor_id, true );
+      $deliver_day = get_post_meta( $order->get_id(), 'gron_deliver_day_' . $vendor_id, true );
       $deliver_time = get_post_meta( $order->get_id(), 'gron_deliver_time_' . $vendor_id, true );
 
-      $store_name = get_user_meta( $vendor_id, 'store_name' )[0];
+      $store_name = get_user_meta( $vendor_id, 'store_name', true );
 
       echo '<h3 style="color:#333;font-weight: 600;font-size: 15px;margin-bottom: 3px;">' . $store_name . '</h3>';
       echo '<p><strong>'.__('Collection Type').':</strong> ' . Utils::underscore_to_capitalize( $collection_type ) . '</p>';
-      echo '<p><strong>'.__('Deliver Date').':</strong> ' . ucfirst( $deliver_date ) . '</p>';
+      echo '<p><strong>'.__('Deliver Date').':</strong> ' . ucfirst( $deliver_day ) . '</p>';
       echo '<p><strong>'.__('Deliver Time').':</strong> ' . $deliver_time . '</p>';
 
     }
@@ -263,6 +263,11 @@ class GRON_WooCommerce {
      */
      foreach( $vendor_ids as $vendor_id ) {
 
+       $collection_type = get_post_meta( $order_id, 'gron_collection_type_' . $vendor_id, true );
+
+       if( $collection_type === 'self_collection' ) return;
+
+       // Delivery notification process
        if( $this->is_delivery_manage_by_vendor( $vendor_id ) ) {
 
          // Delivery manage by vendor

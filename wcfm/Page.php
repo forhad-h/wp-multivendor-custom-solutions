@@ -143,7 +143,11 @@ class Page {
 
       wp_enqueue_script( 'gron_map_implementation', GRON_DIR_URI . 'wcfm/assets/js/google-map-implementation.js' , array( 'gron_google_map' ), GRON_VERSION, true );
 
-      wp_localize_script('gron_map_implementation', 'wcfm', array( 'gronDirUri' => GRON_DIR_URI ) );
+      wp_localize_script(
+        'gron_map_implementation',
+        'wcfm',
+        array( 'gronDirUri' => GRON_DIR_URI )
+      );
 
     }
 
@@ -155,7 +159,18 @@ class Page {
         $deps = array('jquery', 'gron_map_implementation' );
       }
 
-  		wp_enqueue_script( 'gron_' . $this->slug . '_script', GRON_DIR_URI . 'wcfm/assets/js/' . $this->slug . '.js', $deps, GRON_VERSION, true );
+      $handle = 'gron_' . $this->slug . '_script';
+
+  		wp_enqueue_script( $handle, GRON_DIR_URI . 'wcfm/assets/js/' . $this->slug . '.js', $deps, GRON_VERSION, true );
+
+      wp_localize_script(
+        $handle,
+        'gron',
+        array(
+          'siteURL' => get_site_url(),
+          'nonce'   => wp_create_nonce( 'wp_rest' )
+        )
+      );
 
     }
 

@@ -83,7 +83,7 @@ class Utils {
   *
   * @return Boolean
   */
-  public function is_delivery_by_seller() {
+  public static function is_delivery_by_seller() {
 
     $setting = get_option( '_gron_delivery_by_seller' );
 
@@ -102,7 +102,7 @@ class Utils {
   * @param Int $vendor_id ID of the current vendor
   * @return Boolean
   */
-  public function is_delivery_by_me( $vendor_id ) {
+  public static function is_delivery_by_me( $vendor_id ) {
 
     $setting = get_user_meta( $vendor_id, '_gron_delivery_by_me' );
 
@@ -120,7 +120,7 @@ class Utils {
   * @param Int $vendor_id [Optional] ID of the current vendor
   * @return Int the time limit minutes
   */
-  public function get_dn_boradcast_time_limit( $vendor_id = null ) {
+  public static function get_dn_boradcast_time_limit( $vendor_id = null ) {
 
     $default_time_limit = 5; // Default time limit is 5 minute
 

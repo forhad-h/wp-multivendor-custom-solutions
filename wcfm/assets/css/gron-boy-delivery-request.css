@@ -1,4 +1,4 @@
-
+/* Common Styles */
 .icon-danger {
   color: #e85656;
 }
@@ -9,9 +9,32 @@
   color: #168916;
 }
 
+.gron_tab_wrap {
+  transition: 0.3s linear;
+}
 .wcfm-action-icon {
   text-align: center;
 }
+
+.gron_table_wrapper {
+  position: relative;
+  height: 191px;
+}
+.gron_table_preloader {
+  width: 100%;
+  height: 191px;
+  background: rgba(255,255,255,0.5);
+  position: absolute;
+  left: 0;
+  z-index: 9;
+  background-image: url(../images/table_preloader.png);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 div#wcfm-main-contentainer #gron-delivery-requests .gron_table [class*=" fa-"]:before {
   font-weight: 600;
 }

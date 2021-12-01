@@ -35,12 +35,13 @@ class SQLite {
 
     $queries = array(
       "CREATE TABLE {$this->delivery_notifications} (
-      	od_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+      	dn_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         manage_by TEXT NOT NULL,
       	vendor_id INTEGER NOT NULL,
       	order_id INTEGER NOT NULL,
       	boy_id INTEGER,
         status TEXT NOT NULL,
+        status_msg TEXT,
         created_at TEXT NOT NULL
       )",
     );
@@ -91,6 +92,49 @@ class SQLite {
     );
 
     return $this->pdo->lastInsertId();
+
+  }
+
+  /**
+  * Get delivery notifications
+  * @param Int $user_id Id of the user
+  * @param Int $order_id [Optional] Id of the order
+  * @param String $get_for Notifications for admin, vendor or delivery boy
+  * @param String $status status of the notification pending, accepted etc.
+  * @version 2.1.3
+  * @return NULL|Array
+  */
+  public function get_delivery_notifications( $user_id, $order_id = null, $get_for, $status ){
+
+    $sql = "SELECT * FROM {$this->delivery_notifications} WHERE status='{$status}'";
+
+    // query for admin
+    if( $get_for === 'admin' ) $sql .= " AND manage_by='admin'";
+
+    // query for vendor
+    elseif( $get_for === 'vendor' ) $sql .= " AND manage_by='vendor' AND vendor_id={$user_id}";
+
+    // query for delivery boy
+    elseif( $get_for === 'delivery_boy' ) $sql .= " AND boy_id={$user_id}";
+
+    // if order_id provided
+    if( $order_id ) $sql .= " AND order_id={$order_id}";
+
+    $stmt = $this->pdo->query( $sql );
+
+    $notifications = array();
+    while( $row = $stmt->fetch( \PDO::FETCH_ASSOC ) ) {
+      $notifications[] = array(
+        'manage_by'  => $row['manage_by'],
+        'vendor_id'  => $row['vendor_id'],
+        'order_id'  => $row['order_id'],
+        'boy_id'  => $row['boy_id'],
+        'status'  => $row['status'],
+        'created_at'  => $row['created_at'],
+      );
+    }
+
+    return $notifications;
 
   }
 
