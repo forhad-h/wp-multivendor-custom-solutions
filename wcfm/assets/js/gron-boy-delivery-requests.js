@@ -100,10 +100,16 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
 
 
         // Set the availability timer
+        // Reference - https://www.jqueryscript.net/time-clock/Minimal-Stopwatch-Timer-Plugin-For-jQuery.html
+        var availability_time = data.availability_time;
+
+        console.log( availability_time );
+
         rowClonedElm.find( '.timer' ).timer({
             action:'start',
-            duration: 60,
+            duration: availability_time ? availability_time : 1,
             countdown: true,
+            callback: function(){}
         });
 
         tableBodyElm.prepend( rowClonedElm );

@@ -3,6 +3,8 @@ namespace GRON;
 defined( 'ABSPATH' ) or exit;
 
 use GRON\SQLite;
+use GRON\Services;
+
 use WP_REST_Controller;
 use WP_REST_Server;
 use WP_REST_Response;
@@ -12,10 +14,15 @@ class REST_Controller extends WP_REST_Controller {
   /** @var SQLite $sqlite instance of SQLite */
   private $sqlite;
 
+  /** @var String $current_date_time curent date and time*/
+  private $current_date_time;
+
   public function __construct() {
 
     $namespace = 'gron/v1';
     $this->sqlite = new SQLite();
+
+    $this->current_date_time = date('Y-m-d H:i:s');
 
     register_rest_route(
       $namespace, '/delivery_notifications', array(
@@ -56,10 +63,12 @@ class REST_Controller extends WP_REST_Controller {
 
     foreach( $notifications as $notification ) {
 
-      $site_url = get_site_url();
-      $vendor_id = $notification['vendor_id'];
-      $order_id = $notification['order_id'];
+      $site_url        = get_site_url();
+      $vendor_id       = $notification['vendor_id'];
+      $order_id        = $notification['order_id'];
       $delivery_boy_id = $notification['boy_id'];
+      $manage_by       = $notification['manage_by'];
+      $create_at       = $notification['created_at'];
 
       $data_item['store_name'] = get_user_meta( $vendor_id, 'store_name', true );
 
@@ -88,6 +97,10 @@ class REST_Controller extends WP_REST_Controller {
       $data_item['status'] = $notification['status'];
       $data_item['status_msg'] = $notification['status_msg'];
 
+      $availability_time = $this->calculate_availability_time( $manage_by, $create_at );
+
+      $data_item['availability_time'] = $availability_time;
+
       array_push( $data, $data_item );
     }
 
@@ -115,6 +128,20 @@ class REST_Controller extends WP_REST_Controller {
       if( $update ) {
 
         $notification_info = $this->sqlite->get_delivery_notification( $dn_id );
+
+        $associated_boy_ids =  $this->sqlite->get_boy_ids_with_order_id( $notification_info['order_id'] );
+
+        // Notify other associated delivery boy
+        Services::pusher()->trigger( 'delivery-boy', 'delivery-accepted', array(
+          'accepted_by'        => $notification_info['boy_id'],
+          'associated_boy_ids' => $associated_boy_ids
+        ) );
+
+        // Notify 'admin' or 'vendor
+        Services::pusher()->trigger( $notification_info['manage_by'], 'delivery-accepted', array(
+          'accepted_by' => $notification_info['boy_id'],
+          'orderId'     => $order_id
+        ) );
 
         return new WP_REST_Response( $notification_info, 200 );
       }
@@ -160,6 +187,33 @@ class REST_Controller extends WP_REST_Controller {
     if( !empty( array_intersect( $accepted_roles, $accepted_roles ) ) ) return true;
 
     return false;
+
+  }
+
+
+  /**
+  * Calculate Availability Time or Remaining Broadcast time
+  * @param String $manage_by Delivery manage by - 'admin' or 'vendor'
+  * @param String $created_at DateTime when the the entry is created
+  * @return Int $time Availability in seconds
+  */
+  private function calculate_availability_time( $manage_by, $created_at ) {
+
+    $broadcast_time_limit = 0;
+
+    if( $manage_by === 'admin' ) {
+      $broadcast_time_limit = Utils::get_dn_boradcast_time_limit();
+    }elseif( $manage_by === 'vendor' ) {
+      $broadcast_time_limit = Utils::get_dn_boradcast_time_limit( $vendor_id );
+    }
+
+    // Created before in seconds
+    $created_before = strtotime( $this->current_date_time ) - strtotime( $created_at );
+
+    // Time in seconds
+    $time = ( $broadcast_time_limit * 60 ) - $created_before;
+
+    return $time > 0 ? (int) $time : 0;
 
   }
 

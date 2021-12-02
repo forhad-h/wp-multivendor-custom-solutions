@@ -228,5 +228,27 @@ class SQLite {
 
   }
 
+  /**
+  * Get boy IDs based on order ID
+  * @param Int $order_id ID of the order
+  * @version 2.1.4
+  * @return Array IDs of delivery boy
+  */
+  public function get_boy_ids_with_order_id( $order_id ) {
+
+    $sql = "SELECT boy_id FROM {$this->delivery_notifications_table_name} WHERE order_id={$order_id}";
+
+    $stmt = $this->pdo->query( $sql );
+
+    $boy_ids = array();
+
+    while( $row = $stmt->fetch( \PDO::FETCH_ASSOC ) ) {
+      $boy_ids[] = $row['boy_id'];
+    }
+
+    return $boy_ids;
+
+  }
+
 
 }
