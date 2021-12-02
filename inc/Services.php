@@ -2,6 +2,7 @@
 namespace GRON;
 defined( 'ABSPATH' ) or exit;
 
+use Pusher\Pusher;
 /**
 * Services class
 * Entry point for all third party services
@@ -21,7 +22,7 @@ class Services {
       'useTLS' => true
     );
 
-    $pusher = new Pusher\Pusher(
+    $pusher = new Pusher(
       $_ENV['PUSHER_KEY'],
       $_ENV['PUSHER_SECRET'],
       $_ENV['PUSHER_APP_ID'],

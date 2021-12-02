@@ -410,8 +410,8 @@ class GRON_WooCommerce {
 
         // Notify delivery boy
         Services::pusher()->trigger( 'delivery-boy', 'new-order', array(
-          'order_id'  => $order_id,
-          'boy_id' => $boy_id
+          'orderId'  => $order_id,
+          'boyId' => $boy_id
         ) );
 
       }
@@ -427,8 +427,8 @@ class GRON_WooCommerce {
 
       // Notify admin or vendor
       Services::pusher()->trigger( $manage_by, 'new-order', array(
-        'order_id'  => $order_id,
-        'vendor_id' => $vendor_id
+        'orderId'  => $order_id,
+        'vendorId' => $vendor_id
       ) );
 
     }

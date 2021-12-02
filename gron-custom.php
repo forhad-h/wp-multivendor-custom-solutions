@@ -51,7 +51,7 @@ function gron_init() {
   require_once GRON_DIR_PATH . 'wcfm/delivery-boy.php';
 
   // Load pusher service
-  //require_once GRON_DIR_PATH . 'services/pusher.php';
+  require_once GRON_DIR_PATH . 'services/pusher.php';
 
 }
 

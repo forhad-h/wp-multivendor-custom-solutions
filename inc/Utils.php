@@ -153,7 +153,9 @@ class Utils {
 
     $current_user = wp_get_current_user();
 
-    return $current_user->roles[0];
+    if( !empty( $current_user->roles ) ) {
+      return $current_user->roles[0];
+    }
 
   }
 
