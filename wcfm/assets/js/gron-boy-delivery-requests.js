@@ -31,10 +31,6 @@ jQuery(document).ready( function($) {
 
   } );
 
-  gron_reject_delivery_notifications( $, {
-    boy_id: 7,
-    dn_id: 50
-  } )
 
 } );
 
@@ -96,6 +92,19 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
         // set delivery day
         rowClonedElm.find( '.delivery_time' )
         .text( data.delivery_time );
+
+        // set delivery day
+        var status = data.status_msg ? data.status_msg : data.status;
+        rowClonedElm.find( '.status' )
+        .text( status );
+
+
+        // Set the availability timer
+        rowClonedElm.find( '.timer' ).timer({
+            action:'start',
+            duration: 3000,
+            countdown: true,
+        });
 
         tableBodyElm.prepend( rowClonedElm );
 

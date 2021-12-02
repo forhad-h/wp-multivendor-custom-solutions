@@ -41,7 +41,7 @@ class SQLite {
       	order_id INTEGER NOT NULL,
       	boy_id INTEGER,
         status TEXT NOT NULL,
-        accepted_by INTEGER,
+        is_accepted INTEGER,
         status_msg TEXT,
         created_at TEXT NOT NULL
       )",
@@ -150,25 +150,42 @@ class SQLite {
   }
 
   /**
-  * Update delivery notification
-  * @param Int $boy_id ID of the user
+  * Get notification by ID
   * @param Int $dn_id ID of the entry
   * @version 2.1.4
   * @return Boolean
   */
-  function update_delivery_notification( $dn_id, $boy_id  ) {
+  public function get_delivery_notification( $dn_id ) {
+
+    $sql = "SELECT * FROM {$this->delivery_notifications_table_name} WHERE dn_id={$dn_id}";
+
+    $stmt = $this->pdo->query( $sql );
+
+    $result = $stmt->fetch( \PDO::FETCH_ASSOC );
+
+    return $result;
+
+  }
+
+  /**
+  * Update delivery notification
+  * @param Int $dn_id ID of the entry
+  * @version 2.1.4
+  * @return Boolean
+  */
+  function update_delivery_notification( $dn_id  ) {
 
     // SQL statement to update status of a task to completed
-    $sql = "UPDATE  {$this->delivery_notifications_table_name} SET accepted_by=:boy_id WHERE dn_id=:dn_id";
+    $sql = "UPDATE  {$this->delivery_notifications_table_name} SET is_accepted=1, status_msg='Accepted by' WHERE dn_id=:dn_id";
 
     $stmt = $this->pdo->prepare( $sql );
 
     // passing values to the parameters
     $stmt->bindValue(':dn_id', $dn_id);
-    $stmt->bindValue(':boy_id', $boy_id);
 
     // execute the update statement
     $stmt->execute();
+
     return $stmt->rowCount();
 
   }
@@ -194,20 +211,20 @@ class SQLite {
   }
 
   /**
-  * Has accepted_by
+  * Check is already accepted
   * @param Int $dn_id ID of the entry
   * @version 2.1.4
   * @return Boolean
   */
-  public function has_accepted_by( $dn_id ) {
+  public function is_accepted( $dn_id ) {
 
-    $sql = "SELECT accepted_by FROM {$this->delivery_notifications_table_name} WHERE dn_id={$dn_id}";
+    $sql = "SELECT is_accepted FROM {$this->delivery_notifications_table_name} WHERE dn_id={$dn_id}";
 
     $stmt = $this->pdo->query( $sql );
 
     $result = $stmt->fetch( \PDO::FETCH_ASSOC );
 
-    return $result['accepted_by'] ? true : false;
+    return $result['is_accepted'];
 
   }
 

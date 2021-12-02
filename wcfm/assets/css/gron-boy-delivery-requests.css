@@ -38,3 +38,7 @@
 div#wcfm-main-contentainer #gron-delivery-requests .gron_table [class*=" fa-"]:before {
   font-weight: 600;
 }
+
+tr .status {
+  text-transform: capitalize;
+}

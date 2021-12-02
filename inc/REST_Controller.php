@@ -69,8 +69,6 @@ class REST_Controller extends WP_REST_Controller {
       }
 
       if( $get_for === 'admin' || $get_for === 'vendor' ) {
-        $data_item['status'] = $notification['status'];
-        $data_item['status_msg'] = $notification['status_msg'];
 
         if( $delivery_boy_id ) {
           $user_data = get_userdata( $delivery_boy_id );
@@ -86,6 +84,9 @@ class REST_Controller extends WP_REST_Controller {
 
       $data_item['delivery_day'] = get_post_meta( $order_id, 'gron_deliver_day_' . $vendor_id, true );
       $data_item['delivery_time'] = get_post_meta( $order_id, 'gron_deliver_time_' . $vendor_id, true );
+
+      $data_item['status'] = $notification['status'];
+      $data_item['status_msg'] = $notification['status_msg'];
 
       array_push( $data, $data_item );
     }
@@ -104,18 +105,20 @@ class REST_Controller extends WP_REST_Controller {
   public function accept_delivery_notification( $request ) {
 
     $dn_id   = esc_sql( $request['dn_id'] );
-    $boy_id   = esc_sql( $request['boy_id'] );
 
-    $has_accepted_by = $this->sqlite->has_accepted_by( $dn_id  );
+    $is_accepted = $this->sqlite->is_accepted( $dn_id  );
 
-    if( !$has_accepted_by ) {
+    if( !$is_accepted ) {
 
-      $update = $this->sqlite->update_delivery_notification( $dn_id, $boy_id );
+      $update = $this->sqlite->update_delivery_notification( $dn_id );
 
       if( $update ) {
-        return new WP_REST_Response( $update, 200 );
+
+        $notification_info = $this->sqlite->get_delivery_notification( $dn_id );
+
+        return new WP_REST_Response( $notification_info, 200 );
       }
-      
+
     }
 
     return new WP_Error( 'cant-update', __( 'Delivery Notification cannot be updated!', 'gron-custom' ), array( 'status' => 500 ) );

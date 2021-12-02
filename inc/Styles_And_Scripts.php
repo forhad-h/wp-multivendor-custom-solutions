@@ -68,6 +68,9 @@ class Styles_And_Scripts {
       'siteUrl'  => get_site_url()
     ) );
 
+    // Loader timer JS
+    wp_enqueue_script( 'jquery-timer', GRON_DIR_URI . 'assets/js/timer.jquery.min.js', array('jquery'), '0.7.1', true );
+
     wp_enqueue_script( 'gron-main-js', GRON_DIR_URI . 'assets/js/main.js', array( 'jquery' ), GRON_VERSION, true );
 
     wp_localize_script( 'gron-main-js', 'mainObj', array(

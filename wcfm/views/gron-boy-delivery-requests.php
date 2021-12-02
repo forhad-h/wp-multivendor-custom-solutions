@@ -35,7 +35,7 @@ $current_user_id = get_current_user_id();
         <!-- collapsible -->
         <div class="page_collapsible" id="gron-dr-pending">
           <label class="wcfmfa fa-ellipsis-h"></label>
-          <?php _e('Pending', 'gron-custom'); ?><span></span>
+          <?php _e('Requests', 'gron-custom'); ?><span></span>
         </div>
 
         <div class="wcfm-container">
@@ -50,6 +50,8 @@ $current_user_id = get_current_user_id();
                   <td class="store"></td>
                   <td class="delivery_day"></td>
                   <td class="delivery_time"></td>
+                  <td class="status"></td>
+                  <td class="availability"><div class="timer">00:00</div></td>
                   <td>
 
                     <a
@@ -83,6 +85,8 @@ $current_user_id = get_current_user_id();
                       <th>Store</th>
                       <th>Delivery Day</th>
                       <th>Delivery Time</th>
+                      <th>Status</th>
+                      <th>Availability</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -95,6 +99,8 @@ $current_user_id = get_current_user_id();
                       <th>Store</th>
                       <th>Delivery Day</th>
                       <th>Delivery Time</th>
+                      <th>Status</th>
+                      <th>Availability</th>
                       <th>Action</th>
                     </tr>
                   </tfoot>
@@ -110,12 +116,12 @@ $current_user_id = get_current_user_id();
         <!-- collapsible -->
         <div class="page_collapsible" id="gron-dr-accepted">
           <label class="wcfmfa fa-user-check"></label>
-          <?php _e('Accepted', 'gron-custom'); ?><span></span>
+          <?php _e('Need to Deliver', 'gron-custom'); ?><span></span>
         </div>
 
         <div class="wcfm-container">
           <div id="gron-dr-accepted" class="wcfm-content">
-            <h2><?php _e('Accepted Delivery Requests', 'gron-custom'); ?></h2>
+            <h2><?php _e('Delivery requests need to deliver', 'gron-custom'); ?></h2>
             <div class="wcfm_clearfix"></div>
 
               <table style="display:none;visibility:hidden;">
