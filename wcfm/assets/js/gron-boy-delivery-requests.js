@@ -102,7 +102,7 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
         // Set the availability timer
         rowClonedElm.find( '.timer' ).timer({
             action:'start',
-            duration: 3000,
+            duration: 60,
             countdown: true,
         });
 
