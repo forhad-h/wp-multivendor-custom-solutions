@@ -251,6 +251,12 @@ class GRON_WooCommerce {
    */
   public function order_processed( $order_id, $posted_data, $order ) {
 
+    /*
+      TODO:
+      figure out how to redirect to thank you page, if any error occured here.
+      Like pusher can not connect etc.
+    */
+
     // Get vendor IDs from the $order
     $vendor_ids = $this->get_vendor_ids( $order );
 
@@ -415,6 +421,12 @@ class GRON_WooCommerce {
         ) );
 
       }
+
+      // Notify admin or vendor
+      Services::pusher()->trigger( $manage_by, 'new-order', array(
+        'orderId'  => $order_id,
+        'vendorId' => $vendor_id
+      ) );
 
     }else {
 

@@ -14,10 +14,26 @@ jQuery(document).ready( function($) {
   data.status = 'accepted';
   gron_delivery_notifications_ajax_request( $, data );
 
+  // Subscribe on delivery-boy channel
+  var channel = gronPusher.subscribe('vendor');
+
+  channel.bind( 'new-order', function( payload ) {
+
+    if( payload.vendorId === userId ) {
+
+      data.order_id = payload.orderId;
+      data.status = 'pending';
+
+      gron_delivery_notifications_ajax_request( $, data, 'partial' );
+
+    }
+
+  } );
+
 } );
 
 
-function gron_delivery_notifications_ajax_request( $, data ) {
+function gron_delivery_notifications_ajax_request( $, data, render = 'all' ) {
 
   var tableElm = $('#gron-dr-' + data.status + '-table');
   var rowElm = $( '#gron-dr-' + data.status + '-row-template' );
@@ -42,7 +58,9 @@ function gron_delivery_notifications_ajax_request( $, data ) {
 
       var tableBodyElm = tableElm.find('tbody');
 
-      tableBodyElm.empty();
+      if( render !== 'partial' ) {
+        tableBodyElm.empty();
+      }
 
       $.each(res, function(index, data) {
 
@@ -84,7 +102,7 @@ function gron_delivery_notifications_ajax_request( $, data ) {
         .attr( 'href', data.accepted_by_link );
 
 
-        tableBodyElm.append( rowClonedElm );
+        tableBodyElm.prepend( rowClonedElm );
 
       });
 

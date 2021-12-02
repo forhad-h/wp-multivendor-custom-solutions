@@ -123,11 +123,20 @@ class SQLite {
     $stmt = $this->pdo->query( $sql );
 
     $notifications = array();
+    $order_ids = array();
     while( $row = $stmt->fetch( \PDO::FETCH_ASSOC ) ) {
+
+      $order_id = $row['order_id'];
+
+      // prevent duplication based on order ID
+      if( in_array( $order_id, $order_ids ) ) continue;
+
+      $order_ids[] = $order_id;
+
       $notifications[] = array(
         'manage_by'  => $row['manage_by'],
         'vendor_id'  => $row['vendor_id'],
-        'order_id'  => $row['order_id'],
+        'order_id'  => $order_id,
         'boy_id'  => $row['boy_id'],
         'status_msg'  => $row['status_msg'],
         'status'  => $row['status'],

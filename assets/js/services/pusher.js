@@ -7,24 +7,16 @@ var gronPusher = new Pusher( pusherObj.key, {
 
   $(document).ready( function() {
 
-    var pusher = new Pusher( pusherObj.key, {
-      cluster: pusherObj.cluster
-    });
-
-    var channel = pusher.subscribe('my-channel');
-
-    channel.bind('my-event', function(data) {
-      alert(JSON.stringify(data));
-    });
-
     // Global Options for toast notification
+    // Docs - https://www.jqueryscript.net/other/jQuery-Plugin-For-Animated-Stackable-Toast-Messages-Toast.html
     var toastOptions = {
-      loader   : false,
+      loader   : true,
+      loaderBg:'#212020',
       bgColor  : '#313030',
-      hideAfter: 5000
+      hideAfter: 60000
     }
 
-    switch( pusherObj.userRole ) {
+    switch( pusherObj.userInfo.role ) {
 
       case 'administrator':
 
@@ -32,9 +24,14 @@ var gronPusher = new Pusher( pusherObj.key, {
         var channel = gronPusher.subscribe('admin');
 
         channel.bind('new-order', function( data ) {
-          console.log( "Data: inside amdin:", data );
-          toastOptions.text = "New order created!",
+
+          // Format toast message
+          var deliveriesUrl = pusherObj.siteUrl + '/store-manager/gron-admin-delivery-notifications/'
+          toastOptions.heading = "New Order!";
+          toastOptions.text = "You received a new order. Please check the <a href='" + deliveriesUrl + "'>GRON - Deliveries</a>!";
+
           $.toast( toastOptions );
+
         });
 
         break;
@@ -45,7 +42,18 @@ var gronPusher = new Pusher( pusherObj.key, {
         var channel = gronPusher.subscribe('vendor');
 
         channel.bind('new-order', function( data ) {
-          console.log(JSON.stringify(data));
+
+          if( data.vendorId === pusherObj.userInfo.id ) {
+
+            // Format toast message
+            var deliveriesUrl = pusherObj.siteUrl + '/store-manager/gron-vendor-delivery-notifications/'
+            toastOptions.heading = "New Order!";
+            toastOptions.text = "You received a new order. Please check the <a href='" + deliveriesUrl + "'>GRON - Deliveries</a>!";
+
+            $.toast( toastOptions );
+
+          }
+
         });
 
         break;
@@ -56,9 +64,18 @@ var gronPusher = new Pusher( pusherObj.key, {
         var channel = gronPusher.subscribe('delivery-boy');
 
         channel.bind('new-order', function( data ) {
-          console.log( "Data inside boy:", data );
-          toastOptions.text = "New order created!",
-          $.toast( toastOptions );
+
+          if( data.boyId === pusherObj.userInfo.id ) {
+
+            // Format toast message
+            var deliveriesUrl = pusherObj.siteUrl + '/store-manager/gron-boy-delivery-requests/'
+            toastOptions.heading = "New Delivery Request!";
+            toastOptions.text = "You received a new delivery request. Please check the <a href='" + deliveriesUrl + "'>GRON - Deliveries</a>!";
+
+            $.toast( toastOptions );
+
+          }
+
         });
 
         break;

@@ -19,13 +19,17 @@ jQuery(document).ready( function($) {
   var channel = gronPusher.subscribe('delivery-boy');
 
   channel.bind( 'new-order', function( payload ) {
-    console.log( "Payload: ", payload );
+
     if( payload.boyId === userId ) {
+
       data.order_id = payload.orderId;
       data.status = 'pending';
+
       gron_delivery_notifications_ajax_request( $, data, 'partial' );
+
     }
-  } )
+
+  } );
 
 } );
 
@@ -88,11 +92,7 @@ function gron_delivery_notifications_ajax_request( $, data, render = 'all' ) {
         rowClonedElm.find( '.delivery_time' )
         .text( data.delivery_time );
 
-        if( render !== 'partial' ) {
-          tableBodyElm.append( rowClonedElm );
-        }else {
-          tableBodyElm.prepend( rowClonedElm );
-        }
+        tableBodyElm.prepend( rowClonedElm );
 
       });
 

@@ -53,7 +53,6 @@ class Styles_And_Scripts {
   public function load_view_scripts() {
 
     // Load jQuery Toast JS
-    // Source: https://www.jqueryscript.net/other/jQuery-Plugin-For-Animated-Stackable-Toast-Messages-Toast.html
     wp_enqueue_script( 'jquery-toast-script', GRON_DIR_URI . 'assets/js/jquery.toast.min.js', array('jquery'), '1.0.0', true );
 
     // Load pusher JS
@@ -65,7 +64,8 @@ class Styles_And_Scripts {
     wp_localize_script( 'gron-pusher-js', 'pusherObj', array(
       'key'      => $_ENV[ 'PUSHER_KEY' ],
       'cluster'  => $_ENV[ 'PUSHER_CLUSTER'],
-      'userRole' => Utils::current_user_role()
+      'userInfo' => Utils::current_user_info(),
+      'siteUrl'  => get_site_url()
     ) );
 
     wp_enqueue_script( 'gron-main-js', GRON_DIR_URI . 'assets/js/main.js', array( 'jquery' ), GRON_VERSION, true );

@@ -149,12 +149,19 @@ class Utils {
   * Get current user role
   * @return String role of the user
   */
-  public static function current_user_role() {
+  public static function current_user_info() {
 
-    $current_user = wp_get_current_user();
+    $user = wp_get_current_user();
 
-    if( !empty( $current_user->roles ) ) {
-      return $current_user->roles[0];
+    if( !empty( $user->roles ) ) {
+
+      $info = array(
+        'id' => $user->ID,
+        'role' => $user->roles[0],
+      );
+
+      return $info;
+      
     }
 
   }
