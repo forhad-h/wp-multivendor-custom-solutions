@@ -152,20 +152,20 @@ class SQLite {
   /**
   * Update delivery notification
   * @param Int $boy_id ID of the user
-  * @param Int $order_id ID of the order
+  * @param Int $dn_id ID of the entry
   * @version 2.1.4
-  * @return NULL|Array
+  * @return Boolean
   */
-  function update_delivery_notification( $boy_id, $order_id ) {
+  function update_delivery_notification( $dn_id, $boy_id  ) {
 
     // SQL statement to update status of a task to completed
-    $sql = "UPDATE  {$this->delivery_notifications_table_name} SET accepted_by=:boy_id WHERE boy_id=:boy_id AND order_id=:order_id";
+    $sql = "UPDATE  {$this->delivery_notifications_table_name} SET accepted_by=:boy_id WHERE dn_id=:dn_id";
 
-    $stmt = $this->pdo->prepare($sql);
+    $stmt = $this->pdo->prepare( $sql );
 
     // passing values to the parameters
+    $stmt->bindValue(':dn_id', $dn_id);
     $stmt->bindValue(':boy_id', $boy_id);
-    $stmt->bindValue(':order_id', $order_id);
 
     // execute the update statement
     $stmt->execute();
@@ -175,23 +175,39 @@ class SQLite {
 
   /**
   * Delete delivery notification
-  * @param Int $boy_id ID of the user
-  * @param Int $order_id ID of the order
+  * @param Int $dn_id ID of the entry
   * @version 2.1.4
-  * @return NULL|Array
+  * @return Boolean
   */
-  function delete_delivery_notification( $boy_id, $order_id ) {
+  function delete_delivery_notification( $dn_id ) {
 
-    $sql = "DELETE FROM {$this->delivery_notifications_table_name} WHERE boy_id=:boy_id AND order_id=:order_id";
+    $sql = "DELETE FROM {$this->delivery_notifications_table_name} WHERE dn_id=:dn_id";
 
     $stmt = $this->pdo->prepare( $sql );
 
-    $stmt->bindValue(':boy_id', $boy_id);
-    $stmt->bindValue(':order_id', $order_id);
+    $stmt->bindValue(':dn_id', $dn_id);
 
     $stmt->execute();
 
     return $stmt->rowCount();
+
+  }
+
+  /**
+  * Has accepted_by
+  * @param Int $dn_id ID of the entry
+  * @version 2.1.4
+  * @return Boolean
+  */
+  public function has_accepted_by( $dn_id ) {
+
+    $sql = "SELECT accepted_by FROM {$this->delivery_notifications_table_name} WHERE dn_id={$dn_id}";
+
+    $stmt = $this->pdo->query( $sql );
+
+    $result = $stmt->fetch( \PDO::FETCH_ASSOC );
+
+    return $result['accepted_by'] ? true : false;
 
   }
 

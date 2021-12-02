@@ -26,12 +26,12 @@ class REST_Controller extends WP_REST_Controller {
         ),
         array(
           'methods'             => WP_REST_Server::EDITABLE,
-          'callback'            => array( $this, 'update_delivery_notification' ),
+          'callback'            => array( $this, 'accept_delivery_notification' ),
           'permission_callback' => array( $this, 'permission_check' )
         ),
         array(
           'methods'             => WP_REST_Server::DELETABLE,
-          'callback'            => array( $this, 'delete_delivery_notification' ),
+          'callback'            => array( $this, 'reject_delivery_notification' ),
           'permission_callback' => array( $this, 'permission_check' )
         )
       )
@@ -97,19 +97,25 @@ class REST_Controller extends WP_REST_Controller {
   }
 
   /**
-   * Update delivery notification
+   * Accept delivery notification
    * @param WP_REST_Request $request
    * @return WP_Error|WP_REST_Response
   */
-  public function update_delivery_notification( $request ) {
+  public function accept_delivery_notification( $request ) {
 
+    $dn_id   = esc_sql( $request['dn_id'] );
     $boy_id   = esc_sql( $request['boy_id'] );
-    $order_id  = esc_sql( $request['order_id'] );
 
-    $update = $this->sqlite->update_delivery_notification( $boy_id, $order_id );
+    $has_accepted_by = $this->sqlite->has_accepted_by( $dn_id  );
 
-    if( $update ) {
-      return new WP_REST_Response( $update, 200 );
+    if( !$has_accepted_by ) {
+
+      $update = $this->sqlite->update_delivery_notification( $dn_id, $boy_id );
+
+      if( $update ) {
+        return new WP_REST_Response( $update, 200 );
+      }
+      
     }
 
     return new WP_Error( 'cant-update', __( 'Delivery Notification cannot be updated!', 'gron-custom' ), array( 'status' => 500 ) );
@@ -121,12 +127,11 @@ class REST_Controller extends WP_REST_Controller {
    * @param WP_REST_Request $request
    * @return WP_Error|WP_REST_Response
   */
-  public function delete_delivery_notification( $request ) {
+  public function reject_delivery_notification( $request ) {
 
-    $boy_id   = esc_sql( $request['boy_id'] );
-    $order_id  = esc_sql( $request['order_id'] );
+    $dn_id   = esc_sql( $request['dn_id'] );
 
-    $delete = $this->sqlite->delete_delivery_notification( $boy_id, $order_id );
+    $delete = $this->sqlite->delete_delivery_notification( $dn_id );
 
     if( $delete ) {
       return new WP_REST_Response( $delete, 200 );

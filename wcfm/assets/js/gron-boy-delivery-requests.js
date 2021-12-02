@@ -31,6 +31,11 @@ jQuery(document).ready( function($) {
 
   } );
 
+  gron_reject_delivery_notifications( $, {
+    boy_id: 7,
+    dn_id: 50
+  } )
+
 } );
 
 
@@ -116,7 +121,7 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
   });
 }
 
-function gron_update_delivery_notifications( $, data ) {
+function gron_accept_delivery_notifications( $, data ) {
 
   $.ajax({
     url: gron.siteURL + '/wp-json/gron/v1/delivery_notifications',
@@ -139,7 +144,7 @@ function gron_update_delivery_notifications( $, data ) {
 }
 
 
-function gron_delete_delivery_notifications( $, data ) {
+function gron_reject_delivery_notifications( $, data ) {
 
   $.ajax({
     url: gron.siteURL + '/wp-json/gron/v1/delivery_notifications',
