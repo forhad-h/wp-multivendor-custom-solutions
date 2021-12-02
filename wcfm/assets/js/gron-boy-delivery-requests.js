@@ -9,11 +9,11 @@ jQuery(document).ready( function($) {
 
   // Render pending list
   data.status = 'pending';
-  gron_delivery_notifications_ajax_request( $, data );
+  gron_get_delivery_notifications( $, data );
 
   // Render accepted list
   data.status = 'accepted';
-  gron_delivery_notifications_ajax_request( $, data );
+  gron_get_delivery_notifications( $, data );
 
   // Subscribe on delivery-boy channel
   var channel = gronPusher.subscribe('delivery-boy');
@@ -25,7 +25,7 @@ jQuery(document).ready( function($) {
       data.order_id = payload.orderId;
       data.status = 'pending';
 
-      gron_delivery_notifications_ajax_request( $, data, 'partial' );
+      gron_get_delivery_notifications( $, data, 'partial' );
 
     }
 
@@ -34,7 +34,7 @@ jQuery(document).ready( function($) {
 } );
 
 
-function gron_delivery_notifications_ajax_request( $, data, render = 'all' ) {
+function gron_get_delivery_notifications( $, data, render = 'all' ) {
 
   var tableElm = $('#gron-dr-' + data.status + '-table');
   var rowElm = $( '#gron-dr-' + data.status + '-row-template' );
@@ -114,4 +114,49 @@ function gron_delivery_notifications_ajax_request( $, data, render = 'all' ) {
     tablePreloaderElm.fadeOut( 300 );
 
   });
+}
+
+function gron_update_delivery_notifications( $, data ) {
+
+  $.ajax({
+    url: gron.siteURL + '/wp-json/gron/v1/delivery_notifications',
+    type: 'PUT',
+    beforeSend: function( xhr ) {
+      xhr.setRequestHeader( 'X-WP-Nonce', gron.nonce );
+    },
+    data: data
+  })
+  .done( function( res ) {
+   console.log( res );
+  } )
+  .fail( function( err ) {
+   console.log( err.responseText );
+  } )
+  .always( function() {
+   //console.log("complete");
+  } );
+
+}
+
+
+function gron_delete_delivery_notifications( $, data ) {
+
+  $.ajax({
+    url: gron.siteURL + '/wp-json/gron/v1/delivery_notifications',
+    type: 'DELETE',
+    beforeSend: function( xhr ) {
+      xhr.setRequestHeader( 'X-WP-Nonce', gron.nonce );
+    },
+    data: data
+  })
+  .done( function( res ) {
+   console.log( res );
+  } )
+  .fail( function( err ) {
+   console.log( err.responseText );
+  } )
+  .always( function() {
+   //console.log("complete");
+  } );
+
 }

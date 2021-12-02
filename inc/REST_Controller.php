@@ -18,11 +18,22 @@ class REST_Controller extends WP_REST_Controller {
     $this->sqlite = new SQLite();
 
     register_rest_route(
-      $namespace, '/delivery_notifications',
-      array(
-        'methods'             => WP_REST_Server::READABLE,
-        'callback'            => array( $this, 'delivery_notifications' ),
-        'permission_callback' => array( $this, 'permission_check' )
+      $namespace, '/delivery_notifications', array(
+        array(
+          'methods'             => WP_REST_Server::READABLE,
+          'callback'            => array( $this, 'get_delivery_notifications' ),
+          'permission_callback' => array( $this, 'permission_check' )
+        ),
+        array(
+          'methods'             => WP_REST_Server::EDITABLE,
+          'callback'            => array( $this, 'update_delivery_notification' ),
+          'permission_callback' => array( $this, 'permission_check' )
+        ),
+        array(
+          'methods'             => WP_REST_Server::DELETABLE,
+          'callback'            => array( $this, 'delete_delivery_notification' ),
+          'permission_callback' => array( $this, 'permission_check' )
+        )
       )
     );
 
@@ -33,7 +44,7 @@ class REST_Controller extends WP_REST_Controller {
    * @param WP_REST_Request $request
    * @return WP_Error|WP_REST_Response
   */
-  public function delivery_notifications( $request ) {
+  public function get_delivery_notifications( $request ) {
 
     $user_id  = esc_sql( $request[ 'user_id' ] );
     $order_id = esc_sql( $request[ 'order_id' ] );
@@ -86,6 +97,46 @@ class REST_Controller extends WP_REST_Controller {
   }
 
   /**
+   * Update delivery notification
+   * @param WP_REST_Request $request
+   * @return WP_Error|WP_REST_Response
+  */
+  public function update_delivery_notification( $request ) {
+
+    $boy_id   = esc_sql( $request['boy_id'] );
+    $order_id  = esc_sql( $request['order_id'] );
+
+    $update = $this->sqlite->update_delivery_notification( $boy_id, $order_id );
+
+    if( $update ) {
+      return new WP_REST_Response( $update, 200 );
+    }
+
+    return new WP_Error( 'cant-update', __( 'Delivery Notification cannot be updated!', 'gron-custom' ), array( 'status' => 500 ) );
+
+  }
+
+  /**
+   * Delete delivery notification
+   * @param WP_REST_Request $request
+   * @return WP_Error|WP_REST_Response
+  */
+  public function delete_delivery_notification( $request ) {
+
+    $boy_id   = esc_sql( $request['boy_id'] );
+    $order_id  = esc_sql( $request['order_id'] );
+
+    $delete = $this->sqlite->delete_delivery_notification( $boy_id, $order_id );
+
+    if( $delete ) {
+      return new WP_REST_Response( $delete, 200 );
+    }
+
+    return new WP_Error( 'cant-delete', __( 'Delivery Notifications cannot be deleted!', 'gron-custom' ), array( 'status' => 500 ) );
+
+  }
+
+  /**
    * Check if the user is valid
    * @param WP_REST_Request $request
    * @return Boolean
@@ -96,25 +147,9 @@ class REST_Controller extends WP_REST_Controller {
 
     if( !$current_user->ID ) return false;
 
-    $get_for = $request['get_for'];
+    $accepted_roles = array( 'administrator', 'wcfm_vendor', 'wcfm_delivery_boy' );
 
-    $admin_role = 'administrator';
-    $vendor_role = 'wcfm_vendor';
-    $delivery_boy_role = 'wcfm_delivery_boy';
-
-    if( $get_for === 'admin' ) {
-
-      if( in_array( $admin_role, $current_user->roles ) ) return true;
-
-    }elseif( $get_for === 'vendor' ) {
-
-      if( in_array( $vendor_role, $current_user->roles ) ) return true;
-
-    }elseif( $get_for === 'delivery_boy' ) {
-
-      if( in_array( $delivery_boy_role, $current_user->roles ) ) return true;
-
-    }
+    if( !empty( array_intersect( $accepted_roles, $accepted_roles ) ) ) return true;
 
     return false;
 

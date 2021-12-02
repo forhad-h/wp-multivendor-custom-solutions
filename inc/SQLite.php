@@ -12,8 +12,8 @@ class SQLite {
   /** @var $pdo instance of SQLite */
   private $pdo;
 
-  /** @var $delivery_notifications Table name of Order Notifications */
-  private $delivery_notifications;
+  /** @var $delivery_notifications_table_name Table name of Order Notifications */
+  private $delivery_notifications_table_name;
 
 
   public function __construct() {
@@ -24,7 +24,7 @@ class SQLite {
 
     }
 
-    $this->delivery_notifications = 'delivery_notifications';
+    $this->delivery_notifications_table_name = 'delivery_notifications';
 
   }
 
@@ -34,13 +34,14 @@ class SQLite {
   public function create_tables() {
 
     $queries = array(
-      "CREATE TABLE {$this->delivery_notifications} (
+      "CREATE TABLE {$this->delivery_notifications_table_name} (
       	dn_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         manage_by TEXT NOT NULL,
       	vendor_id INTEGER NOT NULL,
       	order_id INTEGER NOT NULL,
       	boy_id INTEGER,
         status TEXT NOT NULL,
+        accepted_by INTEGER,
         status_msg TEXT,
         created_at TEXT NOT NULL
       )",
@@ -75,7 +76,7 @@ class SQLite {
     $status     = $data['status'];
     $created_at = date('Y-m-d H:i:s');
 
-    $sql  = "INSERT INTO {$this->delivery_notifications}(manage_by,vendor_id,order_id,boy_id,status,created_at)";
+    $sql  = "INSERT INTO {$this->delivery_notifications_table_name}(manage_by,vendor_id,order_id,boy_id,status,created_at)";
     $sql .= " VALUES(:manage_by,:vendor_id,:order_id,:boy_id,:status,:created_at)";
 
     $statement = $this->pdo->prepare( $sql );
@@ -97,8 +98,8 @@ class SQLite {
 
   /**
   * Get delivery notifications
-  * @param Int $user_id [Optional] Id of the user
-  * @param Int $order_id [Optional] Id of the order
+  * @param Int $user_id [Optional] ID of the user
+  * @param Int $order_id [Optional] ID of the order
   * @param String $get_for Notifications for admin, vendor or delivery boy
   * @param String $status status of the notification pending, accepted etc.
   * @version 2.1.3
@@ -106,7 +107,7 @@ class SQLite {
   */
   public function get_delivery_notifications( $user_id = null, $order_id = null, $get_for, $status ){
 
-    $sql = "SELECT * FROM {$this->delivery_notifications} WHERE status='{$status}'";
+    $sql = "SELECT * FROM {$this->delivery_notifications_table_name} WHERE status='{$status}'";
 
     // query for admin
     if( $get_for === 'admin' ) $sql .= " AND manage_by='admin'";
@@ -145,6 +146,52 @@ class SQLite {
     }
 
     return $notifications;
+
+  }
+
+  /**
+  * Update delivery notification
+  * @param Int $boy_id ID of the user
+  * @param Int $order_id ID of the order
+  * @version 2.1.4
+  * @return NULL|Array
+  */
+  function update_delivery_notification( $boy_id, $order_id ) {
+
+    // SQL statement to update status of a task to completed
+    $sql = "UPDATE  {$this->delivery_notifications_table_name} SET accepted_by=:boy_id WHERE boy_id=:boy_id AND order_id=:order_id";
+
+    $stmt = $this->pdo->prepare($sql);
+
+    // passing values to the parameters
+    $stmt->bindValue(':boy_id', $boy_id);
+    $stmt->bindValue(':order_id', $order_id);
+
+    // execute the update statement
+    $stmt->execute();
+    return $stmt->rowCount();
+
+  }
+
+  /**
+  * Delete delivery notification
+  * @param Int $boy_id ID of the user
+  * @param Int $order_id ID of the order
+  * @version 2.1.4
+  * @return NULL|Array
+  */
+  function delete_delivery_notification( $boy_id, $order_id ) {
+
+    $sql = "DELETE FROM {$this->delivery_notifications_table_name} WHERE boy_id=:boy_id AND order_id=:order_id";
+
+    $stmt = $this->pdo->prepare( $sql );
+
+    $stmt->bindValue(':boy_id', $boy_id);
+    $stmt->bindValue(':order_id', $order_id);
+
+    $stmt->execute();
+
+    return $stmt->rowCount();
 
   }
 
