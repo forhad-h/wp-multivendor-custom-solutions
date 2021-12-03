@@ -11,9 +11,10 @@ jQuery(document).ready( function($) {
   data.status = 'accepted';
   gron_delivery_notifications_ajax_request( $, data );
 
-  // Subscribe on delivery-boy channel
+  // Subscribe to delivery-boy channel
   var channel = gronPusher.subscribe('admin');
 
+  // On new-order
   channel.bind( 'new-order', function( payload ) {
 
       data.order_id = payload.orderId;
@@ -78,7 +79,7 @@ function gron_delivery_notifications_ajax_request( $, data, render = 'all' ) {
 
         // Set the entry id
         rowClonedElm.attr( 'data-dn-id', data.dn_id )
-        
+
         // set order ID
         rowClonedElm.find( '.order' )
         .find('a')

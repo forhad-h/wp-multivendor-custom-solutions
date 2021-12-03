@@ -92,7 +92,7 @@ $mysql = new MySQL();
 
                 <div class="field">
                   <input type="number" id="time-limit" class="wcfm-text" value="<?php echo $time_limit;?>">
-                  <p class="field_desc">Provide time limit as <strong>Minute</strong>.</p>
+                  <p class="field_desc">Provide the time limit as <strong>Minute</strong>.</p>
                 </div>
 
               </div>

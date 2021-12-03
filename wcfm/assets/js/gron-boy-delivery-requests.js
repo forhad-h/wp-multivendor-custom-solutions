@@ -32,7 +32,7 @@ jQuery(document).ready( function($) {
 
   } );
 
-  // On new-order event
+  // On delivery-accepted event
   channel.bind( 'delivery-accepted', function( payload ) {
 
     if( $.inArray( userId, payload.associated_boy_ids ) ) {
@@ -188,7 +188,7 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
   });
 }
 
-function gron_accept_delivery_notifications( $, data ) {
+function gron_accept_delivery_notifications( $, data, parentTRElm ) {
 
   $.ajax({
     url: gron.siteURL + '/wp-json/gron/v1/delivery_notifications',
@@ -199,7 +199,9 @@ function gron_accept_delivery_notifications( $, data ) {
     data: data
   })
   .done( function( res ) {
-   console.log( res );
+    parentTRElm
+    .removeClass( ['processing', 'accept'] )
+    .addClass( 'accepted' );
   } )
   .fail( function( err ) {
    console.log( err.responseText );

@@ -14,7 +14,7 @@ jQuery(document).ready( function($) {
   data.status = 'accepted';
   gron_delivery_notifications_ajax_request( $, data );
 
-  // Subscribe on delivery-boy channel
+  // Subscribe to delivery-boy channel
   var channel = gronPusher.subscribe('vendor');
 
   channel.bind( 'new-order', function( payload ) {

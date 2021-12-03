@@ -40,6 +40,9 @@ tr .status {
 
 
 /* Actions style */
+tr.accepted td {
+  background-color: rgba(74, 255, 80, 0.3);
+}
 tr.processing td {
   position: relative;
   transition: 0.3s linear;

@@ -20,9 +20,10 @@ var gronPusher = new Pusher( pusherObj.key, {
 
       case 'administrator':
 
-        // Subscribe on 'admin' channel
+        // Subscribe to 'admin' channel
         var channel = gronPusher.subscribe('admin');
 
+        // On new-order event
         channel.bind('new-order', function( data ) {
 
           // Format toast message
@@ -34,13 +35,27 @@ var gronPusher = new Pusher( pusherObj.key, {
 
         });
 
+        // On delivery-accepted event
+        channel.bind( 'delivery-accepted', function( data ) {
+
+          // Toast heading
+          toastOptions.heading = "Delivery Accepted!";
+
+          // Toast message
+          toastOptions.text = data.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>';
+
+          $.toast( toastOptions );
+
+        });
+
         break;
 
       case 'wcfm_vendor':
 
-        // Subscribe on 'vendor' channel
+        // Subscribe to 'vendor' channel
         var channel = gronPusher.subscribe('vendor');
 
+        // On new-order event
         channel.bind('new-order', function( data ) {
 
           if( data.vendorId === pusherObj.userInfo.id ) {
@@ -56,13 +71,30 @@ var gronPusher = new Pusher( pusherObj.key, {
 
         });
 
+        // On delivery-accepted event
+        channel.bind( 'delivery-accepted', function( data ) {
+
+          if( $.inArray( pusherObj.userInfo.id, data.vendorId ) ) {
+            // Toast heading
+            toastOptions.heading = "Delivery Accepted!";
+
+            // Toast message
+            toastOptions.text = data.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>';
+
+            $.toast( toastOptions );
+
+          }
+
+        });
+
         break;
 
       case 'wcfm_delivery_boy':
 
-        // Subscribe on 'vendor' channel
+        // Subscribe to 'vendor' channel
         var channel = gronPusher.subscribe('delivery-boy');
 
+        // On new-order event
         channel.bind('new-order', function( data ) {
 
           if( data.boyId === pusherObj.userInfo.id ) {
@@ -71,6 +103,20 @@ var gronPusher = new Pusher( pusherObj.key, {
             var deliveriesUrl = pusherObj.siteUrl + '/store-manager/gron-boy-delivery-requests/'
             toastOptions.heading = "New Delivery Request!";
             toastOptions.text = "You received a new delivery request. Please check the <a href='" + deliveriesUrl + "'>GRON - Deliveries</a>!";
+
+            $.toast( toastOptions );
+
+          }
+
+        });
+
+        // On delivery-accepted event
+        channel.bind( 'delivery-accepted', function( payload ) {
+
+          if( $.inArray( pusherObj.userInfo.id, payload.associated_boy_ids ) ) {
+
+            toastOptions.heading = "Delivery Accepted!";
+            toastOptions.text = payload.status_msg + ' <a href="' + payload.accepted_by.link + '">' + payload.accepted_by.name + '</a>';
 
             $.toast( toastOptions );
 
