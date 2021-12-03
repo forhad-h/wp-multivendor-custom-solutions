@@ -40,7 +40,8 @@ jQuery(document).ready( function($) {
       var status = payload.status_msg + ' <a href="' + payload.accepted_by.link + '">' + payload.accepted_by.name + '</a>'
 
       tableElm
-      .find('tr[data-dn-id=' + payload.dn_id + ']')
+      .find('tr[data-order-id=' + payload.order_id + ']')
+      .addClass('accepted')
       .find('.status')
       .html( status );
 
@@ -88,7 +89,15 @@ function gron_delivery_notifications_ajax_request( $, data, render = 'all' ) {
         // Fill with response data
 
         // Set the entry id
-        rowClonedElm.attr( 'data-dn-id', data.dn_id )
+        rowClonedElm.attr( 'data-dn-id', data.dn_id );
+
+        // Set order ID
+        rowClonedElm.attr( 'data-order-id', data.order_id );
+
+        // If the delivery accepted
+        if( data.is_accepted ) {
+          rowClonedElm.addClass('accepted');
+        }
 
         // set order ID
         rowClonedElm.find( '.order' )
@@ -139,7 +148,8 @@ function gron_delivery_notifications_ajax_request( $, data, render = 'all' ) {
             callback: function(){}
         });
 
-
+        // Remove the ID
+        rowClonedElm.removeAttr('id');
         tableBodyElm.prepend( rowClonedElm );
 
       });

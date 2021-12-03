@@ -42,3 +42,10 @@ div#wcfm-main-contentainer #gron-delivery-requests .gron_table [class*=" fa-"]:b
 tr .status {
   text-transform: capitalize;
 }
+tr .status a {
+  text-transform: initial;
+}
+#wcfm-main-contentainer table tbody tr.accepted td {
+  background-color: rgba(74, 255, 80, 0.3);
+  color: #444;
+}

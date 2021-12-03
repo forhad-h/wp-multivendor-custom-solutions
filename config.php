@@ -17,4 +17,4 @@ define( "GRON_BOY_ENDPOINT_DELIVERY_REQUEST", 'gron-boy-delivery-requests' );
 
 define( "SQLite_FILE_PATH", "sqlite:" . GRON_DIR_PATH . "db/delivery_notifications.db" );
 
-define( "GRON_ACCEPTED_BY_STATUS_MSG", "Accepted by");
+define( "GRON_DELIVERY_ACCEPTED_STATUS_MSG", "Accepted by");

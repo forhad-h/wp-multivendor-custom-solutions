@@ -77,9 +77,13 @@ class REST_Controller extends WP_REST_Controller {
   public function accept_delivery_notification( $request ) {
 
     $dn_id   = esc_sql( $request['dn_id'] );
-    $notification = $this->sqlite->get_delivery_notification( $dn_id );
 
-    $is_accepted = $this->sqlite->accepted_by( $notification['order_id']  );
+    $notification = $this->sqlite->get_delivery_notification( $dn_id );
+    $boy_id       = (Int) $notification['boy_id'];
+    $order_id     = $notification['order_id'];
+    $status_msg   = $notification['status_msg'];
+
+    $is_accepted = $this->sqlite->accepted_by( $order_id  );
 
     // Do nothing if the order already accepted by someone
     if( $is_accepted ) return;
@@ -88,29 +92,36 @@ class REST_Controller extends WP_REST_Controller {
 
     if( $update ) {
 
-      $boy_ids = $this->sqlite->get_boy_ids_with_order_id( $notification['order_id'] );
-      $associated_boy_ids = array_diff( $boy_ids, array( $notification['boy_id'] ) );
+      $boy_ids = $this->sqlite->get_boy_ids_with_order_id( $order_id );
+      $associated_boy_ids = array_diff( $boy_ids, array( $boy_id ) );
+
+      /*
+        Trigger pusher events
+      */
+      $pusher_payload = array(
+        'dn_id'       => $dn_id,
+        'order_id'    => $order_id,
+        'status_msg'  => $status_msg,
+        'accepted_by' => $this->accepted_by_info( $boy_id ),
+      );
+
+      // Notify 'delivery_boy'
+
+      // set associated boy IDs for delivery boy
+      $pusher_payload['associated_boy_ids'] = $associated_boy_ids;
 
       // Notify other associated delivery boy
-
-      Services::pusher()->trigger(
-        'delivery-boy',
-        'delivery-accepted',
-        array_merge(
-          $this->accepted_by_info( $boy_id, $data_raw['status_msg'] ),
-          array( 'associated_boy_ids' => $associated_boy_ids, )
-        ),
-      );
+      Services::pusher()->trigger( 'delivery-boy', 'delivery-accepted', $pusher_payload );
 
       // Notify 'admin' or 'vendor
-      Services::pusher()->trigger(
-        $notification['manage_by'],
-        'delivery-accepted',
-        array_merge(
-          $payload,
-          array( 'vendor_id' => $notification['vendor_id'] ),
-        )
-      );
+
+      // Unset associated boy ids for admin and vendor
+      unset($pusher_payload['associated_boy_ids']);
+
+      // Set vendor_id for 'vendor'
+      $pusher_payload['vendor_id'] = $notification['vendor_id'];
+
+      Services::pusher()->trigger( $notification['manage_by'], 'delivery-accepted', $pusher_payload );
 
       return new WP_REST_Response( $associated_boy_ids, 200 );
     }
@@ -245,7 +256,8 @@ class REST_Controller extends WP_REST_Controller {
       // Provide information about the delivery boy who accepted
       if( $accepted_by ) {
 
-        $data_item['accepted_by'] = $this->accepted_by_info( $accepted_by, GRON_ACCEPTED_BY_STATUS_MSG );
+        $data_item['accepted_by'] = $this->accepted_by_info( $accepted_by );
+        $data_item['status_msg'] = GRON_DELIVERY_ACCEPTED_STATUS_MSG;
 
       }
 
@@ -259,10 +271,9 @@ class REST_Controller extends WP_REST_Controller {
   /**
   * Format boy info who accepted the delivery
   * @param Array $boy_id ID of the boy
-  * @param Array $status_msg Status Message
   * @return Array $accepted_by Array of formatted data
   */
-  private function accepted_by_info( $boy_id, $status_msg ) {
+  private function accepted_by_info( $boy_id ) {
 
     // Boy link
     $site_url = get_site_url();
@@ -273,8 +284,7 @@ class REST_Controller extends WP_REST_Controller {
     $accepted_by = array(
       'id'   => $boy_id,
       'name' => esc_attr( $user_info['display_name'] ),
-      'link' => esc_url( $boy_link ),
-      'status_msg' => $status_msg
+      'link' => esc_url( $boy_link )
     );
 
     return $accepted_by;

@@ -35,14 +35,17 @@ jQuery(document).ready( function($) {
   // On delivery-accepted event
   channel.bind( 'delivery-accepted', function( payload ) {
 
-    if( $.inArray( userId, payload.associated_boy_ids ) ) {
+    var associatedBoyIds = Object.values( payload.associated_boy_ids );
+
+    if( $.inArray( userId, associatedBoyIds ) != -1 ) {
 
       var tableElm = $('#gron-dr-pending-table');
 
-      var status = payload.status_msg + ' <a href="' + payload.accepted_by.link + '">' + payload.accepted_by.name + '</a>'
+      var status = payload.status_msg + ' <a href="' + payload.accepted_by.link + '">' + payload.accepted_by.name + '</a>';
 
       tableElm
-      .find('tr[data-dn-id=' + payload.dn_id + ']')
+      .find('tr[data-order-id=' + payload.order_id + ']')
+      .addClass('accepted')
       .find('.status')
       .html( status );
 
@@ -62,6 +65,7 @@ jQuery(document).ready( function($) {
     var data = {
       dn_id: parentTRElm.attr('data-dn-id')
     }
+
     if( $(this).attr('id') === 'accept-btn' ) {
 
       parentTRElm.addClass( 'accept' );
@@ -118,10 +122,15 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
 
         // Fill with response data
 
+        // Set the entry ID
+        rowClonedElm.attr( 'data-dn-id', data.dn_id );
+
+        // Set order ID
+        rowClonedElm.attr( 'data-order-id', data.order_id );
+
         // If the delivery accepted
         if( data.is_accepted ) {
 
-          rowClonedElm.attr( 'data-dn-id', data.dn_id );
           rowClonedElm.addClass('accepted');
           rowClonedElm.find( '#accept-btn').remove();
 
@@ -154,9 +163,9 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
 
         if( data.is_accepted ) {
           if( data.accepted_by.id != data.boy_id ) {
-            status = data.accepted_by.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>';
+            status = data.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>';
           }else {
-            status = data.accepted_by.status_msg + ' You';
+            status = data.status_msg + ' You';
           }
         }
 
@@ -174,6 +183,8 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
             callback: function(){}
         });
 
+        // Remove the ID
+        rowClonedElm.removeAttr('id');
         tableBodyElm.prepend( rowClonedElm );
 
       });

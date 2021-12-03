@@ -168,13 +168,14 @@ class SQLite {
   function update_delivery_notification( $dn_id  ) {
 
     // SQL statement to update status of a task to completed
-    $status_msg = GRON_ACCEPTED_BY_STATUS_MSG;
-    $sql = "UPDATE  {$this->delivery_notifications_table_name} SET is_accepted=1, status_msg='{$status_msg}' WHERE dn_id=:dn_id";
+    $status_msg = GRON_DELIVERY_ACCEPTED_STATUS_MSG;
+    $sql = "UPDATE  {$this->delivery_notifications_table_name} SET is_accepted=1, status_msg=:status_msg WHERE dn_id=:dn_id";
 
     $stmt = $this->pdo->prepare( $sql );
 
     // passing values to the parameters
     $stmt->bindValue(':dn_id', $dn_id);
+    $stmt->bindValue(':status_msg', $status_msg);
 
     // execute the update statement
     $stmt->execute();

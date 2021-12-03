@@ -42,7 +42,7 @@ var gronPusher = new Pusher( pusherObj.key, {
           toastOptions.heading = "Delivery Accepted!";
 
           // Toast message
-          toastOptions.text = data.accepted_by.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>';
+          toastOptions.text = data.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>';
 
           $.toast( toastOptions );
 
@@ -58,7 +58,7 @@ var gronPusher = new Pusher( pusherObj.key, {
         // On new-order event
         channel.bind('new-order', function( data ) {
 
-          if( data.vendorId === pusherObj.userInfo.id ) {
+          if( data.vendorId == pusherObj.userInfo.id ) {
 
             // Format toast message
             var deliveriesUrl = pusherObj.siteUrl + '/store-manager/gron-vendor-delivery-notifications/'
@@ -74,12 +74,12 @@ var gronPusher = new Pusher( pusherObj.key, {
         // On delivery-accepted event
         channel.bind( 'delivery-accepted', function( data ) {
 
-          if( $.inArray( pusherObj.userInfo.id, data.vendorId ) != -1 ) {
+          if( data.vendorId == pusherObj.userInfo.id ) {
             // Toast heading
             toastOptions.heading = "Delivery Accepted!";
 
             // Toast message
-            toastOptions.text = data.accepted_by.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>';
+            toastOptions.text = data.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>';
 
             $.toast( toastOptions );
 
@@ -113,10 +113,12 @@ var gronPusher = new Pusher( pusherObj.key, {
         // On delivery-accepted event
         channel.bind( 'delivery-accepted', function( data ) {
 
-          if( $.inArray( pusherObj.userInfo.id, data.associated_boy_ids ) != -1 ) {
+          var associatedBoyIds = Object.values( data.associated_boy_ids );
+
+          if( $.inArray( pusherObj.userInfo.id, associatedBoyIds ) != -1 ) {
 
             toastOptions.heading = "Delivery Accepted!";
-            toastOptions.text = data.accepted_by.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>';
+            toastOptions.text = data.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>';
 
             $.toast( toastOptions );
 
