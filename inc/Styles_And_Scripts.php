@@ -64,7 +64,7 @@ class Styles_And_Scripts {
     wp_localize_script( 'gron-pusher-js', 'pusherObj', array(
       'key'      => $_ENV[ 'PUSHER_KEY' ],
       'cluster'  => $_ENV[ 'PUSHER_CLUSTER'],
-      'userInfo' => Utils::current_user_info(),
+      'userInfo' => Utils::user_info(),
       'siteUrl'  => get_site_url()
     ) );
 

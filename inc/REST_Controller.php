@@ -8,6 +8,7 @@ use GRON\Services;
 use WP_REST_Controller;
 use WP_REST_Server;
 use WP_REST_Response;
+use WP_Error;
 
 class REST_Controller extends WP_REST_Controller {
 
@@ -57,52 +58,10 @@ class REST_Controller extends WP_REST_Controller {
     $order_id = esc_sql( $request[ 'order_id' ] );
     $get_for  = esc_sql( $request[ 'get_for' ] );
     $status   = esc_sql( $request[ 'status' ] );
-    $data = array();
 
     $notifications = $this->sqlite->get_delivery_notifications( $user_id, $order_id, $get_for, $status );
 
-    foreach( $notifications as $notification ) {
-
-      $site_url        = get_site_url();
-      $vendor_id       = $notification['vendor_id'];
-      $order_id        = $notification['order_id'];
-      $delivery_boy_id = $notification['boy_id'];
-      $manage_by       = $notification['manage_by'];
-      $create_at       = $notification['created_at'];
-
-      $data_item['store_name'] = get_user_meta( $vendor_id, 'store_name', true );
-
-      if( $get_for !== 'admin' ) {
-        // do not expose vendor manage URL for delivery boy and vendor
-        $data_item['store_link'] = "{$site_url}/store-manager/vendors-manage/{$vendor_id}/";
-      }
-
-      if( $get_for === 'admin' || $get_for === 'vendor' ) {
-
-        if( $delivery_boy_id ) {
-          $user_data = get_userdata( $delivery_boy_id );
-
-          $data_item['accepted_by_name'] = $user_data->display_name;
-          $data_item['accepted_by_link'] = "{$site_url}/store-manager/delivery-boys-stats/{$delivery_boy_id}/";
-        }
-
-      }
-
-      $data_item['order_id'] = $order_id;
-      $data_item['order_link'] = "{$site_url}/store-manager/orders-details/{$order_id}/";
-
-      $data_item['delivery_day'] = get_post_meta( $order_id, 'gron_deliver_day_' . $vendor_id, true );
-      $data_item['delivery_time'] = get_post_meta( $order_id, 'gron_deliver_time_' . $vendor_id, true );
-
-      $data_item['status'] = $notification['status'];
-      $data_item['status_msg'] = $notification['status_msg'];
-
-      $availability_time = $this->calculate_availability_time( $manage_by, $create_at );
-
-      $data_item['availability_time'] = $availability_time;
-
-      array_push( $data, $data_item );
-    }
+    $data = $this->format_notifications( $notifications, $get_for );
 
     return new WP_REST_Response( $data, 200 );
 
@@ -131,16 +90,23 @@ class REST_Controller extends WP_REST_Controller {
 
         $associated_boy_ids =  $this->sqlite->get_boy_ids_with_order_id( $notification_info['order_id'] );
 
+        // Get user information
+        $user_info = Utils::user_info( $notification_info['boy_id'] );
+
         // Notify other associated delivery boy
         Services::pusher()->trigger( 'delivery-boy', 'delivery-accepted', array(
-          'accepted_by'        => $notification_info['boy_id'],
+          'dn_id'              => $dn_id,
+          'accepted_by_id'     => $notification_info['boy_id'],
+          'accepted_by_name'   => $user_info['display_name'],
           'associated_boy_ids' => $associated_boy_ids
         ) );
 
         // Notify 'admin' or 'vendor
         Services::pusher()->trigger( $notification_info['manage_by'], 'delivery-accepted', array(
-          'accepted_by' => $notification_info['boy_id'],
-          'orderId'     => $order_id
+          'dn_id'            => $dn_id,
+          'vendor_id'        => $notification_info['vendor_id'],
+          'accepted_by_id'   => $notification_info['boy_id'],
+          'accepted_by_name' => $user_info['display_name'],
         ) );
 
         return new WP_REST_Response( $notification_info, 200 );
@@ -214,6 +180,75 @@ class REST_Controller extends WP_REST_Controller {
     $time = ( $broadcast_time_limit * 60 ) - $created_before;
 
     return $time > 0 ? (int) $time : 0;
+
+  }
+
+  /**
+  * Format data to return notifications
+  * @param Array $data_raw Array of all raw data
+  * @param Array $get_for Data get form 'admin', 'vendor' or 'delivery_boy'
+  * @return Array $data_formatted Array of formatted data
+  */
+  private function format_notifications( $data_raw, $get_for ) {
+
+    $data_formatted = array();
+
+    foreach( $data_raw as $data ) {
+
+      $site_url        = get_site_url();
+      $vendor_id       = $data['vendor_id'];
+      $order_id        = $data['order_id'];
+      $delivery_boy_id = $data['boy_id'];
+      $manage_by       = $data['manage_by'];
+      $create_at       = $data['created_at'];
+
+      $data_item['dn_id'] = $data['dn_id'];
+
+      $data_item['store_name'] = get_user_meta( $vendor_id, 'store_name', true );
+
+      if( $get_for !== 'admin' ) {
+        // do not expose vendor manage URL for delivery boy and vendor
+        $data_item['store_link'] = "{$site_url}/store-manager/vendors-manage/{$vendor_id}/";
+      }
+
+      if( $get_for === 'admin' || $get_for === 'vendor' ) {
+
+        if( $delivery_boy_id ) {
+          $user_data = get_userdata( $delivery_boy_id );
+
+          $data_item['accepted_by_name'] = $user_data->display_name;
+          $data_item['accepted_by_link'] = "{$site_url}/store-manager/delivery-boys-stats/{$delivery_boy_id}/";
+        }
+
+      }
+
+      $data_item['order_id'] = $order_id;
+      $data_item['order_link'] = "{$site_url}/store-manager/orders-details/{$order_id}/";
+
+      $data_item['delivery_day'] = get_post_meta( $order_id, 'gron_deliver_day_' . $vendor_id, true );
+      $data_item['delivery_time'] = get_post_meta( $order_id, 'gron_deliver_time_' . $vendor_id, true );
+
+      $data_item['status'] = $data['status'];
+      $data_item['status_msg'] = $data['status_msg'];
+
+      $availability_time = $this->calculate_availability_time( $manage_by, $create_at );
+
+      $data_item['availability_time'] = $availability_time;
+
+      // Provide information about the delivery boy who accepted
+      if( $data['accepted_by'] ) {
+        // Get user information
+        $user_info = Utils::user_info( $data['boy_id'] );
+        
+        $data_item['accepted_by_id'] = $data['boy_id'];
+        $data_item['accepted_by_name'] = $user_info['display_name'];
+
+      }
+
+      array_push( $data_formatted, $data_item );
+    }
+
+    return $data_formatted;
 
   }
 

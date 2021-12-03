@@ -30,6 +30,26 @@ jQuery(document).ready( function($) {
 
   } );
 
+  // On new-order event
+  channel.bind( 'delivery-accepted', function( payload ) {
+
+    if( payload.vendorId === userId ) {
+      var tableElm = $('#gron-dr-pending-table');
+
+      var userProfileUrl = gron.siteURL +
+      '/store-manager/delivery-boys-stats/' +
+       payload.accepted_by_id + '/';
+
+      var status = 'Accepted By ' + '<a href="' + userProfileUrl + '">' + payload.accepted_by_name + '</a>'
+
+      tableElm
+      .find('tr[data-dn-id=' + payload.dn_id + ']')
+      .find('.status')
+      .html( status )
+    }
+
+  });
+
 } );
 
 

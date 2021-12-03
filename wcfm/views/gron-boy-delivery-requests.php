@@ -52,18 +52,22 @@ $current_user_id = get_current_user_id();
                   <td class="delivery_time"></td>
                   <td class="status"></td>
                   <td class="availability"><div class="timer">00:00</div></td>
-                  <td>
+                  <td class="actions">
 
                     <a
+                      id="accept-btn"
                       class="wcfm-action-icon icon-success"
                       href="#"
+                      role="button"
                     >
                       <span class="wcfmfa fa-check text_tip" data-tip="Accept"></span>
                     </a>
 
                     <a
+                      id="reject-btn"
                       class="wcfm-action-icon icon-danger"
                       href="#"
+                      role="button"
                     >
                       <span class="wcfmfa fa-times text_tip" data-tip="Reject"></span>
                     </a>

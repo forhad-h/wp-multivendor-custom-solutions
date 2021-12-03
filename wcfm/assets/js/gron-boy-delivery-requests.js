@@ -15,9 +15,10 @@ jQuery(document).ready( function($) {
   data.status = 'accepted';
   gron_get_delivery_notifications( $, data );
 
-  // Subscribe on delivery-boy channel
+  // Subscribe to delivery-boy channel
   var channel = gronPusher.subscribe('delivery-boy');
 
+  // On new-order event
   channel.bind( 'new-order', function( payload ) {
 
     if( payload.boyId === userId ) {
@@ -30,6 +31,54 @@ jQuery(document).ready( function($) {
     }
 
   } );
+
+  // On new-order event
+  channel.bind( 'delivery-accepted', function( payload ) {
+
+    if( $.inArray( userId, payload.associated_boy_ids ) ) {
+      var tableElm = $('#gron-dr-pending-table');
+
+      var userProfileUrl = gron.siteURL +
+      '/store-manager/delivery-boys-stats/' +
+       payload.accepted_by_id + '/';
+
+      var status = 'Accepted By ' + '<a href="' + userProfileUrl + '">' + payload.accepted_by_name + '</a>'
+
+      tableElm
+      .find('tr[data-dn-id=' + payload.dn_id + ']')
+      .find('.status')
+      .html( status )
+    }
+
+  });
+
+  // Accept Delivery request
+  $('body').on( 'click', "#accept-btn, #reject-btn", function( event ) {
+
+    event.preventDefault();
+
+    var parentTRElm = $(this).closest( 'tr' );
+
+    parentTRElm.addClass( 'processing' );
+
+    var data = {
+      dn_id: parentTRElm.attr('data-dn-id')
+    }
+    if( $(this).attr('id') === 'accept-btn' ) {
+
+      parentTRElm.addClass( 'accept' );
+
+      gron_accept_delivery_notifications( $, data );
+
+    }else if( $(this).attr('id') === 'reject-btn' ) {
+
+      parentTRElm.addClass( 'reject' );
+
+      gron_reject_delivery_notifications( $, data, parentTRElm );
+
+    }
+
+  })
 
 
 } );
@@ -71,6 +120,9 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
 
         // Fill with response data
 
+        // Set the entry id
+        rowClonedElm.attr( 'data-dn-id', data.dn_id )
+
         // set order ID
         rowClonedElm.find( '.order' )
         .find('a')
@@ -102,8 +154,6 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
         // Set the availability timer
         // Reference - https://www.jqueryscript.net/time-clock/Minimal-Stopwatch-Timer-Plugin-For-jQuery.html
         var availability_time = data.availability_time;
-
-        console.log( availability_time );
 
         rowClonedElm.find( '.timer' ).timer({
             action:'start',
@@ -159,7 +209,7 @@ function gron_accept_delivery_notifications( $, data ) {
 }
 
 
-function gron_reject_delivery_notifications( $, data ) {
+function gron_reject_delivery_notifications( $, data, parentTRElm ) {
 
   $.ajax({
     url: gron.siteURL + '/wp-json/gron/v1/delivery_notifications',
@@ -170,13 +220,14 @@ function gron_reject_delivery_notifications( $, data ) {
     data: data
   })
   .done( function( res ) {
-   console.log( res );
+   if( res ) {
+     parentTRElm.fadeOut( 500 ).promise().done( function() {
+      parentTRElm.remove();
+     });
+   }
   } )
   .fail( function( err ) {
    console.log( err.responseText );
   } )
-  .always( function() {
-   //console.log("complete");
-  } );
 
 }

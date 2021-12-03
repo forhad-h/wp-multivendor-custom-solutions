@@ -134,15 +134,7 @@ class SQLite {
 
       $order_ids[] = $order_id;
 
-      $notifications[] = array(
-        'manage_by'  => $row['manage_by'],
-        'vendor_id'  => $row['vendor_id'],
-        'order_id'  => $order_id,
-        'boy_id'  => $row['boy_id'],
-        'status_msg'  => $row['status_msg'],
-        'status'  => $row['status'],
-        'created_at'  => $row['created_at'],
-      );
+      $notifications[] = $row;
     }
 
     return $notifications;

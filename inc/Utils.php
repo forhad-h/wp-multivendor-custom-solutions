@@ -147,21 +147,29 @@ class Utils {
 
   /**
   * Get current user role
-  * @return String role of the user
+  * @param $user_id [Options] ID of the user, if not provided then current user information will return
+  * @return Array $info User information
   */
-  public static function current_user_info() {
+  public static function user_info( $user_id = null ) {
 
-    $user = wp_get_current_user();
+    $user = null;
 
-    if( !empty( $user->roles ) ) {
+    if( !$user_id ) {
+      $user = wp_get_current_user();
+    }else {
+      $user = get_userdata( $user_id );
+    }
+
+    if( $user && $user->ID ) {
 
       $info = array(
-        'id' => $user->ID,
-        'role' => $user->roles[0],
+        'id'           => $user->ID,
+        'role'         => $user->roles[0],
+        'display_name' => $user->display_name
       );
 
       return $info;
-      
+
     }
 
   }
