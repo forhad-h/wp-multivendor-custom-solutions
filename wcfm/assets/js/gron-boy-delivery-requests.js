@@ -1,6 +1,9 @@
 jQuery(document).ready( function($) {
 
   var userId = $( '#current-user-id' ).val();
+  userId = parseInt( userId );
+
+  var animSpeed = 300;
 
   var data = {
     user_id: userId,
@@ -21,9 +24,11 @@ jQuery(document).ready( function($) {
   // On new-order event
   channel.bind( 'new-order', function( payload ) {
 
-    if( payload.boyId === userId ) {
+    var boyId = parseInt( payload.boy_id );
 
-      data.order_id = payload.orderId;
+    if( boyId === userId ) {
+
+      data.order_id = payload.order_id;
       data.status = 'pending';
 
       gron_get_delivery_notifications( $, data, 'partial' );
@@ -40,14 +45,37 @@ jQuery(document).ready( function($) {
     if( $.inArray( userId, associatedBoyIds ) != -1 ) {
 
       var tableElm = $('#gron-dr-pending-table');
+      var trElm = tableElm.find('tr[data-order-id=' + payload.order_id + ']');
 
       var status = payload.status_msg + ' <a href="' + payload.accepted_by.link + '">' + payload.accepted_by.name + '</a>';
 
-      tableElm
-      .find('tr[data-order-id=' + payload.order_id + ']')
-      .addClass('accepted')
-      .find('.status')
-      .html( status );
+      // Mark as accepted and change status
+      trElm.addClass('accepted').find('.status').html( status );
+
+      // Hide action buttons
+      trElm.find('#accept-btn').fadeOut( animSpeed )
+      trElm.find('#reject-btn').fadeOut( animSpeed )
+
+    }
+
+  });
+
+  // On delivery-rejected event
+  channel.bind( 'delivery-rejected', function( payload ) {
+    var associatedBoyIds = Object.values( payload.associated_boy_ids );
+
+    if( $.inArray( userId, associatedBoyIds ) != -1 ) {
+
+      var tableElm = $('#gron-dr-pending-table');
+      var trElm = tableElm.find('tr[data-order-id=' + payload.order_id + ']');
+      var status = payload.status_msg;
+
+      // Mark as not accepted and update status
+      trElm.removeClass('accepted').find('.status').html( status );
+
+      // show action buttons
+      trElm.find('#accept-btn').fadeIn( animSpeed )
+      trElm.find('#reject-btn').fadeIn( animSpeed )
 
     }
 
@@ -63,7 +91,8 @@ jQuery(document).ready( function($) {
     parentTRElm.addClass( 'processing' );
 
     var data = {
-      dn_id: parentTRElm.attr('data-dn-id')
+      dn_id: parentTRElm.attr('data-dn-id'),
+      boy_id: userId
     }
 
     if( $(this).attr('id') === 'accept-btn' ) {
@@ -74,7 +103,11 @@ jQuery(document).ready( function($) {
 
     }else if( $(this).attr('id') === 'reject-btn' ) {
 
+      if(!confirm("Are you sure to reject the delivery?")) return;
+
       parentTRElm.addClass( 'reject' );
+
+      data.reject_type = $(this).attr('data-reject-type');
 
       gron_reject_delivery_notifications( $, data, parentTRElm );
 
@@ -95,6 +128,8 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
   var tablePreloaderElm = $('#gron-dr-' + data.status + ' .gron_table_preloader');
 
   var tabWrapperElm = $( '.gron_tab_wrap' );
+
+  var animSpeed = 300;
 
 
   $.ajax({
@@ -133,6 +168,8 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
 
           rowClonedElm.addClass('accepted');
           rowClonedElm.find( '#accept-btn').remove();
+          rowClonedElm.find( '#reject-btn')
+          .attr( 'data-reject-type', 'after-accept' );
 
         }
 
@@ -204,12 +241,14 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
   .always( function() {
 
     tableWrapperElm.css( 'height', 'auto' );
-    tablePreloaderElm.fadeOut( 300 );
+    tablePreloaderElm.fadeOut( animSpeed );
 
   });
 }
 
 function gron_accept_delivery_notifications( $, data, parentTRElm ) {
+
+  var animSpeed = 300;
 
   $.ajax({
     url: gron.siteURL + '/wp-json/gron/v1/delivery_notifications',
@@ -222,11 +261,18 @@ function gron_accept_delivery_notifications( $, data, parentTRElm ) {
   .done( function( res ) {
 
     if( res ) {
+      // Hide accept button
+      parentTRElm.find('#accept-btn').fadeOut( animSpeed );
 
-      parentTRElm.find('#accept-btn').remove();
+      // Change the parent tr element class
       parentTRElm
       .removeClass( ['processing', 'accept'] )
       .addClass( 'accepted' );
+
+      //
+      parentTRElm
+      .find('#reject-btn')
+      .attr('data-reject-type', 'after-accept')
 
     }
 
@@ -243,6 +289,8 @@ function gron_accept_delivery_notifications( $, data, parentTRElm ) {
 
 function gron_reject_delivery_notifications( $, data, parentTRElm ) {
 
+  var animSpeed = 300;
+
   $.ajax({
     url: gron.siteURL + '/wp-json/gron/v1/delivery_notifications',
     type: 'DELETE',
@@ -252,8 +300,9 @@ function gron_reject_delivery_notifications( $, data, parentTRElm ) {
     data: data
   })
   .done( function( res ) {
+
    if( res ) {
-     parentTRElm.fadeOut( 500 ).promise().done( function() {
+     parentTRElm.fadeOut( animSpeed ).promise().done( function() {
       parentTRElm.remove();
      });
    }

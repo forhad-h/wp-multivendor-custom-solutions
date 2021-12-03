@@ -68,6 +68,7 @@ $current_user_id = get_current_user_id();
                       class="wcfm-action-icon icon-danger"
                       href="#"
                       role="button"
+                      data-reject-type="reject"
                     >
                       <span class="wcfmfa fa-times text_tip" data-tip="Reject"></span>
                     </a>

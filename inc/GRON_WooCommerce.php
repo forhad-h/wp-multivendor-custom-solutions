@@ -416,16 +416,16 @@ class GRON_WooCommerce {
 
         // Notify delivery boy
         Services::pusher()->trigger( 'delivery-boy', 'new-order', array(
-          'orderId'  => $order_id,
-          'boyId' => $boy_id
+          'order_id'  => $order_id,
+          'boy_id' => $boy_id
         ) );
 
       }
 
       // Notify admin or vendor
       Services::pusher()->trigger( $manage_by, 'new-order', array(
-        'orderId'  => $order_id,
-        'vendorId' => $vendor_id
+        'order_id'  => $order_id,
+        'vendor_id' => $vendor_id
       ) );
 
     }else {
@@ -439,8 +439,8 @@ class GRON_WooCommerce {
 
       // Notify admin or vendor
       Services::pusher()->trigger( $manage_by, 'new-order', array(
-        'orderId'  => $order_id,
-        'vendorId' => $vendor_id
+        'order_id'  => $order_id,
+        'vendor_id' => $vendor_id
       ) );
 
     }

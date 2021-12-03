@@ -17,7 +17,7 @@ jQuery(document).ready( function($) {
   // On new-order
   channel.bind( 'new-order', function( payload ) {
 
-      data.order_id = payload.orderId;
+      data.order_id = payload.order_id;
       data.status = 'pending';
 
       gron_delivery_notifications_ajax_request( $, data, 'partial' );
@@ -36,6 +36,20 @@ jQuery(document).ready( function($) {
     .addClass('accepted')
     .find('.status')
     .html( status );
+
+  });
+
+  // On delivery-rejected event
+  channel.bind( 'delivery-rejected', function( payload ) {
+
+      var tableElm = $('#gron-dr-pending-table');
+      var status = payload.status_msg;
+
+      tableElm
+      .find('tr[data-order-id=' + payload.order_id + ']')
+      .removeClass('accepted')
+      .find('.status')
+      .html( status );
 
   });
 

@@ -76,12 +76,16 @@ class REST_Controller extends WP_REST_Controller {
   */
   public function accept_delivery_notification( $request ) {
 
-    $dn_id   = esc_sql( $request['dn_id'] );
+    $dn_id            = esc_sql( $request['dn_id'] );
+    $requested_boy_id = esc_sql( $request['boy_id'] );
 
     $notification = $this->sqlite->get_delivery_notification( $dn_id );
     $boy_id       = (Int) $notification['boy_id'];
     $order_id     = $notification['order_id'];
-    $status_msg   = $notification['status_msg'];
+
+    // If requested boy ID and the notification boy ID is not equal
+    // then terminate
+    if( $requested_boy_id != $boy_id ) return;
 
     $is_accepted = $this->sqlite->accepted_by( $order_id  );
 
@@ -95,6 +99,8 @@ class REST_Controller extends WP_REST_Controller {
       $boy_ids = $this->sqlite->get_boy_ids_with_order_id( $order_id );
       $associated_boy_ids = array_diff( $boy_ids, array( $boy_id ) );
 
+      // change the status message
+      $status_msg = $notification['status_msg'] = GRON_DELIVERY_ACCEPTED_STATUS_MSG;
       /*
         Trigger pusher events
       */
@@ -123,7 +129,7 @@ class REST_Controller extends WP_REST_Controller {
 
       Services::pusher()->trigger( $notification['manage_by'], 'delivery-accepted', $pusher_payload );
 
-      return new WP_REST_Response( $associated_boy_ids, 200 );
+      return new WP_REST_Response( $notification, 200 );
     }
 
     return new WP_Error( 'cant-update', __( 'Delivery Notification cannot be updated!', 'gron-custom' ), array( 'status' => 500 ) );
@@ -138,11 +144,51 @@ class REST_Controller extends WP_REST_Controller {
   public function reject_delivery_notification( $request ) {
 
     $dn_id   = esc_sql( $request['dn_id'] );
+    $reject_type = $request['reject_type'];
+    $requested_boy_id = esc_sql( $request['boy_id'] );
 
+    // Get the notification data
+    $notification = $this->sqlite->get_delivery_notification( $dn_id );
+    $boy_id       = $notification['boy_id'];
+    $order_id     = $notification['order_id'];
+
+    // If requested boy ID and the notification boy ID is not equal
+    // then terminate
+    if( $requested_boy_id != $boy_id ) return;
+
+    if( $reject_type === 'after-accept' ) {
+
+      $boy_ids = $this->sqlite->get_boy_ids_with_order_id( $order_id );
+
+      $associated_boy_ids = array_diff( $boy_ids, array( $boy_id ) );
+
+      // If reject after accepting
+      $pusher_payload = array(
+        'order_id'    => $order_id,
+        'status_msg'  => 'pending'
+      );
+
+      // Notify other associated delivery boys
+      $pusher_payload['associated_boy_ids'] = $associated_boy_ids;
+      Services::pusher()->trigger( 'delivery-boy', 'delivery-rejected', $pusher_payload );
+
+      // Notify to the 'admin' or 'vendor'
+
+      // Unset associated boy ids for admin and vendor
+      unset($pusher_payload['associated_boy_ids']);
+
+      // Set vendor_id for 'vendor'
+      $pusher_payload['vendor_id'] = $notification['vendor_id'];
+
+      Services::pusher()->trigger( $notification['manage_by'], 'delivery-rejected', $pusher_payload );
+
+    }
+
+    // Delete the entry
     $delete = $this->sqlite->delete_delivery_notification( $dn_id );
 
     if( $delete ) {
-      return new WP_REST_Response( $delete, 200 );
+      return new WP_REST_Response( $pusher_payload, 200 );
     }
 
     return new WP_Error( 'cant-delete', __( 'Delivery Notifications cannot be deleted!', 'gron-custom' ), array( 'status' => 500 ) );
@@ -173,9 +219,10 @@ class REST_Controller extends WP_REST_Controller {
   * Calculate Availability Time or Remaining Broadcast time
   * @param String $manage_by Delivery manage by - 'admin' or 'vendor'
   * @param String $created_at DateTime when the the entry is created
+  * @param String $vendor_id ID of the vendor
   * @return Int $time Availability in seconds
   */
-  private function calculate_availability_time( $manage_by, $created_at ) {
+  private function calculate_availability_time( $manage_by, $created_at, $vendor_id ) {
 
     $broadcast_time_limit = 0;
 
@@ -244,7 +291,7 @@ class REST_Controller extends WP_REST_Controller {
       $data_item['status'] = $data['status'];
       $data_item['status_msg'] = $data['status_msg'];
 
-      $availability_time = $this->calculate_availability_time( $manage_by, $create_at );
+      $availability_time = $this->calculate_availability_time( $manage_by, $create_at, $vendor_id );
 
       $data_item['availability_time'] = $availability_time;
 

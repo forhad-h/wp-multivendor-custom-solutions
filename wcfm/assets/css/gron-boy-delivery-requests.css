@@ -44,6 +44,9 @@ tr .status a {
   background-color: rgba(74, 255, 80, 0.3);
   color: #444;
 }
+#wcfm-main-contentainer table tbody tr.accepted.reject td {
+  background-color: #fdfdfd;
+}
 
 /* Actions style */
 tr.processing td {
@@ -60,7 +63,9 @@ tr.processing td::after {
 }
 tr.accepted td::after {
   display: none;
-  visibility: hidden;
+}
+tr.accepted.reject td::after {
+  display: block;
 }
 
 tr.accept.processing td::after {

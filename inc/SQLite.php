@@ -244,7 +244,7 @@ class SQLite {
     $boy_ids = array();
 
     while( $row = $stmt->fetch( \PDO::FETCH_ASSOC ) ) {
-      $boy_ids[] = $row['boy_id'];
+      $boy_ids[] = (Int) $row['boy_id'];
     }
 
     return $boy_ids;

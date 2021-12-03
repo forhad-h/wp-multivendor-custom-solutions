@@ -1,6 +1,7 @@
 jQuery(document).ready( function($) {
 
   var userId = $( '#current-user-id' ).val();
+  userId = parseInt( userId );
 
   var data = {
     user_id: userId,
@@ -19,9 +20,11 @@ jQuery(document).ready( function($) {
 
   channel.bind( 'new-order', function( payload ) {
 
-    if( payload.vendorId === userId ) {
+    var vendorId = parseInt( payload.vendor_id );
 
-      data.order_id = payload.orderId;
+    if( vendorId === userId ) {
+
+      data.order_id = payload.order_id;
       data.status = 'pending';
 
       gron_delivery_notifications_ajax_request( $, data, 'partial' );
@@ -33,7 +36,9 @@ jQuery(document).ready( function($) {
   // On new-order event
   channel.bind( 'delivery-accepted', function( payload ) {
 
-    if( payload.vendorId === userId ) {
+    var vendorId = parseInt( payload.vendor_id );
+
+    if( vendorId === userId ) {
 
       var tableElm = $('#gron-dr-pending-table');
 
@@ -42,6 +47,26 @@ jQuery(document).ready( function($) {
       tableElm
       .find('tr[data-order-id=' + payload.order_id + ']')
       .addClass('accepted')
+      .find('.status')
+      .html( status );
+
+    }
+
+  });
+
+  // On delivery-rejected event
+  channel.bind( 'delivery-rejected', function( payload ) {
+
+    var vendorId = parseInt( payload.vendor_id );
+
+    if( vendorId === userId ) {
+
+      var tableElm = $('#gron-dr-pending-table');
+      var status = payload.status_msg;
+
+      tableElm
+      .find('tr[data-order-id=' + payload.order_id + ']')
+      .removeClass('accepted')
       .find('.status')
       .html( status );
 
