@@ -40,7 +40,7 @@ tr .status {
 
 
 /* Actions style */
-tr.accepted td {
+#wcfm-main-contentainer table tbody tr.accepted td {
   background-color: rgba(74, 255, 80, 0.3);
 }
 tr.processing td {
@@ -54,6 +54,10 @@ tr.processing td::after {
   top: 0;
   width: 100%;
   height: 100%;
+}
+tr.accepted td::after {
+  display: none;
+  visibility: hidden;
 }
 
 tr.accept.processing td::after {

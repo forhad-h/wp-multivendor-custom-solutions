@@ -66,7 +66,7 @@ jQuery(document).ready( function($) {
 
       parentTRElm.addClass( 'accept' );
 
-      gron_accept_delivery_notifications( $, data );
+      gron_accept_delivery_notifications( $, data, parentTRElm );
 
     }else if( $(this).attr('id') === 'reject-btn' ) {
 
@@ -118,8 +118,14 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
 
         // Fill with response data
 
-        // Set the entry id
-        rowClonedElm.attr( 'data-dn-id', data.dn_id )
+        // If the delivery accepted
+        if( data.is_accepted ) {
+
+          rowClonedElm.attr( 'data-dn-id', data.dn_id );
+          rowClonedElm.addClass('accepted');
+          rowClonedElm.find( '#accept-btn').remove();
+
+        }
 
         // set order ID
         rowClonedElm.find( '.order' )
@@ -144,14 +150,18 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
         .text( data.delivery_time );
 
         // set status
-        var status = data.status_msg ? data.status_msg : data.status;
+        var status = data.status;
 
         if( data.is_accepted ) {
-          data.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>'
+          if( data.accepted_by.id != data.boy_id ) {
+            status = data.accepted_by.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>';
+          }else {
+            status = data.accepted_by.status_msg + ' You';
+          }
         }
 
         rowClonedElm.find( '.status' )
-        .text( status );
+        .html( status );
 
         // Set the availability timer
         // Reference - https://www.jqueryscript.net/time-clock/Minimal-Stopwatch-Timer-Plugin-For-jQuery.html
@@ -199,9 +209,16 @@ function gron_accept_delivery_notifications( $, data, parentTRElm ) {
     data: data
   })
   .done( function( res ) {
-    parentTRElm
-    .removeClass( ['processing', 'accept'] )
-    .addClass( 'accepted' );
+
+    if( res ) {
+
+      parentTRElm.find('#accept-btn').remove();
+      parentTRElm
+      .removeClass( ['processing', 'accept'] )
+      .addClass( 'accepted' );
+
+    }
+
   } )
   .fail( function( err ) {
    console.log( err.responseText );

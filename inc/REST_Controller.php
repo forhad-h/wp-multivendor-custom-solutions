@@ -61,7 +61,7 @@ class REST_Controller extends WP_REST_Controller {
 
     $notifications = $this->sqlite->get_delivery_notifications( $user_id, $order_id, $get_for, $status );
 
-    $data = $this->format_notifications( $notifications, $get_for );
+    $data = $this->formatted_notifications_info( $notifications, $get_for );
 
     return new WP_REST_Response( $data, 200 );
 
@@ -77,44 +77,42 @@ class REST_Controller extends WP_REST_Controller {
   public function accept_delivery_notification( $request ) {
 
     $dn_id   = esc_sql( $request['dn_id'] );
+    $notification = $this->sqlite->get_delivery_notification( $dn_id );
 
-    $is_accepted = $this->sqlite->is_accepted( $dn_id  );
+    $is_accepted = $this->sqlite->accepted_by( $notification['order_id']  );
 
-    if( !$is_accepted ) {
+    // Do nothing if the order already accepted by someone
+    if( $is_accepted ) return;
 
-      $update = $this->sqlite->update_delivery_notification( $dn_id );
+    $update = $this->sqlite->update_delivery_notification( $dn_id );
 
-      if( $update ) {
+    if( $update ) {
 
-        $notification = $this->sqlite->get_delivery_notification( $dn_id );
+      $boy_ids = $this->sqlite->get_boy_ids_with_order_id( $notification['order_id'] );
+      $associated_boy_ids = array_diff( $boy_ids, array( $notification['boy_id'] ) );
 
-        $associated_boy_ids =  $this->sqlite->get_boy_ids_with_order_id( $notification['order_id'] );
+      // Notify other associated delivery boy
 
-        // Notify other associated delivery boy
-        $payload = $this->delivery_accept_payload( $notification );
+      Services::pusher()->trigger(
+        'delivery-boy',
+        'delivery-accepted',
+        array_merge(
+          $this->accepted_by_info( $boy_id, $data_raw['status_msg'] ),
+          array( 'associated_boy_ids' => $associated_boy_ids, )
+        ),
+      );
 
-        Services::pusher()->trigger(
-          'delivery-boy',
-          'delivery-accepted',
-          array_merge(
-            $payload,
-            array( 'associated_boy_ids' => $associated_boy_ids, )
-          ),
-        );
+      // Notify 'admin' or 'vendor
+      Services::pusher()->trigger(
+        $notification['manage_by'],
+        'delivery-accepted',
+        array_merge(
+          $payload,
+          array( 'vendor_id' => $notification['vendor_id'] ),
+        )
+      );
 
-        // Notify 'admin' or 'vendor
-        Services::pusher()->trigger(
-          $notification['manage_by'],
-          'delivery-accepted',
-          array_merge(
-            $payload,
-            array( 'vendor_id' => $notification['vendor_id'] ),
-          )
-        );
-
-        return new WP_REST_Response( $notification, 200 );
-      }
-
+      return new WP_REST_Response( $associated_boy_ids, 200 );
     }
 
     return new WP_Error( 'cant-update', __( 'Delivery Notification cannot be updated!', 'gron-custom' ), array( 'status' => 500 ) );
@@ -192,14 +190,13 @@ class REST_Controller extends WP_REST_Controller {
   * @param Array $get_for Data get form 'admin', 'vendor' or 'delivery_boy'
   * @return Array $data_formatted Array of formatted data
   */
-  private function format_notifications( $data_raw, $get_for ) {
+  private function formatted_notifications_info( $data_raw, $get_for ) {
 
     $data_formatted = array();
 
     foreach( $data_raw as $data ) {
 
       $site_url        = get_site_url();
-      $boy_id          = $data['boy_id'];
       $vendor_id       = $data['vendor_id'];
       $order_id        = $data['order_id'];
       $delivery_boy_id = $data['boy_id'];
@@ -207,6 +204,7 @@ class REST_Controller extends WP_REST_Controller {
       $create_at       = $data['created_at'];
 
       $data_item['dn_id'] = $data['dn_id'];
+      $data_item['boy_id'] = $data['boy_id'];
 
       $data_item['store_name'] = get_user_meta( $vendor_id, 'store_name', true );
 
@@ -238,19 +236,16 @@ class REST_Controller extends WP_REST_Controller {
       $availability_time = $this->calculate_availability_time( $manage_by, $create_at );
 
       $data_item['availability_time'] = $availability_time;
-      $data_item['is_accepted'] = $data['is_accepted'];
+
+      $accepted_by = $this->sqlite->accepted_by( $order_id );
+
+      $data_item['is_accepted'] = $accepted_by ? true : false;
       $data_item['accepted_by'] = array();
 
       // Provide information about the delivery boy who accepted
-      if( $data['is_accepted'] ) {
-        // Get user information
-        $user_info = Utils::user_info( $boy_id );
-        $boy_link = "{$site_url}/store-manager/delivery-boys-stats/{$boy_id}/";
+      if( $accepted_by ) {
 
-        $data_item['accepted_by'] = array(
-          'name' => $user_info['display_name'],
-          'link' => $boy_link
-        );
+        $data_item['accepted_by'] = $this->accepted_by_info( $accepted_by, GRON_ACCEPTED_BY_STATUS_MSG );
 
       }
 
@@ -262,30 +257,28 @@ class REST_Controller extends WP_REST_Controller {
   }
 
   /**
-  * Format delivery-accept payload
-  * @param Array $data_raw Notification data
-  * @return Array $data_formatted Array of formatted data
+  * Format boy info who accepted the delivery
+  * @param Array $boy_id ID of the boy
+  * @param Array $status_msg Status Message
+  * @return Array $accepted_by Array of formatted data
   */
-
-  private function delivery_accept_payload( $data_raw ) {
+  private function accepted_by_info( $boy_id, $status_msg ) {
 
     // Boy link
     $site_url = get_site_url();
-    $boy_link = "{$site_url}/store-manager/delivery-boys-stats/{$data_raw['boy_id']}/";
+    $boy_link = "{$site_url}/store-manager/delivery-boys-stats/{$boy_id}/";
 
-    // Get user information
-    $user_info = Utils::user_info( $data_raw['boy_id'] );
+    $user_info = Utils::user_info( $boy_id );
 
-    $data_formatted = array(
-      'status_msg' => $data_raw['status_msg'],
-      'accepted_by' => array(
-        'name' => $user_info['display_name'],
-        'link' => $boy_link
-      )
+    $accepted_by = array(
+      'id'   => $boy_id,
+      'name' => esc_attr( $user_info['display_name'] ),
+      'link' => esc_url( $boy_link ),
+      'status_msg' => $status_msg
     );
 
-    return $data_formatted;
-
+    return $accepted_by;
   }
+
 
 }

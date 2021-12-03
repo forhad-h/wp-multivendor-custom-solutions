@@ -122,7 +122,7 @@ function gron_delivery_notifications_ajax_request( $, data, render = 'all' ) {
         var status = data.status_msg ? data.status_msg : data.status;
 
         if( data.is_accepted ) {
-          data.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>'
+          status = data.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>'
         }
 
         rowClonedElm.find( '.status' )

@@ -168,7 +168,8 @@ class SQLite {
   function update_delivery_notification( $dn_id  ) {
 
     // SQL statement to update status of a task to completed
-    $sql = "UPDATE  {$this->delivery_notifications_table_name} SET is_accepted=1, status_msg='Accepted by' WHERE dn_id=:dn_id";
+    $status_msg = GRON_ACCEPTED_BY_STATUS_MSG;
+    $sql = "UPDATE  {$this->delivery_notifications_table_name} SET is_accepted=1, status_msg='{$status_msg}' WHERE dn_id=:dn_id";
 
     $stmt = $this->pdo->prepare( $sql );
 
@@ -204,19 +205,26 @@ class SQLite {
 
   /**
   * Check is already accepted
-  * @param Int $dn_id ID of the entry
+  * @param Int $order_id ID of the order
   * @version 2.1.4
-  * @return Boolean
+  * @return Int $accepted_by ID of the boy
   */
-  public function is_accepted( $dn_id ) {
+  public function accepted_by( $order_id ) {
 
-    $sql = "SELECT is_accepted FROM {$this->delivery_notifications_table_name} WHERE dn_id={$dn_id}";
+    $accepted_by = 0;
+
+    $sql = "SELECT is_accepted, boy_id FROM {$this->delivery_notifications_table_name} WHERE order_id={$order_id}";
 
     $stmt = $this->pdo->query( $sql );
 
-    $result = $stmt->fetch( \PDO::FETCH_ASSOC );
+    while( $row = $stmt->fetch( \PDO::FETCH_ASSOC ) ) {
+      if( $row['is_accepted'] ) {
+        $accepted_by = $row['boy_id'];
+        break;
+      }
+    }
 
-    return $result['is_accepted'];
+    return $accepted_by;
 
   }
 

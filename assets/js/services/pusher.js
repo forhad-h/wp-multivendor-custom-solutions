@@ -42,7 +42,7 @@ var gronPusher = new Pusher( pusherObj.key, {
           toastOptions.heading = "Delivery Accepted!";
 
           // Toast message
-          toastOptions.text = data.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>';
+          toastOptions.text = data.accepted_by.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>';
 
           $.toast( toastOptions );
 
@@ -74,12 +74,12 @@ var gronPusher = new Pusher( pusherObj.key, {
         // On delivery-accepted event
         channel.bind( 'delivery-accepted', function( data ) {
 
-          if( $.inArray( pusherObj.userInfo.id, data.vendorId ) ) {
+          if( $.inArray( pusherObj.userInfo.id, data.vendorId ) != -1 ) {
             // Toast heading
             toastOptions.heading = "Delivery Accepted!";
 
             // Toast message
-            toastOptions.text = data.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>';
+            toastOptions.text = data.accepted_by.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>';
 
             $.toast( toastOptions );
 
@@ -111,12 +111,12 @@ var gronPusher = new Pusher( pusherObj.key, {
         });
 
         // On delivery-accepted event
-        channel.bind( 'delivery-accepted', function( payload ) {
+        channel.bind( 'delivery-accepted', function( data ) {
 
-          if( $.inArray( pusherObj.userInfo.id, payload.associated_boy_ids ) ) {
+          if( $.inArray( pusherObj.userInfo.id, data.associated_boy_ids ) != -1 ) {
 
             toastOptions.heading = "Delivery Accepted!";
-            toastOptions.text = payload.status_msg + ' <a href="' + payload.accepted_by.link + '">' + payload.accepted_by.name + '</a>';
+            toastOptions.text = data.accepted_by.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>';
 
             $.toast( toastOptions );
 
