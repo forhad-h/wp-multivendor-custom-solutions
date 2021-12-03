@@ -51,7 +51,7 @@ $current_user_id = get_current_user_id();
                   <td class="delivery_day"></td>
                   <td class="delivery_time"></td>
                   <td class="status"></td>
-                  <td class="availability"><div class="timer">00:00</div></td>
+                  <td class="availability"><div class="timer"></div></td>
                   <td class="actions">
 
                     <a

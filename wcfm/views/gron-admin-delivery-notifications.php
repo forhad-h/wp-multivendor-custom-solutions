@@ -42,9 +42,11 @@ use GRON\Utils;
                 <tr id="gron-dr-pending-row-template">
 
                   <td class="order"><a href="#"></a></td>
+                  <td class="store"><a href="#"></a></td>
                   <td class="delivery_day"></td>
                   <td class="delivery_time"></td>
                   <td class="status"></td>
+                  <td class="availability"><div class="timer"></div></td>
 
                 </tr>
               </table>
@@ -58,9 +60,11 @@ use GRON\Utils;
                   <thead>
                     <tr>
                       <th>Order</th>
+                      <th>Store</th>
                       <th>Delivery Day</th>
                       <th>Delivery Time</th>
                       <th>Status</th>
+                      <th>Availability</th>
                     </tr>
                   </thead>
 
@@ -69,9 +73,11 @@ use GRON\Utils;
                   <tfoot>
                     <tr>
                       <th>Order</th>
+                      <th>Store</th>
                       <th>Delivery Day</th>
                       <th>Delivery Time</th>
                       <th>Status</th>
+                      <th>Availability</th>
                     </tr>
                   </tfoot>
 
@@ -98,6 +104,7 @@ use GRON\Utils;
                 <tr id="gron-dr-accepted-row-template">
 
                   <td class="order"><a href="#"></a></td>
+                  <td class="store"><a href="#"></a></td>
                   <td class="delivery_day"></td>
                   <td class="delivery_time"></td>
                   <td class="accepted_by"><a href="#"></a></td>
@@ -114,6 +121,7 @@ use GRON\Utils;
                   <thead>
                     <tr>
                       <th>Order</th>
+                      <th>Store</th>
                       <th>Delivery Day</th>
                       <th>Delivery Time</th>
                       <th>Accepted By</th>
@@ -125,6 +133,7 @@ use GRON\Utils;
                   <tfoot>
                     <tr>
                       <th>Order</th>
+                      <th>Store</th>
                       <th>Delivery Day</th>
                       <th>Delivery Time</th>
                       <th>Accepted By</th>

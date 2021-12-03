@@ -86,30 +86,33 @@ class REST_Controller extends WP_REST_Controller {
 
       if( $update ) {
 
-        $notification_info = $this->sqlite->get_delivery_notification( $dn_id );
+        $notification = $this->sqlite->get_delivery_notification( $dn_id );
 
-        $associated_boy_ids =  $this->sqlite->get_boy_ids_with_order_id( $notification_info['order_id'] );
-
-        // Get user information
-        $user_info = Utils::user_info( $notification_info['boy_id'] );
+        $associated_boy_ids =  $this->sqlite->get_boy_ids_with_order_id( $notification['order_id'] );
 
         // Notify other associated delivery boy
-        Services::pusher()->trigger( 'delivery-boy', 'delivery-accepted', array(
-          'dn_id'              => $dn_id,
-          'accepted_by_id'     => $notification_info['boy_id'],
-          'accepted_by_name'   => $user_info['display_name'],
-          'associated_boy_ids' => $associated_boy_ids
-        ) );
+        $payload = $this->delivery_accept_payload( $notification );
+
+        Services::pusher()->trigger(
+          'delivery-boy',
+          'delivery-accepted',
+          array_merge(
+            $payload,
+            array( 'associated_boy_ids' => $associated_boy_ids, )
+          ),
+        );
 
         // Notify 'admin' or 'vendor
-        Services::pusher()->trigger( $notification_info['manage_by'], 'delivery-accepted', array(
-          'dn_id'            => $dn_id,
-          'vendor_id'        => $notification_info['vendor_id'],
-          'accepted_by_id'   => $notification_info['boy_id'],
-          'accepted_by_name' => $user_info['display_name'],
-        ) );
+        Services::pusher()->trigger(
+          $notification['manage_by'],
+          'delivery-accepted',
+          array_merge(
+            $payload,
+            array( 'vendor_id' => $notification['vendor_id'] ),
+          )
+        );
 
-        return new WP_REST_Response( $notification_info, 200 );
+        return new WP_REST_Response( $notification, 200 );
       }
 
     }
@@ -196,6 +199,7 @@ class REST_Controller extends WP_REST_Controller {
     foreach( $data_raw as $data ) {
 
       $site_url        = get_site_url();
+      $boy_id          = $data['boy_id'];
       $vendor_id       = $data['vendor_id'];
       $order_id        = $data['order_id'];
       $delivery_boy_id = $data['boy_id'];
@@ -206,7 +210,7 @@ class REST_Controller extends WP_REST_Controller {
 
       $data_item['store_name'] = get_user_meta( $vendor_id, 'store_name', true );
 
-      if( $get_for !== 'admin' ) {
+      if( $get_for === 'admin' ) {
         // do not expose vendor manage URL for delivery boy and vendor
         $data_item['store_link'] = "{$site_url}/store-manager/vendors-manage/{$vendor_id}/";
       }
@@ -234,19 +238,51 @@ class REST_Controller extends WP_REST_Controller {
       $availability_time = $this->calculate_availability_time( $manage_by, $create_at );
 
       $data_item['availability_time'] = $availability_time;
+      $data_item['is_accepted'] = $data['is_accepted'];
+      $data_item['accepted_by'] = array();
 
       // Provide information about the delivery boy who accepted
-      if( $data['accepted_by'] ) {
+      if( $data['is_accepted'] ) {
         // Get user information
-        $user_info = Utils::user_info( $data['boy_id'] );
-        
-        $data_item['accepted_by_id'] = $data['boy_id'];
-        $data_item['accepted_by_name'] = $user_info['display_name'];
+        $user_info = Utils::user_info( $boy_id );
+        $boy_link = "{$site_url}/store-manager/delivery-boys-stats/{$boy_id}/";
+
+        $data_item['accepted_by'] = array(
+          'name' => $user_info['display_name'],
+          'link' => $boy_link
+        );
 
       }
 
       array_push( $data_formatted, $data_item );
     }
+
+    return $data_formatted;
+
+  }
+
+  /**
+  * Format delivery-accept payload
+  * @param Array $data_raw Notification data
+  * @return Array $data_formatted Array of formatted data
+  */
+
+  private function delivery_accept_payload( $data_raw ) {
+
+    // Boy link
+    $site_url = get_site_url();
+    $boy_link = "{$site_url}/store-manager/delivery-boys-stats/{$data_raw['boy_id']}/";
+
+    // Get user information
+    $user_info = Utils::user_info( $data_raw['boy_id'] );
+
+    $data_formatted = array(
+      'status_msg' => $data_raw['status_msg'],
+      'accepted_by' => array(
+        'name' => $user_info['display_name'],
+        'link' => $boy_link
+      )
+    );
 
     return $data_formatted;
 

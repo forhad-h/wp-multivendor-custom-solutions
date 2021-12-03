@@ -34,18 +34,16 @@ jQuery(document).ready( function($) {
   channel.bind( 'delivery-accepted', function( payload ) {
 
     if( payload.vendorId === userId ) {
+
       var tableElm = $('#gron-dr-pending-table');
 
-      var userProfileUrl = gron.siteURL +
-      '/store-manager/delivery-boys-stats/' +
-       payload.accepted_by_id + '/';
-
-      var status = 'Accepted By ' + '<a href="' + userProfileUrl + '">' + payload.accepted_by_name + '</a>'
+      var status = payload.status_msg + ' <a href="' + payload.accepted_by.link + '">' + payload.accepted_by.name + '</a>'
 
       tableElm
       .find('tr[data-dn-id=' + payload.dn_id + ']')
       .find('.status')
-      .html( status )
+      .html( status );
+
     }
 
   });
@@ -89,6 +87,9 @@ function gron_delivery_notifications_ajax_request( $, data, render = 'all' ) {
 
         // Fill with response data
 
+        // Set the entry id
+        rowClonedElm.attr( 'data-dn-id', data.dn_id )
+
         // set order ID
         rowClonedElm.find( '.order' )
         .find('a')
@@ -107,10 +108,6 @@ function gron_delivery_notifications_ajax_request( $, data, render = 'all' ) {
         rowClonedElm.find( '.delivery_time' )
         .text( data.delivery_time );
 
-        // set status
-        rowClonedElm.find( '.status' )
-        .text( data.status_msg ? data.status_msg : data.status );
-
         // set accepted by name
         rowClonedElm.find( '.accepted_by' )
         .find('a')
@@ -120,6 +117,27 @@ function gron_delivery_notifications_ajax_request( $, data, render = 'all' ) {
         rowClonedElm.find( '.accepted_by' )
         .find('a')
         .attr( 'href', data.accepted_by_link );
+
+        // set status
+        var status = data.status_msg ? data.status_msg : data.status;
+
+        if( data.is_accepted ) {
+          data.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>'
+        }
+
+        rowClonedElm.find( '.status' )
+        .text( status );
+
+        // Set the availability timer
+        // Reference - https://www.jqueryscript.net/time-clock/Minimal-Stopwatch-Timer-Plugin-For-jQuery.html
+        var availability_time = data.availability_time;
+
+        rowClonedElm.find( '.timer' ).timer({
+            action: 'start',
+            duration: availability_time ? availability_time : 1,
+            countdown: true,
+            callback: function(){}
+        });
 
 
         tableBodyElm.prepend( rowClonedElm );

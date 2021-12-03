@@ -36,18 +36,16 @@ jQuery(document).ready( function($) {
   channel.bind( 'delivery-accepted', function( payload ) {
 
     if( $.inArray( userId, payload.associated_boy_ids ) ) {
+
       var tableElm = $('#gron-dr-pending-table');
 
-      var userProfileUrl = gron.siteURL +
-      '/store-manager/delivery-boys-stats/' +
-       payload.accepted_by_id + '/';
-
-      var status = 'Accepted By ' + '<a href="' + userProfileUrl + '">' + payload.accepted_by_name + '</a>'
+      var status = payload.status_msg + ' <a href="' + payload.accepted_by.link + '">' + payload.accepted_by.name + '</a>'
 
       tableElm
       .find('tr[data-dn-id=' + payload.dn_id + ']')
       .find('.status')
-      .html( status )
+      .html( status );
+
     }
 
   });
@@ -141,22 +139,26 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
         rowClonedElm.find( '.delivery_day' )
         .text( data.delivery_day );
 
-        // set delivery day
+        // set delivery time
         rowClonedElm.find( '.delivery_time' )
         .text( data.delivery_time );
 
-        // set delivery day
+        // set status
         var status = data.status_msg ? data.status_msg : data.status;
+
+        if( data.is_accepted ) {
+          data.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>'
+        }
+
         rowClonedElm.find( '.status' )
         .text( status );
-
 
         // Set the availability timer
         // Reference - https://www.jqueryscript.net/time-clock/Minimal-Stopwatch-Timer-Plugin-For-jQuery.html
         var availability_time = data.availability_time;
 
         rowClonedElm.find( '.timer' ).timer({
-            action:'start',
+            action: 'start',
             duration: availability_time ? availability_time : 1,
             countdown: true,
             callback: function(){}

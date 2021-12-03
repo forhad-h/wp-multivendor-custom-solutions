@@ -34,7 +34,12 @@
   align-items: center;
   justify-content: center;
 }
+tr .status {
+  text-transform: capitalize;
+}
 
+
+/* Actions style */
 tr.processing td {
   position: relative;
   transition: 0.3s linear;
@@ -58,8 +63,4 @@ tr.reject.processing td::after {
 
 div#wcfm-main-contentainer #gron-delivery-requests .gron_table [class*=" fa-"]:before {
   font-weight: 600;
-}
-
-tr .status {
-  text-transform: capitalize;
 }
