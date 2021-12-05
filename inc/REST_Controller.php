@@ -92,7 +92,7 @@ class REST_Controller extends WP_REST_Controller {
     // Do nothing if the order already accepted by someone
     if( $is_accepted ) return;
 
-    $update = $this->sqlite->update_delivery_notification( $dn_id );
+    $update = $this->sqlite->update_delivery_notification( $dn_id, true );
 
     if( $update ) {
 

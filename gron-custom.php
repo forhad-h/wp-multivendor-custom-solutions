@@ -23,15 +23,34 @@ use GRON\Activation;
 use GRON\GRON_WooCommerce;
 use GRON\Styles_And_Scripts;
 use GRON\REST_Controller;
+use GRON\Cron_Job;
+
 use GRON\WCFM\Store_Manager;
+
 
 /* TODO: Security Issue
   Single vendor management exposed to Delivery boy
   Example Link: http://localhost:8080/store-manager/vendors-manage/2/
 */
+
+/*
+* Activation hook run on plugin activation
+*/
 register_activation_hook( __FILE__, function() {
   new Activation();
 } );
+
+/*
+* Deactivation hook run on plugin deactivation
+*/
+register_deactivation_hook( __FILE__, function(){
+
+  // Reset Cron-job
+  $timestamp = wp_next_scheduled('gron_dn_check');
+  wp_unschedule_event( $timestamp, 'gron_dn_check' );
+
+});
+
 
 // Register styles and scripts
 new Styles_And_Scripts();
@@ -48,6 +67,18 @@ function gron_init() {
   // TODO: prevent excecute delivery boy related code, if the plugin is not found
   // Delivery boy
   require_once GRON_DIR_PATH . 'wcfm/delivery-boy.php';
+
+
+  /* Cron Job */
+  new Cron_Job();
+
+  $timestamp = wp_next_scheduled('gron_dn_check');
+
+  // On gron_dn_check event
+  add_action( 'gron_dn_check', function() {
+  \GRON\Utils::log( date('H:i:s') );
+  } );
+
 
 }
 

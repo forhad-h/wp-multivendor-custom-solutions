@@ -1,0 +1,3 @@
+# Make SQLite database writable
+# Setup system cron job
+# Disable the wp-cron in wp-config.php

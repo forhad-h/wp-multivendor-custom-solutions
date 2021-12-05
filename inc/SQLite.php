@@ -97,6 +97,24 @@ class SQLite {
   }
 
   /**
+  * Get all notifications
+  */
+  public function get_all_delivery_notifications() {
+    $sql = "SELECT * FROM {$this->delivery_notifications_table_name}";
+
+    $stmt = $this->pdo->query( $sql );
+
+    $notifications = array();
+
+    while( $row = $stmt->fetch( \PDO::FETCH_ASSOC ) ) {
+      $notifications[] = $row;
+    }
+
+    return $notifications;
+
+  }
+
+  /**
   * Get delivery notifications
   * @param Int $user_id [Optional] ID of the user
   * @param Int $order_id [Optional] ID of the order
@@ -160,21 +178,42 @@ class SQLite {
   }
 
   /**
-  * Update delivery notification
+  * Update delivery notification By ID
+  *
   * @param Int $dn_id ID of the entry
+  * @param Boolean $is_accepted ID of the entry
+  * @param String [Optional] $status Status of the notification
+  * @param String [Optional] $status_msg Status Message
   * @version 2.1.4
   * @return Boolean
   */
-  function update_delivery_notification( $dn_id  ) {
+  function update_delivery_notification(
+    $dn_id,
+    $is_accepted = false,
+    $status = '',
+    $status_msg = '',
+    $reset_boy_id = false
+  ) {
 
     // SQL statement to update status of a task to completed
-    $status_msg = GRON_DELIVERY_ACCEPTED_STATUS_MSG;
-    $sql = "UPDATE  {$this->delivery_notifications_table_name} SET is_accepted=1, status_msg=:status_msg WHERE dn_id=:dn_id";
+    $sql = "UPDATE  {$this->delivery_notifications_table_name} SET status_msg=:status_msg";
+
+    if( $is_accepted ) {
+      $sql .= ", is_accepted=1";
+    }
+
+    if( $status ) {
+      $sql .= ", status=:status";
+    }
+
+    $sql .= " WHERE dn_id=:dn_id";
 
     $stmt = $this->pdo->prepare( $sql );
 
     // passing values to the parameters
     $stmt->bindValue(':dn_id', $dn_id);
+
+    $status_msg = !$status_msg ? GRON_DELIVERY_ACCEPTED_STATUS_MSG : $status_msg ;
     $stmt->bindValue(':status_msg', $status_msg);
 
     // execute the update statement
