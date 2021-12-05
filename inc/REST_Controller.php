@@ -4,6 +4,7 @@ defined( 'ABSPATH' ) or exit;
 
 use GRON\SQLite;
 use GRON\Services;
+use GRON\Utils;
 
 use WP_REST_Controller;
 use WP_REST_Server;
@@ -92,7 +93,10 @@ class REST_Controller extends WP_REST_Controller {
     // Do nothing if the order already accepted by someone
     if( $is_accepted ) return;
 
-    $update = $this->sqlite->update_delivery_notification( $dn_id, true );
+    $update = $this->sqlite->update_delivery_notification( array(
+      'dn_id'       => $dn_id,
+      'is_accepted' => true
+    ) );
 
     if( $update ) {
 
@@ -214,34 +218,6 @@ class REST_Controller extends WP_REST_Controller {
 
   }
 
-
-  /**
-  * Calculate Availability Time or Remaining Broadcast time
-  * @param String $manage_by Delivery manage by - 'admin' or 'vendor'
-  * @param String $created_at DateTime when the the entry is created
-  * @param String $vendor_id ID of the vendor
-  * @return Int $time Availability in seconds
-  */
-  private function calculate_availability_time( $manage_by, $created_at, $vendor_id ) {
-
-    $broadcast_time_limit = 0;
-
-    if( $manage_by === 'admin' ) {
-      $broadcast_time_limit = Utils::get_dn_boradcast_time_limit();
-    }elseif( $manage_by === 'vendor' ) {
-      $broadcast_time_limit = Utils::get_dn_boradcast_time_limit( $vendor_id );
-    }
-
-    // Created before in seconds
-    $created_before = strtotime( $this->current_date_time ) - strtotime( $created_at );
-
-    // Time in seconds
-    $time = ( $broadcast_time_limit * 60 ) - $created_before;
-
-    return $time > 0 ? (int) $time : 0;
-
-  }
-
   /**
   * Format data to return notifications
   * @param Array $data_raw Array of all raw data
@@ -291,7 +267,7 @@ class REST_Controller extends WP_REST_Controller {
       $data_item['status'] = $data['status'];
       $data_item['status_msg'] = $data['status_msg'];
 
-      $availability_time = $this->calculate_availability_time( $manage_by, $create_at, $vendor_id );
+      $availability_time = Utils::calculate_availability_time( $manage_by, $create_at, $vendor_id );
 
       $data_item['availability_time'] = $availability_time;
 
