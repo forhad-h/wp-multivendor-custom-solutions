@@ -1,6 +1,6 @@
 <?php
 namespace GRON;
-// prevent direct access
+// Prevent direct access
 defined( 'ABSPATH' ) or exit;
 
 /**
@@ -100,7 +100,7 @@ class SQLite {
   /**
   * Get all notifications
   */
-  public function get_all_inactive_delivery_notifications() {
+  public function get_all_delivery_notifications() {
     $sql = "SELECT * FROM {$this->delivery_notifications_table_name}";
 
     $stmt = $this->pdo->query( $sql );
@@ -144,6 +144,8 @@ class SQLite {
 
     $notifications = array();
     $order_ids = array();
+
+
     while( $row = $stmt->fetch( \PDO::FETCH_ASSOC ) ) {
 
       $order_id = $row['order_id'];
@@ -195,15 +197,18 @@ class SQLite {
   function update_delivery_notification( $data ) {
 
     $dn_id        = $data['dn_id'];
-    $is_accepted  = $data['is_accepted'];
+    $is_accepted  = isset($data['is_accepted']) ?
+                    $data['is_accepted'] :
+                    0;
 
-    $status       = $data['status'] ? $data['status'] : '';
+    $status       = isset( $data['status'] ) ?
+                    $data['status'] : '';
 
-    $status_msg   = $data['status_msg'] ?
+    $status_msg   = isset( $data['status_msg'] ) ?
                     $data['status_msg'] :
                     GRON_DELIVERY_ACCEPTED_STATUS_MSG;
 
-    $reset_boy_id = $data['reset_boy_id'] ?
+    $reset_boy_id = isset( $data['reset_boy_id'] ) ?
                     $data['reset_boy_id'] :
                     false;
 

@@ -29,7 +29,7 @@ class Page {
     $this->icon = $options['icon'];
     $this->endpoint = $options['endpoint'];
     $this->slug = $options['slug'];
-    $this->priority = array_key_exists( 'priority', $options ) && $options['priority'] ? $options['priority'] : 51;
+    $this->priority = isset( $options['priority'] ) && $options['priority'] ? $options['priority'] : 51;
 
     add_action( 'init', array( $this, 'init' ), 50 );
     add_action( 'wcfm_load_scripts', array( $this, 'load_scripts' ) );

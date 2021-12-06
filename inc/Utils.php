@@ -1,5 +1,6 @@
 <?php
 namespace GRON;
+// Prevent direct access
 defined('ABSPATH') or exit;
 
 class Utils {
@@ -169,18 +170,20 @@ class Utils {
   * @param String $vendor_id ID of the vendor
   * @return Int $time Availability in seconds
   */
-  public function calculate_availability_time( $manage_by, $created_at, $vendor_id ) {
+  public static function calculate_availability_time( $manage_by, $created_at, $vendor_id ) {
+
+    $current_date_time = date('Y-m-d H:i:s');
 
     $broadcast_time_limit = 0;
 
     if( $manage_by === 'admin' ) {
-      $broadcast_time_limit = Utils::get_dn_boradcast_time_limit();
+      $broadcast_time_limit = self::get_dn_boradcast_time_limit();
     }elseif( $manage_by === 'vendor' ) {
-      $broadcast_time_limit = Utils::get_dn_boradcast_time_limit( $vendor_id );
+      $broadcast_time_limit = self::get_dn_boradcast_time_limit( $vendor_id );
     }
 
     // Created before in seconds
-    $created_before = strtotime( $this->current_date_time ) - strtotime( $created_at );
+    $created_before = strtotime( $current_date_time ) - strtotime( $created_at );
 
     // Time in seconds
     $time = ( $broadcast_time_limit * 60 ) - $created_before;

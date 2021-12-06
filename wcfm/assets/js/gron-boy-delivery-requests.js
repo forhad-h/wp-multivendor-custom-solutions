@@ -60,6 +60,21 @@ jQuery(document).ready( function($) {
 
   });
 
+  // On lock-accepted-delivery event
+  channel.bind( 'lock-accepted-delivery', function( payload ) {
+
+    var boyId = parseInt( payload.boy_id );
+
+    if( boyId === userId ) {
+      data.status = 'accepted';
+    }else {
+      data.status = 'pending';
+    }
+
+    gron_get_delivery_notifications( $, data );
+
+  });
+
   // On delivery-rejected event
   channel.bind( 'delivery-rejected', function( payload ) {
     var associatedBoyIds = Object.values( payload.associated_boy_ids );

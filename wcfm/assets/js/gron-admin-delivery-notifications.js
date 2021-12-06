@@ -53,6 +53,19 @@ jQuery(document).ready( function($) {
 
   });
 
+  // On lock-accepted-delivery event
+  channel.bind( 'lock-accepted-delivery', function() {
+
+    // Refresh pending lists
+    data.status = 'pending';
+    gron_delivery_notifications_ajax_request( $, data );
+
+    // Refresh accepted lists
+    data.status = 'accepted';
+    gron_delivery_notifications_ajax_request( $, data );
+
+  });
+
 } );
 
 

@@ -1,5 +1,7 @@
 <?php
 namespace GRON;
+
+// Prevent direct access
 defined('ABSPATH') or exit;
 
 /*
@@ -15,8 +17,8 @@ class Cron_Job {
     add_filter( 'cron_schedules', array( $this, 'add_interval' ) );
 
     // Cron job to check Delivery Notifications
-    if( ! wp_next_scheduled('gron_dn_check') ) {
-      wp_schedule_event( time(), 'gron_1m', 'gron_dn_check' );
+    if( ! wp_next_scheduled('gron_dn_scheduled_tasks') ) {
+      wp_schedule_event( time(), 'gron_1m', 'gron_dn_scheduled_tasks' );
     }
 
   }

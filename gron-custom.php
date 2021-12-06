@@ -27,6 +27,8 @@ use GRON\Cron_Job;
 
 use GRON\WCFM\Store_Manager;
 
+// Load the Delivery Notifications schedule tasks file
+require_once GRON_DIR_PATH . 'helpers/dn-scheduled-tasks.php';
 
 /* TODO: Security Issue
   Single vendor management exposed to Delivery boy
@@ -46,8 +48,8 @@ register_activation_hook( __FILE__, function() {
 register_deactivation_hook( __FILE__, function(){
 
   // Reset Cron-job
-  $timestamp = wp_next_scheduled('gron_dn_check');
-  wp_unschedule_event( $timestamp, 'gron_dn_check' );
+  $timestamp = wp_next_scheduled('gron_dn_scheduled_tasks');
+  wp_unschedule_event( $timestamp, 'gron_dn_scheduled_tasks' );
 
 });
 
@@ -70,15 +72,15 @@ function gron_init() {
 
 
   /* Cron Job */
-  new Cron_Job();
+  $cron_job = new Cron_Job();
 
-  $timestamp = wp_next_scheduled('gron_dn_check');
+  // On gron_dn_scheduled_tasks event
+  add_action( 'gron_dn_scheduled_tasks', function() {
+    // Run the Delivery Notifications Scheduled task
+    // on gron_dn_scheduled_tasks event
+    //gron_dn_scheduled_tasks();
 
-  // On gron_dn_check event
-  add_action( 'gron_dn_check', function() {
-  \GRON\Utils::log( date('H:i:s') );
   } );
-
 
 }
 
