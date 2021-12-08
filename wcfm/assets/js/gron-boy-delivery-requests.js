@@ -66,12 +66,22 @@ jQuery(document).ready( function($) {
     var boyId = parseInt( payload.boy_id );
 
     if( boyId === userId ) {
-      data.status = 'accepted';
-    }else {
-      data.status = 'pending';
-    }
 
-    gron_get_delivery_notifications( $, data );
+      // Refresh pending list
+      data.status = 'pending';
+      gron_get_delivery_notifications( $, data );
+
+      // Refresh accepted list
+      data.status = 'accepted';
+      gron_get_delivery_notifications( $, data );
+
+    }else {
+
+      // Refresh pending list
+      data.status = 'pending';
+      gron_get_delivery_notifications( $, data );
+
+    }
 
   });
 
@@ -91,6 +101,20 @@ jQuery(document).ready( function($) {
       // show action buttons
       trElm.find('#accept-btn').fadeIn( animSpeed )
       trElm.find('#reject-btn').fadeIn( animSpeed )
+
+    }
+
+  });
+
+  // On no-one-accepted event
+  channel.bind( 'no-one-accepted', function( payload ) {
+    var boyAndVendorIds = Object.values( payload.boy_and_vendor_ids );
+
+    if( $.inArray( userId, boyAndVendorIds ) != -1 ) {
+
+      // Refresh pending list
+      data.status = 'pending';
+      gron_get_delivery_notifications( $, data );
 
     }
 
@@ -165,7 +189,7 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
         tableBodyElm.empty();
       }
 
-      $.each(res, function(index, data) {
+      $.each(res, function(index, item) {
 
         // clone the row
         var rowClonedElm = rowElm.clone();
@@ -173,51 +197,59 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
         // Fill with response data
 
         // Set the entry ID
-        rowClonedElm.attr( 'data-dn-id', data.dn_id );
+        rowClonedElm.attr( 'data-dn-id', item.dn_id );
 
         // Set order ID
-        rowClonedElm.attr( 'data-order-id', data.order_id );
+        rowClonedElm.attr( 'data-order-id', item.order_id );
 
         // If the delivery accepted
-        if( data.is_accepted ) {
+        if( item.is_accepted ) {
 
-          rowClonedElm.addClass('accepted');
+          // Make sure we are in pending list
+          if( $('#gron-dr-pending').hasClass('collapse-open') ) {
+            rowClonedElm.addClass('accepted');
+          }
+
           rowClonedElm.find( '#accept-btn').remove();
           rowClonedElm.find( '#reject-btn')
           .attr( 'data-reject-type', 'after-accept' );
 
         }
 
+        if( item.status === 'accepted' ) {
+          rowClonedElm.find( '#reject-btn').remove();
+        }
+
         // set order ID
         rowClonedElm.find( '.order' )
         .find('a')
-        .text( "#" + data.order_id );
+        .text( "#" + item.order_id );
 
         // set order link
         rowClonedElm.find( '.order' )
         .find('a')
-        .attr( 'href', data.order_link );
+        .attr( 'href', item.order_link );
 
         // set store name
         rowClonedElm.find( '.store' )
-        .text( data.store_name );
+        .text( item.store_name );
 
         // set delivery day
         rowClonedElm.find( '.delivery_day' )
-        .text( data.delivery_day );
+        .text( item.delivery_day );
 
         // set delivery time
         rowClonedElm.find( '.delivery_time' )
-        .text( data.delivery_time );
+        .text( item.delivery_time );
 
         // set status
-        var status = data.status;
+        var status = item.status;
 
-        if( data.is_accepted ) {
-          if( data.accepted_by.id != data.boy_id ) {
-            status = data.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>';
+        if( item.is_accepted ) {
+          if( item.accepted_by.id != item.boy_id ) {
+            status = item.status_msg + ' <a href="' + item.accepted_by.link + '">' + item.accepted_by.name + '</a>';
           }else {
-            status = data.status_msg + ' You';
+            status = item.status_msg + ' You';
           }
         }
 
@@ -226,7 +258,7 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
 
         // Set the availability timer
         // Reference - https://www.jqueryscript.net/time-clock/Minimal-Stopwatch-Timer-Plugin-For-jQuery.html
-        var availability_time = data.availability_time;
+        var availability_time = item.availability_time;
 
         rowClonedElm.find( '.timer' ).timer({
             action: 'start',

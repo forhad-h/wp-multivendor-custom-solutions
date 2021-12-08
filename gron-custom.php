@@ -73,12 +73,13 @@ function gron_init() {
 
   /* Cron Job */
   $cron_job = new Cron_Job();
+  gron_dn_scheduled_tasks_func();
 
-  // On gron_dn_scheduled_tasks event
+  // On gron_dn_scheduled_tasks cron job
   add_action( 'gron_dn_scheduled_tasks', function() {
     // Run the Delivery Notifications Scheduled task
-    // on gron_dn_scheduled_tasks event
-    //gron_dn_scheduled_tasks();
+    // on gron_dn_scheduled_tasks cron job
+    //gron_dn_scheduled_tasks_func();
 
   } );
 

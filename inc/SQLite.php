@@ -196,7 +196,11 @@ class SQLite {
   */
   function update_delivery_notification( $data ) {
 
-    $dn_id        = $data['dn_id'];
+    $dn_id        = isset( $data['dn_id'] ) ? $data['dn_id'] : 0;
+
+    $vendor_id        = isset( $data['vendor_id'] ) ? $data['vendor_id'] : 0;
+    $order_id        = isset( $data['order_id'] ) ? $data['order_id'] : 0;
+
     $is_accepted  = isset($data['is_accepted']) ?
                     $data['is_accepted'] :
                     0;
@@ -211,6 +215,8 @@ class SQLite {
     $reset_boy_id = isset( $data['reset_boy_id'] ) ?
                     $data['reset_boy_id'] :
                     false;
+
+    if( !$dn_id && !( $vendor_id && $order_id ) ) return;
 
     // SQL statement to update status of a task to completed
     $sql = "UPDATE {$this->delivery_notifications_table_name} SET status_msg=:status_msg";
@@ -231,13 +237,25 @@ class SQLite {
     }
 
     // Condition
-    $sql .= " WHERE dn_id=:dn_id";
+    if( $dn_id ) {
+      $sql .= " WHERE dn_id=:dn_id";
+    }elseif( $vendor_id && $order_id ) {
+      $sql .= " WHERE status=:status AND vendor_id=:vendor_id AND order_id=:order_id";
+    }
 
     // prepare the query
     $stmt = $this->pdo->prepare( $sql );
 
     // passing values to the parameters
-    $stmt->bindValue(':dn_id', $dn_id);
+
+    // pass value for condition
+    if( $dn_id ) {
+      $stmt->bindValue(':dn_id', $dn_id);
+    }elseif( $vendor_id && $order_id ) {
+      $stmt->bindValue(':status', 'pending');
+      $stmt->bindValue(':vendor_id', $vendor_id);
+      $stmt->bindValue(':order_id', $order_id);
+    }
 
     // passing status
     if( $status ) {

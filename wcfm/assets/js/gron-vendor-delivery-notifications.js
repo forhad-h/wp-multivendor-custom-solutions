@@ -93,6 +93,20 @@ jQuery(document).ready( function($) {
 
   });
 
+  // On no-one-accepted event
+  channel.bind( 'no-one-accepted', function( payload ) {
+    var boyAndVendorIds = Object.values( payload.boy_and_vendor_ids );
+
+    if( $.inArray( userId, boyAndVendorIds ) != -1 ) {
+
+      // Refresh pending list
+      data.status = 'pending';
+      gron_delivery_notifications_ajax_request( $, data );
+
+    }
+
+  });
+
 } );
 
 
@@ -125,7 +139,7 @@ function gron_delivery_notifications_ajax_request( $, data, render = 'all' ) {
         tableBodyElm.empty();
       }
 
-      $.each(res, function(index, data) {
+      $.each(res, function(index, item) {
 
         // clone the row
         var rowClonedElm = rowElm.clone();
@@ -133,57 +147,52 @@ function gron_delivery_notifications_ajax_request( $, data, render = 'all' ) {
         // Fill with response data
 
         // Set the entry id
-        rowClonedElm.attr( 'data-dn-id', data.dn_id );
+        rowClonedElm.attr( 'data-dn-id', item.dn_id );
 
         // Set order ID
-        rowClonedElm.attr( 'data-order-id', data.order_id );
-
-        // If the delivery accepted
-        if( data.is_accepted ) {
-          rowClonedElm.addClass('accepted');
-        }
+        rowClonedElm.attr( 'data-order-id', item.order_id );
 
         // set order ID
         rowClonedElm.find( '.order' )
         .find('a')
-        .text( "#" + data.order_id );
+        .text( "#" + item.order_id );
 
         // set order link
         rowClonedElm.find( '.order' )
         .find('a')
-        .attr( 'href', data.order_link );
+        .attr( 'href', item.order_link );
 
         // set delivery day
         rowClonedElm.find( '.delivery_day' )
-        .text( data.delivery_day );
+        .text( item.delivery_day );
 
         // set delivery day
         rowClonedElm.find( '.delivery_time' )
-        .text( data.delivery_time );
+        .text( item.delivery_time );
 
         // set accepted by name
         rowClonedElm.find( '.accepted_by' )
         .find('a')
-        .text( data.accepted_by_name );
+        .text( item.accepted_by_name );
 
         // set accepted by link
         rowClonedElm.find( '.accepted_by' )
         .find('a')
-        .attr( 'href', data.accepted_by_link );
+        .attr( 'href', item.accepted_by_link );
 
         // set status
-        var status = data.status_msg ? data.status_msg : data.status;
+        var status = item.status_msg ? item.status_msg : item.status;
 
-        if( data.is_accepted ) {
-          status = data.status_msg + ' <a href="' + data.accepted_by.link + '">' + data.accepted_by.name + '</a>'
+        if( item.is_accepted ) {
+          status = item.status_msg + ' <a href="' + item.accepted_by.link + '">' + item.accepted_by.name + '</a>'
         }
 
         rowClonedElm.find( '.status' )
-        .text( status );
+        .html( status );
 
         // Set the availability timer
         // Reference - https://www.jqueryscript.net/time-clock/Minimal-Stopwatch-Timer-Plugin-For-jQuery.html
-        var availability_time = data.availability_time;
+        var availability_time = item.availability_time;
 
         rowClonedElm.find( '.timer' ).timer({
             action: 'start',

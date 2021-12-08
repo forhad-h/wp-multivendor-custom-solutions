@@ -139,10 +139,12 @@ $current_user_id = get_current_user_id();
                   <td>
 
                     <a
-                      class="wcfm-action-icon icon-danger"
+                      id="delivered-btn"
+                      class="wcfm-action-icon icon-success"
                       href="#"
+                      role="button"
                     >
-                      <span class="wcfmfa fa-times text_tip" data-tip="Reject"></span>
+                      <span class="wcfmfa fa-truck-loading text_tip" data-tip="Delivered"></span>
                     </a>
 
                   </td>

@@ -97,7 +97,7 @@ var gronPusher = new Pusher( pusherObj.key, {
         // On new-order event
         channel.bind('new-order', function( data ) {
 
-          if( data.boy_id === pusherObj.userInfo.id ) {
+          if( data.boy_id == pusherObj.userInfo.id ) {
 
             // Format toast message
             var deliveriesUrl = pusherObj.siteUrl + '/store-manager/gron-boy-delivery-requests/'
