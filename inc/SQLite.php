@@ -196,10 +196,7 @@ class SQLite {
   */
   function update_delivery_notification( $data ) {
 
-    $dn_id        = isset( $data['dn_id'] ) ? $data['dn_id'] : 0;
-
-    $vendor_id        = isset( $data['vendor_id'] ) ? $data['vendor_id'] : 0;
-    $order_id        = isset( $data['order_id'] ) ? $data['order_id'] : 0;
+    $dn_id        = isset($data['dn_id']) ? $data['dn_id'] : '';
 
     $is_accepted  = isset($data['is_accepted']) ?
                     $data['is_accepted'] :
@@ -216,7 +213,7 @@ class SQLite {
                     $data['reset_boy_id'] :
                     false;
 
-    if( !$dn_id && !( $vendor_id && $order_id ) ) return;
+    if( !$dn_id ) return;
 
     // SQL statement to update status of a task to completed
     $sql = "UPDATE {$this->delivery_notifications_table_name} SET status_msg=:status_msg";
@@ -237,11 +234,7 @@ class SQLite {
     }
 
     // Condition
-    if( $dn_id ) {
-      $sql .= " WHERE dn_id=:dn_id";
-    }elseif( $vendor_id && $order_id ) {
-      $sql .= " WHERE status=:status AND vendor_id=:vendor_id AND order_id=:order_id";
-    }
+    $sql .= " WHERE dn_id=:dn_id";
 
     // prepare the query
     $stmt = $this->pdo->prepare( $sql );
@@ -249,13 +242,7 @@ class SQLite {
     // passing values to the parameters
 
     // pass value for condition
-    if( $dn_id ) {
-      $stmt->bindValue(':dn_id', $dn_id);
-    }elseif( $vendor_id && $order_id ) {
-      $stmt->bindValue(':status', 'pending');
-      $stmt->bindValue(':vendor_id', $vendor_id);
-      $stmt->bindValue(':order_id', $order_id);
-    }
+    $stmt->bindValue(':dn_id', $dn_id);
 
     // passing status
     if( $status ) {
@@ -349,6 +336,18 @@ class SQLite {
     }
 
     return $boy_ids;
+
+  }
+
+  public function is_accepted_by_order_and_vendor( $order_id, $vendor_id ) {
+
+    $sql = "SELECT dn_id FROM {$this->delivery_notifications_table_name} WHERE order_id={$order_id} AND vendor_id={$vendor_id} AND is_accepted=1";
+
+    $stmt = $this->pdo->query( $sql );
+
+    $row = $stmt->fetch( \PDO::FETCH_ASSOC );
+
+    return $row;
 
   }
 

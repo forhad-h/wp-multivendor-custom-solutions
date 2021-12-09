@@ -152,6 +152,12 @@ function gron_delivery_notifications_ajax_request( $, data, render = 'all' ) {
         // Set order ID
         rowClonedElm.attr( 'data-order-id', item.order_id );
 
+        // If the delivery accepted
+        if( item.is_accepted && item.status === 'pending' ) {
+          // Make sure we are in pending list
+          rowClonedElm.addClass('accepted');
+        }
+
         // set order ID
         rowClonedElm.find( '.order' )
         .find('a')

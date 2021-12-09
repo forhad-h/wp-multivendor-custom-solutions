@@ -203,12 +203,10 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
         rowClonedElm.attr( 'data-order-id', item.order_id );
 
         // If the delivery accepted
-        if( item.is_accepted ) {
+        if( item.is_accepted && item.status === 'pending' ) {
 
           // Make sure we are in pending list
-          if( $('#gron-dr-pending').hasClass('collapse-open') ) {
-            rowClonedElm.addClass('accepted');
-          }
+          rowClonedElm.addClass('accepted');
 
           rowClonedElm.find( '#accept-btn').remove();
           rowClonedElm.find( '#reject-btn')

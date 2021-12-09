@@ -58,14 +58,6 @@ function gron_dn_scheduled_tasks_func() {
         'status'       => 'accepted'
       ) );
 
-      // Update others notification with same vendor_id and order_id
-      $sqlite->update_delivery_notification( array(
-        'vendor_id'  => $vendor_id,
-        'order_id'   => $order_id,
-        'status'     => 'expired',
-        'status_msg' => 'Expired!',
-      ) );
-
       if( $update ) {
 
         // Notify other associated delivery boy
@@ -90,7 +82,6 @@ function gron_dn_scheduled_tasks_func() {
         and expire the broadcast time limit */
       $update_option = array(
         'dn_id'        => $dn_id,
-        'status'       => 'expired',
         'reset_boy_id' => true
       );
 
@@ -126,11 +117,15 @@ function gron_dn_scheduled_tasks_func() {
         $boy_and_vendor_ids[] = (Int) $boy_id;
         $boy_and_vendor_ids[] = (Int) $vendor_id;
 
-        // Keep the status pending to show admin or vendor
-        $update_option['status'] = 'pending';
-
-        // Change the message that no one accepted
-        $update_option['status_msg'] = 'No one accepted!';
+        if( empty( $sqlite->is_accepted_by_order_and_vendor( $order_id, $vendor_id ) ) ){
+          // Keep the status pending to show admin or vendor
+          $update_option['status'] = 'pending';
+          // Change the message that no one accepted
+          $update_option['status_msg'] = 'No one accepted!';
+        }else {
+          $update_option['status'] = 'expired';
+          $update_option['status_msg'] = 'Expired!';
+        }
 
       }
 

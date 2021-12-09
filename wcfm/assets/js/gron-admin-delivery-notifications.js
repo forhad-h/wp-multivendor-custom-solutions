@@ -136,6 +136,12 @@ function gron_delivery_notifications_ajax_request( $, data, render = 'all' ) {
         .find('a')
         .text( "#" + item.order_id );
 
+        // If the delivery accepted
+        if( item.is_accepted && item.status === 'pending' ) {
+          // Make sure we are in pending list
+          rowClonedElm.addClass('accepted');
+        }
+
         // set store name
         rowClonedElm.find( '.store' )
         .find('a')
