@@ -26,6 +26,9 @@ class REST_Controller extends WP_REST_Controller {
 
     $this->current_date_time = date('Y-m-d H:i:s');
 
+    /**
+    * Route to manage delivery notifications
+    */
     register_rest_route(
       $namespace, '/delivery_notifications', array(
         array(

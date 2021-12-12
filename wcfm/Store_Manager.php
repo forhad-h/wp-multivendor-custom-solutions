@@ -5,6 +5,7 @@ defined('ABSPATH') or exit;
 use GRON\WCFM\Page;
 use GRON\WCFM\Ajax_Controller;
 use GRON\Notice;
+use GRON\MySQL;
 use GRON\Utils;
 
 
@@ -102,6 +103,14 @@ class Store_Manager {
    * Create custom components
   */
   public function show_gron_notices() {
+
+    $mysql = new MySQL();
+
+    $necessary_value = '<input type="hidden" id="gron-count-shop-timings" value="' . $mysql->count_shop_timings(). '" />';
+
+    $necessary_value .= '<input type="hidden" id="gron-count-delivery-slots" value="' . $mysql->count_delivery_slots() . '" />';
+
+    echo $necessary_value;
 
     if( Utils::is_admin() ) {
 

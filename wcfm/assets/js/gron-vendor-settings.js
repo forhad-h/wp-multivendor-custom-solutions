@@ -5,18 +5,7 @@ jQuery(document).ready(function($) {
   var shopTimingNotice = $('#gron-shop-timing-notice');
   var deliverySlotNotice = $('#gron-delivery-slot-notice');
 
-  var shopTimingsCount = +$('#gron-count-shop-timings').val();
-  var deliverySlotsCount = +$('#gron-count-delivery-slots').val();
-
   var animSpeed = 300;
-
-  if( !shopTimingsCount ) {
-    shopTimingNotice.fadeIn( animSpeed )
-  }
-
-  if( !deliverySlotsCount ) {
-    deliverySlotNotice.fadeIn( animSpeed );
-  }
 
   var animationTime = 150;
   var modalElm = $('.gron_modal');
@@ -105,7 +94,7 @@ jQuery(document).ready(function($) {
       }
     })
     .done( function (res) {
-      
+
       if(res) {
 
         if( res > 0 ) {

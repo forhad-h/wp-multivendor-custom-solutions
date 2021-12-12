@@ -148,10 +148,17 @@ $vendor_id = get_current_user_id();
 
                 <?php
                   foreach( $day_names as $day_name ):
-                    $timing     = $shop_timings[$day_name];
-                    $start_time = !$timing->start_time ? null : esc_attr($timing->start_time);
-                    $end_time   = !$timing->end_time ? null : esc_attr($timing->end_time);
-                    $is_active  = !$timing->is_active ? false : esc_attr($timing->is_active);
+                    $timing     = isset( $shop_timings[$day_name] ) ? $shop_timings[$day_name] : null;
+
+                    $start_time = null;
+                    $end_time = null;
+                    $is_active = false;
+
+                    if( !empty( $timing ) ) {
+                      $start_time = esc_attr($timing->start_time);
+                      $end_time   = esc_attr($timing->end_time);
+                      $is_active  = esc_attr($timing->is_active);
+                    }
                 ?>
                   <tr class="gron_single_titming">
                     <td><input type="checkbox" class="wcfm-checkbox is_active" <?php echo $is_active ? 'checked' : ''; ?>></td>
