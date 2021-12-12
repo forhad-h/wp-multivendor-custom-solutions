@@ -85,7 +85,7 @@ class Notice {
     }*/
 
     $options['id'] = 'gron-map-settings-notice';
-    $options['type_class'] = 'gron_warning_info';
+    $options['type_class'] = 'gron_notice_error';
 
     return $this->notice_markup( $options );
   }
@@ -99,6 +99,7 @@ class Notice {
 
       $options['title']       = 'Google Map API Key is Required!';
       $options['description'] = 'Please ask the admin to set the Google Map API Key: &nbsp;';
+      $options['type_class'] = 'gron_notice_error';
 
     }else {
 
@@ -108,11 +109,11 @@ class Notice {
         array( 'icon' => 'cogs', 'name' => 'Settings' ),
         array( 'icon' => 'globe', 'name' => 'Location > Store Location' ),
       );
+      $options['type_class'] = 'gron_warning_info';
 
     }
 
     $options['id'] = 'gron-map-settings-notice';
-    $options['type_class'] = 'gron_warning_info';
 
     return $this->notice_markup( $options );
 

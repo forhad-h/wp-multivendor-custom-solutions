@@ -2,10 +2,13 @@
 
   $(document).ready( function() {
 
+    // Admin notice for set up map API
     var noticeElm = $('#gron-map-settings-notice');
 
+    var animSpeed = 300;
+
     if( !mainObj.hasMapApiKey ) {
-      noticeElm.show();
+      noticeElm.fadeIn( animSpeed );
     }
 
     /* Vendor notifications to set up shop timing and delivery slot */
@@ -14,8 +17,6 @@
 
     var shopTimingsCount = +$('#gron-count-shop-timings').val();
     var deliverySlotsCount = +$('#gron-count-delivery-slots').val();
-
-    var animSpeed = 300;
 
     if( !shopTimingsCount ) {
       shopTimingNotice.fadeIn( animSpeed )
