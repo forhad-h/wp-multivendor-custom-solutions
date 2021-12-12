@@ -47,7 +47,19 @@ use GRON\Utils;
                   <td class="delivery_time"></td>
                   <td class="status"></td>
                   <td class="availability"><div class="timer"></div></td>
+                  <td>
 
+                    <a
+                      id="delivered-btn"
+                      class="wcfm-action-icon icon-success"
+                      href="#"
+                      role="button"
+                    >
+                      <span class="wcfmfa fa-truck-loading text_tip" data-tip="Delivered"></span>
+                    </a>
+
+                  </td>
+                  
                 </tr>
               </table>
 
@@ -65,6 +77,7 @@ use GRON\Utils;
                       <th>Delivery Time</th>
                       <th>Status</th>
                       <th>Availability</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
 
@@ -78,6 +91,7 @@ use GRON\Utils;
                       <th>Delivery Time</th>
                       <th>Status</th>
                       <th>Availability</th>
+                      <th>Action</th>
                     </tr>
                   </tfoot>
 

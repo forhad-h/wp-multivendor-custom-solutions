@@ -10,6 +10,7 @@ use WP_REST_Controller;
 use WP_REST_Server;
 use WP_REST_Response;
 use WP_Error;
+use WC_Order;
 
 class REST_Controller extends WP_REST_Controller {
 
@@ -24,13 +25,13 @@ class REST_Controller extends WP_REST_Controller {
     $namespace = 'gron/v1';
     $this->sqlite = new SQLite();
 
-    $this->current_date_time = date('Y-m-d H:i:s');
+    $this->current_date_time = current_time('Y-m-d H:i:s');
 
     /**
     * Route to manage delivery notifications
     */
     register_rest_route(
-      $namespace, '/delivery_notifications', array(
+      $namespace, '/delivery-notifications', array(
         array(
           'methods'             => WP_REST_Server::READABLE,
           'callback'            => array( $this, 'get_delivery_notifications' ),
@@ -48,6 +49,13 @@ class REST_Controller extends WP_REST_Controller {
         )
       )
     );
+
+    // Delivered order from notification list
+    register_rest_route( $namespace, '/order-delivered/(?P<order_id>[\d]+)', array(
+      'methods'             => WP_REST_Server::EDITABLE,
+      'callback'            => array( $this, 'order_delivered' ),
+      'permission_callback' => array( $this, 'permission_check' )
+    ));
 
   }
 
@@ -195,7 +203,7 @@ class REST_Controller extends WP_REST_Controller {
     $delete = $this->sqlite->delete_delivery_notification( $dn_id );
 
     if( $delete ) {
-      return new WP_REST_Response( $pusher_payload, 200 );
+      return new WP_REST_Response( $delete, 200 );
     }
 
     return new WP_Error( 'cant-delete', __( 'Delivery Notifications cannot be deleted!', 'gron-custom' ), array( 'status' => 500 ) );
@@ -314,6 +322,25 @@ class REST_Controller extends WP_REST_Controller {
     );
 
     return $accepted_by;
+  }
+
+  /**
+  * Mark the order as delivered from notification list
+  *
+  * @param WP_REST_Request $request
+  * @return WP_Error|WP_REST_Response
+  */
+  public function order_delivered( $order_id ) {
+
+    // Reference
+    // wc-frontend-manager-delivery/core/class-wcfmd-ajax.php
+    // Table Name - {$wpdb->prefix}wcfm_delivery_orders
+    $update = '';
+
+    if( $update ) return new WP_REST_Response( $update, 200 );
+
+    return new WP_Error( 'cant-update', __( 'Order status cannot be updated!', 'gron-custom' ), array( 'status' => 500 ) );
+
   }
 
 

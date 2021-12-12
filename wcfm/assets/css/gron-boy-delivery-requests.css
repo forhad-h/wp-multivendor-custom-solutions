@@ -79,3 +79,6 @@ tr.reject.processing td::after {
 div#wcfm-main-contentainer #gron-delivery-requests .gron_table [class*=" fa-"]:before {
   font-weight: 600;
 }
+#wcfm-main-contentainer table.gron_table>tbody>tr:nth-of-type(odd)>* {
+  background-color: #f5f5f5;
+}

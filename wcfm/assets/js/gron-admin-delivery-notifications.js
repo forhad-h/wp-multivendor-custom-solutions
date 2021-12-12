@@ -93,7 +93,7 @@ function gron_delivery_notifications_ajax_request( $, data, render = 'all' ) {
 
 
   $.ajax({
-    url: gron.siteURL + '/wp-json/gron/v1/delivery_notifications',
+    url: gron.siteURL + '/wp-json/gron/v1/delivery-notifications',
     type: 'GET',
     beforeSend: function( xhr ) {
       xhr.setRequestHeader( 'X-WP-Nonce', gron.nonce );
@@ -140,6 +140,12 @@ function gron_delivery_notifications_ajax_request( $, data, render = 'all' ) {
         if( item.is_accepted && item.status === 'pending' ) {
           // Make sure we are in pending list
           rowClonedElm.addClass('accepted');
+        }
+
+        // If not accepted by anyone, only then show the delivered button
+        // Otherwise remove it
+        if( item.is_accepted || !!+item.boy_id ) {
+          rowClonedElm.find('#delivered-btn').remove();
         }
 
         // set store name

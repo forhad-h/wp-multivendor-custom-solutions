@@ -172,7 +172,7 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
 
 
   $.ajax({
-    url: gron.siteURL + '/wp-json/gron/v1/delivery_notifications',
+    url: gron.siteURL + '/wp-json/gron/v1/delivery-notifications',
     type: 'GET',
     beforeSend: function( xhr ) {
       xhr.setRequestHeader( 'X-WP-Nonce', gron.nonce );
@@ -296,7 +296,7 @@ function gron_accept_delivery_notifications( $, data, parentTRElm ) {
   var animSpeed = 300;
 
   $.ajax({
-    url: gron.siteURL + '/wp-json/gron/v1/delivery_notifications',
+    url: gron.siteURL + '/wp-json/gron/v1/delivery-notifications',
     type: 'PUT',
     beforeSend: function( xhr ) {
       xhr.setRequestHeader( 'X-WP-Nonce', gron.nonce );
@@ -337,7 +337,7 @@ function gron_reject_delivery_notifications( $, data, parentTRElm ) {
   var animSpeed = 300;
 
   $.ajax({
-    url: gron.siteURL + '/wp-json/gron/v1/delivery_notifications',
+    url: gron.siteURL + '/wp-json/gron/v1/delivery-notifications',
     type: 'DELETE',
     beforeSend: function( xhr ) {
       xhr.setRequestHeader( 'X-WP-Nonce', gron.nonce );
@@ -345,7 +345,6 @@ function gron_reject_delivery_notifications( $, data, parentTRElm ) {
     data: data
   })
   .done( function( res ) {
-
    if( res ) {
      parentTRElm.fadeOut( animSpeed ).promise().done( function() {
       parentTRElm.remove();

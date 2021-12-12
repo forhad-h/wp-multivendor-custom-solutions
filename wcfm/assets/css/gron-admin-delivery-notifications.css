@@ -38,6 +38,9 @@
 div#wcfm-main-contentainer #gron-delivery-requests .gron_table [class*=" fa-"]:before {
   font-weight: 600;
 }
+#wcfm-main-contentainer table.gron_table>tbody>tr:nth-of-type(odd)>* {
+  background-color: #f5f5f5;
+}
 
 tr .status {
   text-transform: capitalize;
@@ -48,4 +51,7 @@ tr .status a {
 #wcfm-main-contentainer table tbody tr.accepted td {
   background-color: rgba(74, 255, 80, 0.3);
   color: #444;
+}
+.gron_table tr::even {
+  background-color: #eee;
 }

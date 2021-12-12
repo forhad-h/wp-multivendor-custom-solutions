@@ -75,7 +75,7 @@ class SQLite {
     $order_id   = $data['order_id'];
     $boy_id     = $data['boy_id'];
     $status     = $data['status'];
-    $created_at = date('Y-m-d H:i:s');
+    $created_at = current_time('Y-m-d H:i:s');
 
     $sql  = "INSERT INTO {$this->delivery_notifications_table_name}(manage_by,vendor_id,order_id,boy_id,status,created_at)";
     $sql .= " VALUES(:manage_by,:vendor_id,:order_id,:boy_id,:status,:created_at)";

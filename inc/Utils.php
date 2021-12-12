@@ -11,7 +11,7 @@ class Utils {
   * @return Time $new_time 00:00
   */
   public static function time_format( $time ) {
-    $new_time = date('h:i A', strtotime( $time ) );
+    $new_time = date_i18n('h:i A', strtotime( $time ) );
     return $new_time;
   }
 
@@ -172,7 +172,7 @@ class Utils {
   */
   public static function calculate_availability_time( $manage_by, $created_at, $vendor_id ) {
 
-    $current_date_time = date('Y-m-d H:i:s');
+    $current_date_time = current_time('Y-m-d H:i:s');
 
     $broadcast_time_limit = 0;
 
