@@ -56,8 +56,6 @@ jQuery(document).ready( function($) {
   // On lock-accepted-delivery event
   channel.bind( 'lock-accepted-delivery', function() {
 
-    console.log( 'working...' );
-
     // Refresh pending lists
     data.status = 'pending';
     gron_delivery_notifications_ajax_request( $, data );
