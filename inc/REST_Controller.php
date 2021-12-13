@@ -340,9 +340,9 @@ class REST_Controller extends WP_REST_Controller {
   public function order_delivered( $request ) {
 
     $dn_id = isset( $request['dn_id'] ) ? esc_sql( $request['dn_id'] ) : '';
-    $delivery_id = isset( $request['delivery_id'] ) ? esc_sql( $request['delivery_id'] ) : '';
+    $wcfm_delivery_id = isset( $request['wcfm_delivery_id'] ) ? esc_sql( $request['wcfm_delivery_id'] ) : '';
 
-    if( !$dn_id && !$delivery_id ) return;
+    if( !$dn_id && !$wcfm_delivery_id ) return;
 
     $delete = $update = false;
 
@@ -351,12 +351,12 @@ class REST_Controller extends WP_REST_Controller {
       $delete = $this->sqlite->delete_delivery_notification( array( 'dn_id' => $dn_id ) );
     }
 
-    if( $delivery_id ) {
+    if( $wcfm_delivery_id ) {
       // Update the status for WCFM's table
-      $update = $this->mysql->update_wcfm_delivery_order( $delivery_id );
+      $update = $this->mysql->update_wcfm_delivery_order( $wcfm_delivery_id );
     }
 
-    $success = $delete && $update;
+    $success = $delete || $update;
 
     if( $success ) return new WP_REST_Response( $success, 200 );
 

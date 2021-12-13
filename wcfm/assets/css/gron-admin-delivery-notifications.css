@@ -55,3 +55,22 @@ tr .status a {
 .gron_table tr::even {
   background-color: #eee;
 }
+
+tr.processing td {
+  position: relative;
+  transition: 0.3s linear;
+}
+tr.processing td::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Page specific */
+
+tr.delivered.processing td::after {
+  background-color: rgba(74, 255, 80, 0.3);
+}

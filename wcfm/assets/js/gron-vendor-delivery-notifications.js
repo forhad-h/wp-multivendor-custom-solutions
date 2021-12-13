@@ -107,6 +107,37 @@ jQuery(document).ready( function($) {
 
   });
 
+  // Delivered the order
+  $('body').on( 'click', '#delivered-btn', function( event ) {
+    event.preventDefault();
+
+    var parentTRElm = $(this).closest( 'tr' );
+
+    var dnId = +parentTRElm.attr('data-dn-id');
+
+    parentTRElm.addClass( [ 'delivered', 'processing' ] );
+
+    $.ajax({
+      url: gron.siteURL + '/wp-json/gron/v1/order-delivered',
+      type: 'PUT',
+      beforeSend: function( xhr ) {
+        xhr.setRequestHeader( 'X-WP-Nonce', gron.nonce );
+      },
+      data: {
+        dn_id: dnId
+      }
+    })
+    .done(function( res ) {
+      if( res ) {
+        parentTRElm.remove();
+      }
+    })
+    .fail(function( err ) {
+      console.log( err.responseText );
+    });
+
+  });
+
 } );
 
 

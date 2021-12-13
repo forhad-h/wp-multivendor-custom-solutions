@@ -48,6 +48,8 @@ tr .status a {
   background-color: #fdfdfd;
 }
 
+/** Page specific styles */
+
 /* Actions style */
 tr.processing td {
   position: relative;
@@ -68,7 +70,8 @@ tr.accepted.reject td::after {
   display: block;
 }
 
-tr.accept.processing td::after {
+tr.accept.processing td::after,
+tr.delivered.processing td::after {
   background-color: rgba(74, 255, 80, 0.3);
 }
 
@@ -82,5 +85,3 @@ div#wcfm-main-contentainer #gron-delivery-requests .gron_table [class*=" fa-"]:b
 #wcfm-main-contentainer table.gron_table>tbody>tr:nth-of-type(odd)>* {
   background-color: #f5f5f5;
 }
-
-/* Page specific styles */
