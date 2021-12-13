@@ -1,0 +1,57 @@
+.gron_cp_store_name {
+  display: block;
+  font-size: 1.1em;
+  font-weight: 600;
+  margin-top: 25px;
+  line-height: 1.1;
+}
+.gron_collection_type .woocommerce-input-wrapper {
+  position: relative;
+  background-color: #eee;
+}
+.gron_collection_type .woocommerce-input-wrapper input[type=radio] {
+  display: none;
+}
+.woocommerce form .form-row.gron_collection_type .woocommerce-input-wrapper label {
+  display: inline-block;
+}
+.gron_collection_type .woocommerce-input-wrapper label {
+  display: inline-block;
+  background-color: #eee;
+  padding: 1px 9px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: 0.3s linear;
+  box-shadow: 0 0 5px rgba( 0, 0, 0, 0.1 );
+}
+.gron_collection_type .woocommerce-input-wrapper label:hover {
+  border-color: #3AB57B;
+}
+
+.gron_collection_type .woocommerce-input-wrapper label.active {
+  background-color: #3AB57B;
+  color: #fff;
+}
+.gron_collection_type .woocommerce-input-wrapper input[value=deliver_to_home] + label {
+  margin-left: 3px;
+}
+
+.gron_deliver_day,
+.gron_deliver_time {
+  width: 45%;
+  display: inline-block;
+}
+.woocommerce form .form-row.gron_deliver_time {
+  margin-left: 5%;
+}
+
+.gron_deliver_day select,
+.gron_deliver_time select {
+  border: 1px solid #ccc;
+  padding: 3px 16px;
+  border-radius: 0;
+  height: 35px;
+  background: #fff;
+  width: 100%;
+}

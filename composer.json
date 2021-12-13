@@ -1,8 +1,12 @@
-
 {
   "autoload": {
     "psr-4": {
-      "GRONC\\WCFM\\Controllers\\": "wcfm-menus/controllers"
+      "GRON\\": "inc/",
+      "GRON\\WCFM\\": "wcfm/"
     }
+  },
+  "require": {
+    "pusher/pusher-php-server": "^7.0",
+    "vlucas/phpdotenv": "^5.3"
   }
 }

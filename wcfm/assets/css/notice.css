@@ -1,0 +1,33 @@
+.gron_wcfm_notice {
+  padding: 9px;
+  border-left: 2px solid #ddd;
+  background: #fff;
+  margin-bottom: 15px;
+  margin-top: 15px;
+  display: none;
+}
+.gron_wcfm_notice.gron_notice_error {
+  border-color: #e85656;
+  box-shadow: 0 0 5px #e8565655;
+}
+.gron_wcfm_notice.gron_warning_info {
+  border-color: #ffc107;
+  box-shadow: 0 0 5px #ffc10755;
+}
+.gron_wcfm_notice  p {
+  margin-bottom: 0;
+}
+.gron_wcfm_notice .gron_title {
+  font-size: 15px;
+  font-weight: 500;
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+
+.gron_wcfm_notice .gron_setting_path {
+  font-size: 12px;
+}
+.gron_wcfm_notice .gron_setting_path .wcfmfa {
+  font-size: 0.8em
+}
