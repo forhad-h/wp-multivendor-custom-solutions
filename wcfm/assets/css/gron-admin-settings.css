@@ -9,6 +9,9 @@
   display: inline-block;
   vertical-align: top;
 }
+.each_field.gron_multiple_checkbox_fields .gron_field_title {
+  width: 100%;
+}
 .gron_text_field .gron_field_title {
   line-height: 2;
 }
@@ -39,4 +42,15 @@
 #wcfm-main-contentainer .gron_text_field input[type="number"]#time-limit.wcfm-text {
   width: 91px;
   margin-bottom: 0;
+}
+
+.wcfm-tabWrap .gron_multiple_checkbox_fields input[type="checkbox"] {
+  margin-right: 9px;
+}
+.gron_multiple_checkbox_fields .fields {
+  padding-left: 20px;
+  margin-top: 15px;
+}
+.gron_multiple_checkbox_fields .each_field label {
+  cursor: pointer;
 }
