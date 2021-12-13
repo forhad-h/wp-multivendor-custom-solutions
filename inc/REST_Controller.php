@@ -344,13 +344,19 @@ class REST_Controller extends WP_REST_Controller {
 
     if( !$dn_id && !$delivery_id ) return;
 
-    // Update the status for WCFM's table
-    $update = $this->mysql->update_wcfm_delivery_order( $delivery_id );
+    $delete = $update = false;
 
-    // Delete the entry from notification entry
-    $delete = $this->sqlite->delete_delivery_notification( array( 'dn_id' => $dn_id ) );
+    if( $dn_id ) {
+      // Delete the entry from notification entry
+      $delete = $this->sqlite->delete_delivery_notification( array( 'dn_id' => $dn_id ) );
+    }
 
-    $success = $update && $delete;
+    if( $delivery_id ) {
+      // Update the status for WCFM's table
+      $update = $this->mysql->update_wcfm_delivery_order( $delivery_id );
+    }
+
+    $success = $delete && $update;
 
     if( $success ) return new WP_REST_Response( $success, 200 );
 
