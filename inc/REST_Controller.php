@@ -17,6 +17,9 @@ class REST_Controller extends WP_REST_Controller {
   /** @var SQLite $sqlite instance of SQLite */
   private $sqlite;
 
+  /** @var MySQL $mysql instance of MySQL */
+  private $mysql;
+
   /** @var String $current_date_time curent date and time*/
   private $current_date_time;
 
@@ -24,6 +27,7 @@ class REST_Controller extends WP_REST_Controller {
 
     $namespace = 'gron/v1';
     $this->sqlite = new SQLite();
+    $this->mysql = new MySQL();
 
     $this->current_date_time = current_time('Y-m-d H:i:s');
 
@@ -51,7 +55,7 @@ class REST_Controller extends WP_REST_Controller {
     );
 
     // Delivered order from notification list
-    register_rest_route( $namespace, '/order-delivered/(?P<order_id>[\d]+)', array(
+    register_rest_route( $namespace, '/order-delivered', array(
       'methods'             => WP_REST_Server::EDITABLE,
       'callback'            => array( $this, 'order_delivered' ),
       'permission_callback' => array( $this, 'permission_check' )
@@ -200,7 +204,7 @@ class REST_Controller extends WP_REST_Controller {
     }
 
     // Delete the entry
-    $delete = $this->sqlite->delete_delivery_notification( $dn_id );
+    $delete = $this->sqlite->delete_delivery_notification( array( 'dn_id' => $dn_id ) );
 
     if( $delete ) {
       return new WP_REST_Response( $delete, 200 );
@@ -241,12 +245,13 @@ class REST_Controller extends WP_REST_Controller {
 
     foreach( $data_raw as $data ) {
 
-      $site_url        = get_site_url();
-      $vendor_id       = $data['vendor_id'];
-      $order_id        = $data['order_id'];
-      $delivery_boy_id = $data['boy_id'];
-      $manage_by       = $data['manage_by'];
-      $create_at       = $data['created_at'];
+      $site_url         = get_site_url();
+      $vendor_id        = $data['vendor_id'];
+      $order_id         = $data['order_id'];
+      $delivery_boy_id  = $data['boy_id'];
+      $manage_by        = $data['manage_by'];
+      $create_at        = $data['created_at'];
+      $wcfm_delivery_id = isset( $data['wcfm_delivery_id'] ) ? $data['wcfm_delivery_id'] : '';
 
       $data_item['dn_id'] = $data['dn_id'];
       $data_item['boy_id'] = $data['boy_id'];
@@ -295,6 +300,8 @@ class REST_Controller extends WP_REST_Controller {
 
       }
 
+      $data_item['wcfm_delivery_id'] = $wcfm_delivery_id;
+
       array_push( $data_formatted, $data_item );
     }
 
@@ -330,16 +337,24 @@ class REST_Controller extends WP_REST_Controller {
   * @param WP_REST_Request $request
   * @return WP_Error|WP_REST_Response
   */
-  public function order_delivered( $order_id ) {
+  public function order_delivered( $request ) {
 
-    // Reference
-    // wc-frontend-manager-delivery/core/class-wcfmd-ajax.php
-    // Table Name - {$wpdb->prefix}wcfm_delivery_orders
-    $update = '';
+    $dn_id = isset( $request['dn_id'] ) ? esc_sql( $request['dn_id'] ) : '';
+    $delivery_id = isset( $request['delivery_id'] ) ? esc_sql( $request['delivery_id'] ) : '';
 
-    if( $update ) return new WP_REST_Response( $update, 200 );
+    if( !$dn_id && !$delivery_id ) return;
 
-    return new WP_Error( 'cant-update', __( 'Order status cannot be updated!', 'gron-custom' ), array( 'status' => 500 ) );
+    // Update the status for WCFM's table
+    $update = $this->mysql->update_wcfm_delivery_order( $delivery_id );
+
+    // Delete the entry from notification entry
+    $delete = $this->sqlite->delete_delivery_notification( array( 'dn_id' => $dn_id ) );
+
+    $success = $update && $delete;
+
+    if( $success ) return new WP_REST_Response( $success, 200 );
+
+    return new WP_Error( 'cant-update-and-delete', __( 'Order status cannot be updated form WCFM or Delivery notification can not be deleted for GRON!', 'gron-custom' ), array( 'status' => 500 ) );
 
   }
 

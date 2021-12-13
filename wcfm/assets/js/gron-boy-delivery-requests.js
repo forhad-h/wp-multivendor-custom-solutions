@@ -202,6 +202,9 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
         // Set order ID
         rowClonedElm.attr( 'data-order-id', item.order_id );
 
+        // Set WCFM delivery ID
+        rowClonedElm.attr( 'data-wcfm-delivery-id', item.wcfm_delivery_id );
+
         // If the delivery accepted
         if( item.is_accepted && item.status === 'pending' ) {
 
@@ -262,7 +265,9 @@ function gron_get_delivery_notifications( $, data, render = 'all' ) {
             action: 'start',
             duration: availability_time ? availability_time : 1,
             countdown: true,
-            callback: function(){}
+            callback: function(){
+              rowClonedElm.remove();
+            }
         });
 
         // Remove the ID

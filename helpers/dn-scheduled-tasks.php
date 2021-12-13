@@ -12,12 +12,14 @@ defined( 'ABSPATH' ) or exit;
 */
 
 use GRON\SQLite;
+use GRON\MySQL;
 use GRON\Utils;
 use GRON\Services;
 
 function gron_dn_scheduled_tasks_func() {
 
   $sqlite = new SQLite();
+  $mysql = new MySQL();
 
   $notifications = $sqlite->get_all_delivery_notifications();
 
@@ -30,6 +32,7 @@ function gron_dn_scheduled_tasks_func() {
     $dn_id       = $data['dn_id'];
     $vendor_id   = $data['vendor_id'];
     $order_id    = $data['order_id'];
+    $item_id    = $data['item_id'];
     $boy_id      = $data['boy_id'];
     $manage_by   = $data['manage_by'];
     $create_at   = $data['created_at'];
@@ -52,10 +55,19 @@ function gron_dn_scheduled_tasks_func() {
     /* If the order was accepted then update the status */
     if( $is_accepted && $status === 'pending' ) {
 
+      // Insert entry to synchronize with WCFM
+      $wcfm_delivery_id = $mysql->insert_wcfm_delivery_order( array(
+        'vendor_id'   => $vendor_id,
+        'boy_id'      => $boy_id,
+        'order_id'    => $order_id,
+        'item_id'     => $item_id,
+      ) );
+
       // Update the order notifications as accepted
       $update = $sqlite->update_delivery_notification( array(
         'dn_id'        => $dn_id,
-        'status'       => 'accepted'
+        'status'       => 'accepted',
+        'wcfm_delivery_id' => $wcfm_delivery_id,
       ) );
 
       if( $update ) {
@@ -155,6 +167,6 @@ function gron_dn_scheduled_tasks_func() {
   }
 
   // Remove all expired entry
-  $sqlite->delete_delivery_notification( null, 'expired' );
+  $sqlite->delete_delivery_notification( array( 'status' => 'expired' ) );
 
 }

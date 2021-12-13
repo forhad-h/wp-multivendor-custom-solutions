@@ -35,7 +35,7 @@ $current_user_id = get_current_user_id();
         <!-- collapsible -->
         <div class="page_collapsible" id="gron-dr-pending">
           <label class="wcfmfa fa-ellipsis-h"></label>
-          <?php _e('Requests', 'gron-custom'); ?><span></span>
+          <?php _e('Pending', 'gron-custom'); ?><span></span>
         </div>
 
         <div class="wcfm-container">

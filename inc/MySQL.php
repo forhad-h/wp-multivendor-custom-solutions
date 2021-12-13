@@ -24,6 +24,8 @@ class MySQL {
     $this->current_user_id = get_current_user_id();
     $this->shop_timings_tb_name    = $wpdb->prefix . 'gron_shop_timings';
     $this->delivery_slots_tb_name  = $wpdb->prefix . 'gron_delivery_slots';
+    $this->wcfm_delivery_orders_tb_name = $wpdb->prefix . 'wcfm_delivery_orders';
+
   }
 
   /**
@@ -367,6 +369,79 @@ class MySQL {
       $result = $this->db->get_row( $sql );
 
       return $result;
+
+    }
+
+    /**
+    * Insert Order Delivery in WCFM's Table
+    * So that we have a synchronization between
+    * WCFM delivery and GRON delivery management
+    *
+    * @param Array $data array of data
+    * ['vendor_id'] => [Required] (Int) ID of the vendor
+    * ['boy_id'] => [Required] (Int) ID of the delivery boy
+    * ['order_id'] => [Required] (Int) ID of the Order
+    * ['item_id'] => [Required] (Int) ID of the Item
+    *
+    * @return Int|Null $delivery_id ID of the delivery entry
+    */
+
+    public function insert_wcfm_delivery_order( $data ) {
+
+      $vendor_id     = esc_sql( $data['vendor_id'] );
+      $boy_id        = esc_sql( $data['boy_id'] );
+      $order_id      = esc_sql( $data['order_id'] );
+      $order_item_id = esc_sql( $data['item_id'] );
+
+      $order = wc_get_order( $order_id );
+
+      $customer_id = 0;
+      if ( $order->get_user_id() )
+        $customer_id = $order->get_user_id();
+
+      $payment_method = ! empty( $order->get_payment_method() ) ? $order->get_payment_method() : '';
+
+      $line_item    = new \WC_Order_Item_Product( $order_item_id );
+			$product      = $line_item->get_product();
+			$product_id   = $line_item->get_product_id();
+			$variation_id = $line_item->get_variation_id();
+
+      $data_to_insert = array(
+        'vendor_id' => $vendor_id,
+        'order_id' => $order_id,
+        'customer_id' => $customer_id,
+        'payment_method' => $payment_method,
+        'product_id' => $product_id,
+        'variation_id' => $variation_id,
+        'quantity' => $line_item->get_quantity(),
+        'product_price' => $product->get_price(),
+        'item_id' => $order_item_id,
+        'item_sub_total' => $line_item->get_subtotal(),
+        'item_total' => $line_item->get_total(),
+        'delivery_boy' => $boy_id
+      );
+
+      $insert = $this->db->insert( $this->wcfm_delivery_orders_tb_name, $data_to_insert);
+
+      $delivery_id = $this->db->insert_id;
+
+      return $delivery_id;
+    }
+
+    public function update_wcfm_delivery_order( $delivery_id ) {
+
+      // Update Delivery Order Status Update
+      $data_to_update = array(
+        'delivery_status' => 'delivered',
+        'delivery_date'   => current_time('Y-m-d H:i:s'),
+      );
+
+      $update = $this->db->update(
+        $this->wcfm_delivery_orders_tb_name,
+        $data_to_update,
+        array( 'ID' => $delivery_id ) );
+
+      return $update;
 
     }
 

@@ -193,7 +193,7 @@ class GRON_WooCommerce {
 
     $vendor_ids = $this->get_vendor_ids( $order );
 
-    foreach( $vendor_ids as $vendor_id ) {
+    foreach( $vendor_ids as $item_id => $vendor_id ) {
 
       $collection_type = esc_sql( $_POST[ 'gron_collection_type_' . $vendor_id ] );
       $deliver_day = esc_sql( $_POST[ 'gron_deliver_day_' . $vendor_id ] );
@@ -226,7 +226,7 @@ class GRON_WooCommerce {
 
     echo '<h3 style="color:#17a2b8;font-weight: 500;font-size: 13px;border-bottom: 1px solid #ccc;padding-bottom: 11px;">Delivery Details:</h3>';
 
-    foreach( $vendor_ids as $vendor_id ) {
+    foreach( $vendor_ids as $item_id => $vendor_id ) {
 
       $collection_type = get_post_meta( $order->get_id(), 'gron_collection_type_' . $vendor_id, true );
       $deliver_day = get_post_meta( $order->get_id(), 'gron_deliver_day_' . $vendor_id, true );
@@ -267,7 +267,7 @@ class GRON_WooCommerce {
      * Nested loop is acceptable here
      * As vendor numbers will be very limited
      */
-     foreach( $vendor_ids as $vendor_id ) {
+     foreach( $vendor_ids as $item_id => $vendor_id ) {
 
        $collection_type = get_post_meta( $order_id, 'gron_collection_type_' . $vendor_id, true );
 
@@ -278,12 +278,12 @@ class GRON_WooCommerce {
        if( $this->is_delivery_manage_by_vendor( $vendor_id ) ) {
 
          // Delivery manage by vendor
-         $this->deliveriy_notification_process( $vendor_id, $order_id, 'vendor' );
+         $this->deliveriy_notification_process( $vendor_id, $order_id, $item_id, 'vendor' );
 
        }else {
 
          // Delivery manage by admin
-         $this->deliveriy_notification_process( $vendor_id, $order_id, 'admin' );
+         $this->deliveriy_notification_process( $vendor_id, $order_id, $item_id, 'admin' );
 
        }
 
@@ -300,7 +300,7 @@ class GRON_WooCommerce {
   */
   private function get_vendor_ids( $order ) {
 
-    $vendor_ids = [];
+    $vendor_ids = array();
     $line_items = $order->get_items( 'line_item' );
 
     if( !empty( $line_items ) ) {
@@ -316,7 +316,7 @@ class GRON_WooCommerce {
           $vendor_id = wcfm_get_vendor_id_by_post( $product_id );
 
           if( !in_array( $vendor_id, $vendor_ids ) ) {
-            array_push( $vendor_ids, $vendor_id );
+            $vendor_ids[$item_id] = $vendor_id;
           }
 
         }
@@ -383,7 +383,7 @@ class GRON_WooCommerce {
   * @param Int $order_id ID of the order
   * @param String $manage_by delivery manage by 'admin' or 'vendor'
   */
-  private function deliveriy_notification_process( $vendor_id, $order_id, $manage_by ) {
+  private function deliveriy_notification_process( $vendor_id, $order_id, $item_id, $manage_by ) {
 
     $delivery_boy_ids = array();
 
@@ -401,6 +401,7 @@ class GRON_WooCommerce {
       'manage_by' => $manage_by,
       'vendor_id' => $vendor_id,
       'order_id'  => $order_id,
+      'item_id'   => $item_id,
       'status'    => 'pending'
     );
 

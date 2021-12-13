@@ -39,10 +39,12 @@ class SQLite {
         manage_by TEXT NOT NULL,
       	vendor_id INTEGER NOT NULL,
       	order_id INTEGER NOT NULL,
+        item_id INTEGER NOT NULL,
       	boy_id INTEGER,
         status TEXT NOT NULL,
         is_accepted INTEGER,
         status_msg TEXT,
+        wcfm_delivery_id INTEGER,
         created_at TEXT NOT NULL
       )",
     );
@@ -73,12 +75,13 @@ class SQLite {
     $manage_by  = $data['manage_by'];
     $vendor_id  = $data['vendor_id'];
     $order_id   = $data['order_id'];
+    $item_id    = $data['item_id'];
     $boy_id     = $data['boy_id'];
     $status     = $data['status'];
     $created_at = current_time('Y-m-d H:i:s');
 
-    $sql  = "INSERT INTO {$this->delivery_notifications_table_name}(manage_by,vendor_id,order_id,boy_id,status,created_at)";
-    $sql .= " VALUES(:manage_by,:vendor_id,:order_id,:boy_id,:status,:created_at)";
+    $sql  = "INSERT INTO {$this->delivery_notifications_table_name}(manage_by,vendor_id,order_id,item_id,boy_id,status,created_at)";
+    $sql .= " VALUES(:manage_by,:vendor_id,:order_id,:item_id,:boy_id,:status,:created_at)";
 
     $statement = $this->pdo->prepare( $sql );
 
@@ -87,6 +90,7 @@ class SQLite {
         ':manage_by'  => $manage_by,
         ':vendor_id'  => $vendor_id,
         ':order_id'   => $order_id,
+        ':item_id'    => $item_id,
         ':boy_id'     => $boy_id,
         ':status'     => $status,
         ':created_at' => $created_at
@@ -213,6 +217,8 @@ class SQLite {
                     $data['reset_boy_id'] :
                     false;
 
+    $wcfm_delivery_id = isset( $data['wcfm_delivery_id'] ) ? $data['wcfm_delivery_id'] : '';
+
     if( !$dn_id ) return;
 
     // SQL statement to update status of a task to completed
@@ -233,6 +239,10 @@ class SQLite {
       $sql .= ", boy_id=0";
     }
 
+    if( $wcfm_delivery_id ) {
+      $sql .= ", wcfm_delivery_id=:wcfm_delivery_id";
+    }
+
     // Condition
     $sql .= " WHERE dn_id=:dn_id";
 
@@ -249,6 +259,11 @@ class SQLite {
       $stmt->bindValue(':status', $status);
     }
 
+    // passing wcfm_delivery_id
+    if( $wcfm_delivery_id ) {
+      $stmt->bindValue(':wcfm_delivery_id', $wcfm_delivery_id);
+    }
+
     // passing status message
     $stmt->bindValue(':status_msg', $status_msg);
 
@@ -262,13 +277,21 @@ class SQLite {
 
   /**
   * Delete delivery notification
-  * @param Int $dn_id Delete by ID of the entry
-  * @param Int $status Delete by Status of the notifications
+  *
+  * @param Array $data Data to delete based on
+  * At least one [Required]
+  * ['dn_id'] => (Int) ID of the delivery notification entry
+  * ['status'] => (String) status of those entries
+  *
   * @version 2.1.4
   * @return Boolean
   */
-  function delete_delivery_notification( $dn_id = null, $status = '' ) {
+  function delete_delivery_notification( $data ) {
 
+    $dn_id = isset( $data['dn_id'] ) ? $data['dn_id'] : '';
+    $status = isset( $data['status'] ) ? $data['status'] : '';
+
+    if( !$dn_id && !$status ) return;
 
     $sql = "DELETE FROM {$this->delivery_notifications_table_name}";
 
