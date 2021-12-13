@@ -455,7 +455,8 @@ class GRON_WooCommerce {
   private function is_delivery_manage_by_vendor( $vendor_id ) {
 
     return Utils::is_delivery_by_seller() &&
-           Utils::is_delivery_by_me( $vendor_id );
+           Utils::is_delivery_by_me( $vendor_id ) &&
+           Utils::is_allowed_the_vendor_for_dm( $vendor_id );
 
   }
 

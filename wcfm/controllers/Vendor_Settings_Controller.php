@@ -158,7 +158,7 @@ class Vendor_Settings_Controller {
    * @param Array $settings
 	 *  ['name'] => ['Value']
   */
-  public function update_general_settings( $settings ) {
+  public function update_delivery_settings( $settings ) {
 
 		$saved_all = true;
 

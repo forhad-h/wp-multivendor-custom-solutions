@@ -192,5 +192,30 @@ class Utils {
 
   }
 
+  /**
+  * Check if the specific vendor is allowed to manage delivery
+  * @param Int $vendor_id ID of the Vendor
+  *
+  * @return Boolean
+  */
+  public static function is_allowed_the_vendor_for_dm( $vendor_id ) {
+
+    $allowed_vendors = get_option( '_gron_delivery_allowed_vendors' );
+    $is_checked = false;
+
+    if( !$allowed_vendors ) {
+      // If the settings not set yet
+      // Then make all chcked
+      $is_checked = true;
+    }else {
+      if( in_array( $vendor_id, $allowed_vendors ) ) {
+        $is_checked = true;
+      }
+    }
+
+    return $is_checked;
+
+  }
+
 
 }

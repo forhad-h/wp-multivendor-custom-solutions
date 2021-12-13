@@ -28,7 +28,7 @@ class Ajax_Controller {
     $this->task['delete_delivery_slot']   = 'delete-delivery-slot';
 
     // Admin settings
-    $this->task['update_general_settings'] = 'update-general-settings';
+    $this->task['update_delivery_settings'] = 'update-delivery-settings';
 
     add_action( 'after_wcfm_ajax_controller', array( $this, 'controllers' ) );
 
@@ -78,9 +78,9 @@ class Ajax_Controller {
         // insert delivery slot
         $vendor_controller->delete_delivery_slot( $data );
 
-      }elseif( $task == $this->task['update_general_settings'] ) {
+      }elseif( $task == $this->task['update_delivery_settings'] ) {
 
-        $vendor_controller->update_general_settings( $data );
+        $vendor_controller->update_delivery_settings( $data );
 
       }
 
@@ -91,9 +91,9 @@ class Ajax_Controller {
 
       $admin_controller = new Admin_Settings_Controller();
 
-      if( $task === $this->task['update_general_settings'] && $data ) {
+      if( $task === $this->task['update_delivery_settings'] && $data ) {
 
-        $admin_controller->update_general_settings( $data );
+        $admin_controller->update_delivery_settings( $data );
 
       }
 

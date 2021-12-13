@@ -304,7 +304,7 @@ jQuery(document).ready(function($) {
       data: {
         action: 'wcfm_ajax_controller',
         controller: 'gron-vendor-settings',
-        task: 'update-general-settings',
+        task: 'update-delivery-settings',
         data: data
       }
     })

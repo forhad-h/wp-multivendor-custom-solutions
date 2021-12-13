@@ -17,17 +17,26 @@ jQuery(document).ready(function($) {
      $(this).val('SAVING...');
      _this = $(this);
 
+     var storeListElm = $("#gron-store-list");
+
+     var allowedVendorIds = [];
+     storeListElm.find('input[type=checkbox]:checked').each(function(i){
+       allowedVendorIds[i] = +$(this).val();
+     });
+
      var data = {
        _gron_delivery_by_seller: deliveryBySellerValue,
-       _gron_dn_broadcast_time_limit: broadcastTimeLimitValue
+       _gron_dn_broadcast_time_limit: broadcastTimeLimitValue,
+       _gron_delivery_allowed_vendors: allowedVendorIds.length ? allowedVendorIds : [0]
      }
+
      $.ajax({
        type: "POST",
        url: wcfm_params.ajax_url,
        data: {
          action: 'wcfm_ajax_controller',
          controller: 'gron-admin-settings',
-         task: 'update-general-settings',
+         task: 'update-delivery-settings',
          data: data
        }
      })

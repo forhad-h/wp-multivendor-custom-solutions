@@ -31,12 +31,11 @@ class Admin_Settings_Controller {
    * @param Array $settings
 	 *  ['name'] => ['Value']
   */
-  public function update_general_settings( $settings ) {
+  public function update_delivery_settings( $settings ) {
 
 		$saved_all = true;
 
 		foreach( $settings as $name => $value ) {
-
 
 			if( $name === '_gron_delivery_by_seller' ) {
 				// Only accept 'yes' or 'no' for '_gron_delivery_by_seller' setting
@@ -44,6 +43,16 @@ class Admin_Settings_Controller {
 			}elseif( $name === '_gron_dn_broadcast_time_limit' ) {
 				// Only accept Number for _gron_dn_broadcast_time_limit setting
 				if( !is_numeric( $value ) ) return;
+			}elseif( $name === '_gron_delivery_allowed_vendors' ) {
+
+				if( !empty( $value ) ) {
+
+					foreach( $value as $vendor_id ) {
+						if( !is_numeric( $vendor_id ) ) return;
+					}
+
+				}
+
 			}
 
 			$save = update_option( esc_sql( $name ), esc_sql( $value ) );

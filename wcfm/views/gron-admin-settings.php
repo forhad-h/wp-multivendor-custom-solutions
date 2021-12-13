@@ -99,7 +99,7 @@ $mysql = new MySQL();
               <!-- each field -->
 
               <!-- each field -->
-              <div class="each_field gron_multiple_checkbox_fields">
+              <div id="gron-store-list" class="each_field gron_multiple_checkbox_fields">
 
                 <?php
                   $vendor_role = 'wcfm_vendor';
@@ -126,13 +126,25 @@ $mysql = new MySQL();
 
                 <div class="fields">
 
-                  <?php foreach( $store_names as $vendor_id => $store_name): ?>
+                  <?php
+                    foreach( $store_names as $vendor_id => $store_name):
+
+                      // Logic for active checkbox
+                      $is_checked = Utils::is_allowed_the_vendor_for_dm( $vendor_id );
+
+                  ?>
 
                     <div class="each_field">
 
 
 
-                        <input type="checkbox" id="gron-store-<?php echo $vendor_id; ?>" class="wcfm-checkbox" value="<?php echo $vendor_id;?>" />
+                        <input
+                          type="checkbox"
+                          id="gron-store-<?php echo $vendor_id; ?>"
+                          class="wcfm-checkbox"
+                          value="<?php echo $vendor_id;?>"
+                          <?php echo  $is_checked ? 'checked' : ''; ?>
+                        />
 
                         <label for="gron-store-<?php echo $vendor_id; ?>"><?php echo $store_name; ?></label>
 
