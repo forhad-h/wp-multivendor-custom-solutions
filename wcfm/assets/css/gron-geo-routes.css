@@ -37,6 +37,8 @@
   border-radius: 5px;
   border: 1px solid #3AB57B;
   box-shadow: 0 0 7px rgba(0,0,0,0.15);
+  height: 197px;
+  overflow-y: auto;
 }
 .grons_single_info {
   max-width: 300px;
