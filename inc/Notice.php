@@ -68,26 +68,20 @@ class Notice {
 
     $options = array();
 
-    if( !Utils::has_map_api_key() ) {
-      $options['title'] = 'Google Map API Key is Required!';
-      $options['description'] = 'Make sure you have set your Google Map API Key: &nbsp;';
-      $options['path'] = array(
-        array( 'icon' => 'cogs', 'name' => 'Settings' ),
-        array( 'icon' => 'street-view', 'name' => 'GEO Location > Google Map API Key (Change the Map Library to "Google Map")' )
-      );
-    }/*else {
-      $options['title'] = 'Map Default Location is Required!';
-      $options['description'] = 'Make sure you have set your Map Default Location: &nbsp;';
-      $options['path'] = array(
-        array( 'icon' => 'cogs', 'name' => 'Settings' ),
-        array( 'icon' => 'street-view', 'name' => 'GEO Location > Map Default Location' )
-      );
-    }*/
+    $options['title'] = 'Google Map API Key is Required!';
+    $options['description'] = 'Make sure you have set your Google Map API Key: &nbsp;';
+    $options['path'] = array(
+      array( 'icon' => 'cogs', 'name' => 'Settings' ),
+      array( 'icon' => 'street-view', 'name' => 'GEO Location > Google Map API Key (Change the Map Library to "Google Map")' )
+    );
 
     $options['id'] = 'gron-map-settings-notice';
     $options['type_class'] = 'gron_notice_error';
 
-    return $this->notice_markup( $options );
+    if( !Utils::has_map_api_key() ) {
+      return $this->notice_markup( $options );
+    }
+
   }
 
   /**
