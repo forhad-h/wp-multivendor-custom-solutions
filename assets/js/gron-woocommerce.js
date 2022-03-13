@@ -14,4 +14,26 @@
     $(this).addClass( 'active' );
   });
 
+  //
+
+  var locationFieldElm = $('#wcfmmp_user_location');
+  locationFieldElm.on( 'blur', function() {
+    var _this = $(this)
+    setTimeout( function() {
+      var location = _this.val();
+
+      $.ajax({
+        url: gronWC.siteUrl + '/wp-json/gron/v1/vendors',
+        type: 'GET'
+      })
+      .done( function( res ) {
+        console.log( res );
+      })
+      .fail( function( err ) {
+        console.error( err.responseText )
+      } )
+
+    }, 101 )
+  })
+
 } )(jQuery)

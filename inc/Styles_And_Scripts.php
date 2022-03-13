@@ -37,7 +37,15 @@ class Styles_And_Scripts {
   * Register scripts for client side
   */
   public function register_view_scripts() {
+
     wp_register_script( 'gron-woocommerce-script', GRON_DIR_URI . 'assets/js/gron-woocommerce.js', array( 'jquery' ), GRON_VERSION, true );
+
+    wp_localize_script( 'gron-woocommerce-script', 'gronWC', array(
+      'siteUrl'  => get_site_url()
+    ));
+
+
+
   }
 
   /**

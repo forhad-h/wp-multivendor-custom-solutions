@@ -61,6 +61,13 @@ class REST_Controller extends WP_REST_Controller {
       'permission_callback' => array( $this, 'permission_check' )
     ));
 
+    // get all vendors info
+    register_rest_route( $namespace, '/vendors', array(
+      'methods'             => WP_REST_Server::READABLE,
+      'callback'            => array( $this, 'get_vendors' ),
+      'permission_callback' => '__return_true'
+    ));
+
   }
 
   /**
@@ -361,6 +368,48 @@ class REST_Controller extends WP_REST_Controller {
     if( $success ) return new WP_REST_Response( $success, 200 );
 
     return new WP_Error( 'cant-update-and-delete', __( 'Order status cannot be updated form WCFM or Delivery notification can not be deleted for GRON!', 'gron-custom' ), array( 'status' => 500 ) );
+
+  }
+
+  /**
+  * Get all vendors information
+  *
+  *
+  * @return WP_Error|WP_REST_Response
+  */
+
+  public function get_vendors() {
+
+    $vendors = array();
+
+    $vendor_role = 'wcfm_vendor';
+    $args = array(
+      'role__in'     => array( $vendor_role ),
+      'orderby'      => 'ID',
+      'order'        => 'ASC',
+      'fields'       => "ID"
+     );
+
+    $vendor_ids = get_users( $args );
+
+    foreach( $vendor_ids as $vendor_id ) {
+
+      $store_name = get_user_meta( $vendor_id, 'store_name', true );
+
+      $store_user  = wcfmmp_get_store( absint( $vendor_id ) );
+      $store_address     = $store_user->get_address_string();
+
+      $vendors[] = array(
+        'vendor_id' => $vendor_id,
+        'store_name' => $store_name,
+        'store_address' => $store_address
+      );
+
+    }
+
+    if( $vendors ) return new WP_REST_Response( $vendors, 200 );
+
+    return new WP_Error( 'cant-get-vendors', __( 'Cannot get vendors information!', 'gron-custom' ), array( 'status' => 500 ) );
 
   }
 
