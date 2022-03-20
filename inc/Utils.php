@@ -217,5 +217,54 @@ class Utils {
 
   }
 
+  /**
+  * Get all vendors Location Latitude and Longitude
+  *
+  * @return Boolean
+  */
+  public static function get_all_vendors_info() {
+
+    $vendors = array();
+
+    $vendor_role = 'wcfm_vendor';
+
+    $args = array(
+      'role__in'     => array( $vendor_role ),
+      'orderby'      => 'ID',
+      'order'        => 'ASC',
+      'fields'       => "ID"
+     );
+
+    $vendor_ids = get_users( $args );
+
+    foreach( $vendor_ids as $vendor_id ) {
+
+      $store_name = get_user_meta( $vendor_id, 'store_name', true );
+
+      $vendor_data = get_user_meta( $vendor_id, 'wcfmmp_profile_settings', true );
+
+      $store_user  = wcfmmp_get_store( absint( $vendor_id ) );
+      $store_address     = $store_user->get_address_string();
+
+      $store_location   = isset( $vendor_data['store_location'] ) ? esc_attr( $vendor_data['store_location'] ) : '';
+      $store_lat = isset( $vendor_data['store_lat'] ) ? esc_attr( $vendor_data['store_lat'] ) : null;
+      $store_lng = isset( $vendor_data['store_lng'] ) ? esc_attr( $vendor_data['store_lng'] ) : null;
+
+      $vendors[] = array(
+        'vendor_id' => $vendor_id,
+        'store_name' => $store_name,
+        'store_address' => $store_address,
+        'store_location' => $store_location,
+        'store_latitude' => $store_lat,
+        'store_longitude' => $store_lng
+      );
+
+    }
+
+    return $vendors;
+
+  }
+
+
 
 }

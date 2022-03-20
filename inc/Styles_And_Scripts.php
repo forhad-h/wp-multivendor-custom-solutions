@@ -40,8 +40,11 @@ class Styles_And_Scripts {
 
     wp_register_script( 'gron-woocommerce-script', GRON_DIR_URI . 'assets/js/gron-woocommerce.js', array( 'jquery' ), GRON_VERSION, true );
 
+    $vendors_info = \GRON\Utils::get_all_vendors_info();
+
     wp_localize_script( 'gron-woocommerce-script', 'gronWC', array(
-      'siteUrl'  => get_site_url()
+      'siteUrl'  => get_site_url(),
+      'vendors_info' => $vendors_info
     ));
 
 
