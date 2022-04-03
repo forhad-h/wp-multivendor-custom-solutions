@@ -7,8 +7,8 @@ class Utils {
 
   /**
   * Remove seconds from time
-  * @param Time $time 00:00:00
-  * @return Time $new_time 00:00
+  * @param String $time 00:00:00
+  * @return String $new_time 00:00
   */
   public static function time_format( $time ) {
     $new_time = date_i18n('h:i A', strtotime( $time ) );

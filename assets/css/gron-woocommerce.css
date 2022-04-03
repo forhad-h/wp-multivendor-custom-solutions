@@ -5,17 +5,17 @@
   margin-top: 25px;
   line-height: 1.1;
 }
-.gron_collection_type .woocommerce-input-wrapper {
+.gron_radio_select .woocommerce-input-wrapper {
   position: relative;
   background-color: #eee;
 }
-.gron_collection_type .woocommerce-input-wrapper input[type=radio] {
+.gron_radio_select .woocommerce-input-wrapper input[type=radio] {
   display: none;
 }
-.woocommerce form .form-row.gron_collection_type .woocommerce-input-wrapper label {
+.woocommerce form .form-row.gron_radio_select .woocommerce-input-wrapper label {
   display: inline-block;
 }
-.gron_collection_type .woocommerce-input-wrapper label {
+.gron_radio_select .woocommerce-input-wrapper label {
   display: inline-block;
   background-color: #eee;
   padding: 1px 9px;
@@ -25,15 +25,15 @@
   transition: 0.3s linear;
   box-shadow: 0 0 5px rgba( 0, 0, 0, 0.1 );
 }
-.gron_collection_type .woocommerce-input-wrapper label:hover {
+.gron_radio_select .woocommerce-input-wrapper label:hover {
   border-color: #3AB57B;
 }
 
-.gron_collection_type .woocommerce-input-wrapper label.active {
+.gron_radio_select .woocommerce-input-wrapper label.active {
   background-color: #3AB57B;
   color: #fff;
 }
-.gron_collection_type .woocommerce-input-wrapper input[value=deliver_to_home] + label {
+.gron_radio_select .woocommerce-input-wrapper input[value=deliver_to_home] + label {
   margin-left: 3px;
 }
 
@@ -54,4 +54,19 @@
   height: 35px;
   background: #fff;
   width: 100%;
+}
+
+/*? Version 2 styles */
+
+.gron_vendor_list {
+  display: none;
+  -webkit-transition: all 0.35s ease-out;
+  -moz-transition: all 0.35s ease-out;
+  -o-transition: all 0.35s ease-out;
+  transition: all 0.35s ease-out;
+  box-shadow: 0 0 13px rgba(0,0,0,0.1);
+}
+.woocommerce form .form-row.gron_vendor_list {
+  padding: 15px;
+  margin-top: 25px;
 }
