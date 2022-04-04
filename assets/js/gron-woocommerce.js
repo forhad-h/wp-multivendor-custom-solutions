@@ -5,12 +5,9 @@
   deliverToHomeRadioElm.prop("checked", true);
   deliverToHomeRadioElm.next("label").addClass("active");
 
-  /* Collection Type */
-  var collectionTypeLabelElms = $(
-    ".gron_radio_select .woocommerce-input-wrapper label"
-  );
+  /* Radio Type Selection */
 
-  collectionTypeLabelElms.on("click", function () {
+  $('.gron_radio_select .woocommerce-input-wrapper').on("click", 'label', function () {
     $(this).siblings().removeClass("active");
     $(this).addClass("active");
   });
@@ -20,7 +17,6 @@
   var locationFieldElm = $("#wcfmmp_user_location");
 
   locationFieldElm.on("blur", gronWC_tjH2Bn_getLatLng.bind($(this), 0));
-
 })(jQuery);
 
 function gronWC_tjH2Bn_getLatLng(attempt) {
@@ -39,7 +35,6 @@ function gronWC_tjH2Bn_getLatLng(attempt) {
       gronWC_tjH2Bn_getLatLng(attempt);
     } else {
       var vendorsInfo = gronWC.vendors_info;
-      var directionsService = new google.maps.DirectionsService();
       var start = new google.maps.LatLng(inputLatVal, inputLngVal);
 
       // Get elements - added in woocommerce checkout page
@@ -50,7 +45,6 @@ function gronWC_tjH2Bn_getLatLng(attempt) {
       inputWrapperElm.empty();
 
       for (var i = 0; i < vendorsInfo.length; i++) {
-
         var vendorInfo = vendorsInfo[i];
 
         var storeLat = vendorInfo.store_latitude;
@@ -66,34 +60,9 @@ function gronWC_tjH2Bn_getLatLng(attempt) {
           travelMode: "DRIVING",
         };
 
-        directionsService.route(request, function (result, status) {
-          if (status === "OK") {
-            var route = result.routes[0];
-            var distance = route.legs[0].distance.text;
-
-            if (distance) {
-              var fieldMarkup = "";
-
-              // Field input
-              fieldMarkup += '<input type="radio" class="input-radio " value="';
-              fieldMarkup += vendorInfo.vendor_id;
-              fieldMarkup += '" name="gron_vendor_list" id="gron_vendor_list_';
-              fieldMarkup += vendorInfo.vendor_id;
-              fieldMarkup += '" checked="checked">';
-
-              // Field label
-              fieldMarkup += '<label for="gron_vendor_list_';
-              fieldMarkup += vendorInfo.vendor_id;
-              fieldMarkup += '" class="radio ">';
-              fieldMarkup += vendorInfo.store_name 
-              fieldMarkup += '<span class="gron_v_addr">' 
-              fieldMarkup += vendorInfo.store_address + "</span>" 
-              fieldMarkup += '<span class="gron_v_distance">' + distance + '</span>';
-              fieldMarkup += "</label>";
-
-              inputWrapperElm.append(fieldMarkup);
-            }
-          }
+        gronWC_tjH2Bn_render_vendor_list({
+          vendorInfo: vendorInfo,
+          request: request,
         });
       }
 
@@ -107,4 +76,45 @@ function gronWC_tjH2Bn_getLatLng(attempt) {
         });
     }
   }, 101);
+}
+
+function gronWC_tjH2Bn_render_vendor_list(params) {
+  $ = jQuery;
+  var vendorInfo = params.vendorInfo;
+  var request = params.request;
+  var inputWrapperElm = $(".gron_vendor_list .woocommerce-input-wrapper");
+
+  var directionsService = new google.maps.DirectionsService();
+
+  directionsService.route(request, function (result, status) {
+    if (status === "OK") {
+      var route = result.routes[0];
+      var distance = route.legs[0].distance.text;
+
+      if (distance) {
+        var fieldMarkup = "";
+
+        // Field input
+        fieldMarkup += '<input type="radio" class="input-radio " value="';
+        fieldMarkup += vendorInfo.vendor_id;
+        fieldMarkup += '" name="gron_vendor" id="gron_vendor_list_';
+        fieldMarkup += vendorInfo.vendor_id;
+        fieldMarkup += '" checked="checked">';
+
+        // Field label
+        fieldMarkup += '<label for="gron_vendor_list_';
+        fieldMarkup += vendorInfo.vendor_id;
+        fieldMarkup += '" class="radio ">';
+        fieldMarkup += '<span class="gron_v_name">';
+        fieldMarkup += vendorInfo.store_name;
+        fieldMarkup += "</span> ";
+        fieldMarkup += ' <span class="gron_v_addr">';
+        fieldMarkup += vendorInfo.store_address + "</span> ";
+        fieldMarkup += ' <span class="gron_v_distance">' + distance + "</span>";
+        fieldMarkup += "</label>";
+
+        inputWrapperElm.append(fieldMarkup);
+      }
+    }
+  });
 }

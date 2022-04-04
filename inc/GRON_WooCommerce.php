@@ -78,9 +78,9 @@ class GRON_WooCommerce
     // Load script
     wp_enqueue_script('gron-woocommerce-script');
 
-    $vendor_list_field = array(
+    $vendor_field = array(
       'type'        => 'radio',
-      'label'       =>  __('Select Vendor:', 'gron-custom'),
+      'label'       =>  __('Select Store:', 'gron-custom'),
       'required'    => true,
       'class'       => array('gron_vendor_list', 'gron_radio_select'),
       'clear'       => true,
@@ -89,7 +89,7 @@ class GRON_WooCommerce
       ),
       'priority'    => 999
     );
-    $fields['gron_vendor_list'] = $vendor_list_field;
+    $fields['gron_vendor'] = $vendor_field;
 
     return $fields;
   }
