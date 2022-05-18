@@ -1,6 +1,17 @@
 !(function ($) {
+
+  /* 
+    Normally it's not possible to append gron fields at the end of billing fields.
+    Because the google map player is not following the woocommerce priority rule.
+    So move all gron fields with following code.
+  */
+  $('.woocommerce-billing-fields').append( '<div class="gron_fields_box"></div>');
+  $('.gron_field_wrapper').each( function() {
+    $('.woocommerce-billing-fields .gron_fields_box').append( $(this) );
+  })
+
   /* Default collection type selection */
-  var deliverToHomeRadioElm = $("input[value=deliver_to_home]");
+  var deliverToHomeRadioElm = $("input[value=self_collection]");
 
   deliverToHomeRadioElm.prop("checked", true);
   deliverToHomeRadioElm.next("label").addClass("active");
@@ -12,11 +23,38 @@
     $(this).addClass("active");
   });
 
-  //
+  // show collection type based on vendor
+  $('.gron_vendor_list').on('change', '.input-radio', function() {
 
+    var vendorId = $(this).val();
+
+    
+  });
+
+  // show delivery day and time based on collection type
+  $('.gron_collection_type').on('change', '.input-radio', function() {
+
+    var deliveryDayElm = $('.gron_deliver_day');
+    var deliveryTimeElm = $('.gron_deliver_time');
+
+    if( $(this).val() === 'self_collection' ) {
+
+      deliveryDayElm.fadeIn(300).css('display', 'inline-block');
+      deliveryTimeElm.fadeIn(300).css('display', 'inline-block');
+
+    }else {
+
+      deliveryDayElm.fadeOut(150);
+      deliveryTimeElm.fadeOut(150);
+
+    }
+
+  })
+
+  // show vendor list based on location
   var locationFieldElm = $("#wcfmmp_user_location");
-
   locationFieldElm.on("blur", gronWC_tjH2Bn_getLatLng.bind($(this), 0));
+
 })(jQuery);
 
 function gronWC_tjH2Bn_getLatLng(attempt) {
@@ -67,13 +105,33 @@ function gronWC_tjH2Bn_getLatLng(attempt) {
       }
 
       // Display the vendor selection options
-      vendorListElm
+      $('.gron_fields_box')
         .css("background-color", "rgba( 58, 181, 123, 0.5 )")
         .fadeIn(300)
         .promise()
         .done(function () {
+
           $(this).css("background-color", "initial");
+
+          var firstVendorElm = $('.gron_vendor_list .input-radio:first');
+          
+          firstVendorElm.prop("checked", true);
+          firstVendorElm.next('label').addClass('active');
+
+          var collectionTypeElm = $('.gron_collection_type');
+    
+          collectionTypeElm.fadeIn(300)
+
+          var deliveryDayElm = $('.gron_deliver_day');
+          var deliveryTimeElm = $('.gron_deliver_time');
+
+          deliveryDayElm.fadeIn(300).css('display', 'inline-block');
+          deliveryTimeElm.fadeIn(300).css('display', 'inline-block');
+          
         });
+
+        vendorListElm.fadeIn(300)
+
     }
   }, 101);
 }

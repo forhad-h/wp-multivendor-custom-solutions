@@ -68,6 +68,14 @@ class REST_Controller extends WP_REST_Controller {
       'permission_callback' => '__return_true'
     ));
 
+
+    // get all vendors info
+    register_rest_route( $namespace, '/delivery-info', array(
+      'methods'             => WP_REST_Server::READABLE,
+      'callback'            => array( $this, 'get_delivery_info' ),
+      'permission_callback' => '__return_true'
+    ));
+
   }
 
   /**
@@ -410,6 +418,23 @@ class REST_Controller extends WP_REST_Controller {
     if( $vendors ) return new WP_REST_Response( $vendors, 200 );
 
     return new WP_Error( 'cant-get-vendors', __( 'Cannot get vendors information!', 'gron-custom' ), array( 'status' => 500 ) );
+
+  }
+
+  public function get_delivery_info( $request ) {
+
+    $vendor_id = isset($request['vendor_id']) ? $request['vendor_id'] : '';
+
+    if( !$vendor_id ) return new WP_Error( 'no-vendor-id', __( 'Required vendor ID not provided!', 'gron-custom' ), array( 'status' => 400 ) );;
+
+    $data = array(
+      'times' => Utils::get_delivery_times( $vendor_id ),
+      'days' => Utils::get_delivery_days( $vendor_id )
+    );
+
+    if(!empty( $data )) return new WP_REST_Response( $data, 200 );
+
+    return new WP_Error( 'cant-get-delivery-nfo', __( 'Cannot get delivery information!', 'gron-custom' ), array( 'status' => 500 ) );
 
   }
 

@@ -16,6 +16,8 @@ var gronPusher = new Pusher( pusherObj.key, {
       hideAfter: 60000
     }
 
+    if( !pusherObj.userInfo ) return;
+
     switch( pusherObj.userInfo.role ) {
 
       case 'administrator':

@@ -3,6 +3,8 @@ namespace GRON;
 // Prevent direct access
 defined('ABSPATH') or exit;
 
+use GRON\MySQL;
+
 class Utils {
 
   /**
@@ -263,6 +265,53 @@ class Utils {
 
     return $vendors;
 
+  }
+
+
+  /**
+   * Get Delivery Days
+   * @param Int $vendor_id ID of the vendor
+   * @return Array options of Delivery Day field
+   */
+  public static function get_delivery_days($vendor_id, $format = 'raw')
+  {
+
+    $mysql = new MySQL();
+
+    $shop_timings = $mysql->get_shop_timings(true, $vendor_id);
+
+    foreach ($shop_timings as $timing) {
+
+      $key = $timing->day_name;
+      $value = ucfirst($timing->day_name);
+
+      $options[$key] = $value;
+    }
+
+    return $options;
+  }
+
+  /**
+   * Get delivery times
+   * @param Int $vendor_id ID of the vendor
+   * @return Array options of delivery time field
+   */
+  public static function get_delivery_times($vendor_id)
+  {
+
+    $mysql = new MySQL();
+
+    $slots = $mysql->get_delivery_slots($vendor_id);
+
+    foreach ($slots as $slot) {
+      $time_from = Utils::time_format($slot->time_from);
+      $time_to = Utils::time_format($slot->time_to);
+      $key = $value = $time_from . '-' . $time_to;
+
+      $options[$key] = $value;
+    }
+
+    return $options;
   }
 
 

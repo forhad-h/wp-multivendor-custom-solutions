@@ -82,14 +82,55 @@ class GRON_WooCommerce
       'type'        => 'radio',
       'label'       =>  __('Select Store:', 'gron-custom'),
       'required'    => true,
-      'class'       => array('gron_vendor_list', 'gron_radio_select'),
+      'class'       => array('gron_field_wrapper', 'gron_vendor_list', 'gron_radio_select'),
       'clear'       => true,
       'options'     => array(
         ''     => 'Placeholder'
       ),
-      'priority'    => 999
+      'priority'    => 991
     );
     $fields['gron_vendor'] = $vendor_field;
+
+
+    $collection_type_field = array(
+      'type'        => 'radio',
+      'label'       => __('Collection Type:', 'gron-custom'),
+      'required'    => true,
+      'class'       => array('gron_field_wrapper', 'gron_collection_type', 'gron_radio_select'),
+      'clear'       => true,
+      'options'     => array(
+        'self_collection'     => 'Self Collection',
+        'deliver_to_home'     => 'Deliver to Home'
+      ),
+      'priority'    => 993
+    );
+    $fields['gron_collection_type'] = $collection_type_field;
+
+    $date_field = array(
+      'type'        => 'select',
+      'label'       => __('Deliver Date:', 'gron-custom'),
+      'required'    => false,
+      'class'       => array('gron_field_wrapper', 'select2', 'gron_deliver_day'),
+      'clear'       => true,
+      'options'     => array(
+        '' => 'Placeholder'
+      ),
+      'priority'    => 995
+    );
+    $fields['gron_deliver_day'] = $date_field;
+
+    $time_field = array(
+      'type'        => 'select',
+      'label'       => __('Deliver Time:', 'gron-custom'),
+      'required'    => false,
+      'class'       => array('gron_field_wrapper', 'gron_deliver_time'),
+      'clear'       => true,
+      'options'     =>  array(
+        '' => 'Placeholder'
+      ),
+      'priority'    => 997
+    );
+    $fields['gron_deliver_time'] = $time_field;
 
     return $fields;
   }
@@ -144,7 +185,7 @@ class GRON_WooCommerce
         'required'    => true,
         'class'       => array('select2', 'gron_deliver_day'),
         'clear'       => true,
-        'options'     => $this->get_delivery_days($vendor_id),
+        'options'     => array_merge(array("" => "Select Delivery Day"), Utils::get_delivery_days($vendor_id)),
         'priority'    => ++$priority
       );
       $fields['gron_deliver_day_' . $vendor_id] = $date_field;
@@ -155,57 +196,13 @@ class GRON_WooCommerce
         'required'    => true,
         'class'       => array('gron_deliver_time'),
         'clear'       => true,
-        'options'     => $this->get_delivery_times($vendor_id),
+        'options'     => array_merge( array("" => "Select Delivery Times"), Utils::get_delivery_times($vendor_id)),
         'priority'    => ++$priority
       );
       $fields['gron_deliver_time_' . $vendor_id] = $time_field;
     }
 
     return $fields;
-  }
-
-  /**
-   * Get Delivery Days
-   * @param Int $vendor_id ID of the vendor
-   * @return Array options of Delivery Day field
-   */
-  private function get_delivery_days($vendor_id)
-  {
-
-    $options = array("" => "Select Delivery Day");
-    $shop_timings = $this->mysql->get_shop_timings(true, $vendor_id);
-
-    foreach ($shop_timings as $timing) {
-
-      $key = $timing->day_name;
-      $value = ucfirst($timing->day_name);
-
-      $options[$key] = $value;
-    }
-
-    return $options;
-  }
-
-  /**
-   * Get delivery times
-   * @param Int $vendor_id ID of the vendor
-   * @return Array options of delivery time field
-   */
-  private function get_delivery_times($vendor_id)
-  {
-
-    $options = array("" => "Select Delivery Times");
-    $slots = $this->mysql->get_delivery_slots($vendor_id);
-
-    foreach ($slots as $slot) {
-      $time_from = Utils::time_format($slot->time_from);
-      $time_to = Utils::time_format($slot->time_to);
-      $key = $value = $time_from . '-' . $time_to;
-
-      $options[$key] = $value;
-    }
-
-    return $options;
   }
 
   /**
