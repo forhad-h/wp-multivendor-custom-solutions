@@ -62,7 +62,7 @@ class GEO_Routes_Controller {
 			);
 			echo $this->response( 'data_found', 'Location found!', $data );
 
-		}catch( Exception $e ) {
+		}catch( \Exception $e ) {
 		    echo $this->response( 'not_found', 'Location not found!', '', $e );
 		}
 
@@ -91,9 +91,9 @@ class GEO_Routes_Controller {
 				);
 				return $data;
 
-			}catch(Exception $e) {
+			}catch(\Exception $e) {
 
-				throw new WP_Error( 'not_found', 'Error: during get store location of admin user', $e );
+				throw new \WP_Error( 'not_found', 'Error: during get store location of admin user', $e );
 
 			}
 
@@ -115,8 +115,8 @@ class GEO_Routes_Controller {
 				);
 
 				return $data;
-			}catch( Exception $e ) {
-         throw new WP_Error( 'not_found', 'Error: during get store location of vendor', $e );
+			}catch( \Exception $e ) {
+         throw new \WP_Error( 'not_found', 'Error: during get store location of vendor', $e );
 			}
 
 		}
@@ -160,8 +160,8 @@ class GEO_Routes_Controller {
 
 				}
 				return $allData;
-			}catch( Exception $e ) {
-		    throw new WP_Error( 'not_found', 'Error: during get order location of admin user', $e );
+			}catch( \Exception $e ) {
+		    throw new \WP_Error( 'not_found', 'Error: during get order location of admin user', $e );
 		  }
 	  }else{
 
@@ -198,8 +198,8 @@ class GEO_Routes_Controller {
 
 				return $allData;
 
-			}catch( Exception $e ){
-				throw new WP_Error( 'not_found', 'Error: during get order location of admin user', $e );
+			}catch( \Exception $e ){
+				throw new \WP_Error( 'not_found', 'Error: during get order location of admin user', $e );
 			}
 
 		}
