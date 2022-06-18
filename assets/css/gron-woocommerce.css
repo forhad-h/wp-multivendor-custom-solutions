@@ -70,7 +70,7 @@
   -moz-transition: all 0.55s ease-out;
   -o-transition: all 0.55s ease-out;
   transition: all 0.55s ease-out;
-  box-shadow: 0 0 13px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 19px rgba(0, 0, 0, 0.1);
   padding: 15px;
   margin-top: 25px;
 }

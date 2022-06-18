@@ -234,7 +234,8 @@ class Utils {
       'role__in'     => array( $vendor_role ),
       'orderby'      => 'ID',
       'order'        => 'ASC',
-      'fields'       => "ID"
+      'fields'       => "ID",
+      'number'       => 5
      );
 
     $vendor_ids = get_users( $args );
