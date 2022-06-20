@@ -130,7 +130,7 @@ function gronWC_tjH2Bn_getLatLng(attempt) {
 
         }
 
-      })
+      });
 
       // Display the vendor selection options
       $('.gron_fields_box')

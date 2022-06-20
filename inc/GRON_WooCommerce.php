@@ -78,6 +78,16 @@ class GRON_WooCommerce
     // Load script
     wp_enqueue_script('gron-woocommerce-script');
 
+    $deliver_location_field = array(
+      'type'        => 'text',
+      'label'       =>  __('Delivery Location:', 'gron-custom'),
+      'required'    => false,
+      'class'       => array('wcfm_custom_hide'),
+      'clear'       => true,
+      'priority'    => 889
+    );
+    $fields['gron_delivery_location'] = $deliver_location_field;
+
     $vendor_field = array(
       'type'        => 'radio',
       'label'       =>  __('Select Store:', 'gron-custom'),
