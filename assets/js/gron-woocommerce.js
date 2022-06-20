@@ -57,31 +57,39 @@
 
 })(jQuery);
 
+$ = jQuery;
+
 function gronWC_tjH2Bn_getLatLng(attempt) {
   var maxAttempt = 20;
   attempt++;
 
-  $ = jQuery;
-
   setTimeout(function () {
-    var inputLatVal = $("#wcfmmp_user_location_lat").val();
-    var inputLngVal = $("#wcfmmp_user_location_lng").val();
-
     if (attempt > maxAttempt) return;
 
-    if (!inputLatVal || !inputLngVal) {
+    // check if the location updated completely
+    if( !gronWC_tjH2Bn_location_updated() ) {
       gronWC_tjH2Bn_getLatLng(attempt);
     } else {
-      var vendorsInfo = gronWC.vendors_info;
-      var start = new google.maps.LatLng(inputLatVal, inputLngVal);
+      var inputLocationField = $('#wcfmmp_user_location');
+      var inputLatField = $("#wcfmmp_user_location_lat");
+      var inputLngField = $("#wcfmmp_user_location_lng");
 
-      // Get elements - added in woocommerce checkout page
-      var vendorListElm = $(".gron_vendor_list");
-      var inputWrapperElm = vendorListElm.find(".woocommerce-input-wrapper");
+      // Set location value into a text field
+      gronWC_tjH2Bn_set_location_data( {
+        location: inputLocationField.val(),
+        lat: inputLatField.val(),
+        lng: inputLngField.val()
+      } );
+
 
       // empty the input wrapper element, which has a placeholder radio field
+      var vendorListElm = $(".gron_vendor_list");
+      var inputWrapperElm = vendorListElm.find(".woocommerce-input-wrapper");
       inputWrapperElm.empty();
 
+
+      var vendorsInfo = gronWC.vendors_info;
+      var start = new google.maps.LatLng(inputLatField.val(), inputLngField.val());
       var vendorInfoWithDistance = [];
 
       for (var i = 0; i < vendorsInfo.length; i++) {
@@ -130,38 +138,15 @@ function gronWC_tjH2Bn_getLatLng(attempt) {
 
         }
 
-      });
-
-      // Display the vendor selection options
-      $('.gron_fields_box')
-        .css("background-color", "rgba( 58, 181, 123, 0.5 )")
-        .fadeIn(300)
-        .promise()
-        .done(function () {
-
-          $(this).css("background-color", "initial");
-
-          var firstVendorElm = $('.gron_vendor_list .input-radio:first');
-          
-          firstVendorElm.prop("checked", true);
-          firstVendorElm.next('label').addClass('active');
-
-          var collectionTypeElm = $('.gron_collection_type');
-    
-          collectionTypeElm.fadeIn(300)
-
-          var deliveryDayElm = $('.gron_deliver_day');
-          var deliveryTimeElm = $('.gron_deliver_time');
-
-          deliveryDayElm.fadeIn(300).css('display', 'inline-block');
-          deliveryTimeElm.fadeIn(300).css('display', 'inline-block');
-          
-        });
-
+        gronWC_tjH2Bn_render_gron_fields_box();
         vendorListElm.fadeIn(300)
 
+      });
+
+
+
     }
-  }, 101);
+  }, 301);
 }
 
 function gronWC_tjH2Bn_vendor_info_with_distance(params) {
@@ -197,7 +182,6 @@ function gronWC_tjH2Bn_vendor_info_with_distance(params) {
 
 function gronWC_tjH2Bn_render_vendor_list(params) {
 
-  $ = jQuery;
   var vendorInfo = params.vendorInfo;
   var isActive = params.isActive;
   var inputWrapperElm = $(".gron_vendor_list .woocommerce-input-wrapper");
@@ -227,5 +211,68 @@ function gronWC_tjH2Bn_render_vendor_list(params) {
 
   inputWrapperElm.append(fieldMarkup);
 
+}
+
+function gronWC_tjH2Bn_render_gron_fields_box() {
+  
+  // Display the vendor selection options
+  $('.gron_fields_box')
+  .css("background-color", "rgba( 58, 181, 123, 0.5 )")
+  .fadeIn(300)
+  .promise()
+  .done(function () {
+
+    $(this).css("background-color", "initial");
+
+    var firstVendorElm = $('.gron_vendor_list .input-radio:first');
+    
+    firstVendorElm.prop("checked", true);
+    firstVendorElm.next('label').addClass('active');
+
+    var collectionTypeElm = $('.gron_collection_type');
+
+    collectionTypeElm.fadeIn(300)
+
+    var deliveryDayElm = $('.gron_deliver_day');
+    var deliveryTimeElm = $('.gron_deliver_time');
+
+    deliveryDayElm.fadeIn(300).css('display', 'inline-block');
+    deliveryTimeElm.fadeIn(300).css('display', 'inline-block');
+    
+  });
+}
+
+function gronWC_tjH2Bn_set_location_data( params ) {
+
+  
+
+  // set location into a text field to compare for multiple input
+  var gronLocationField = $('#gron_delivery_location_data');
+  gronLocationField.val( JSON.stringify( params ) );
+
+}
+
+function gronWC_tjH2Bn_location_updated() {
+  var locationValue = $('#gron_delivery_location_data').val();
+  var locationData = JSON.parse( locationValue ? locationValue : '{}' );
+
+  var savedLocation = locationData.location;
+  var inputLocation = $('#wcfmmp_user_location').val();
+
+  var savedLat = locationData.lat ? locationData.lat : "";
+  var inputLat = $("#wcfmmp_user_location_lat").val();
+
+
+  var savedLng = locationData.lng ? locationData.lng : "";
+  var inputLng = $("#wcfmmp_user_location_lng").val();
+
+  // check if location changed
+  if( savedLocation !== inputLocation ) {
+    // check if latitude and longitude updated
+    // as it's an asynchronous operation
+    return savedLat !== inputLat || savedLng !== inputLng;
+  };
+
+  return true;
 }
 

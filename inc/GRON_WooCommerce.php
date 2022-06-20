@@ -80,13 +80,13 @@ class GRON_WooCommerce
 
     $deliver_location_field = array(
       'type'        => 'text',
-      'label'       =>  __('Delivery Location:', 'gron-custom'),
+      'label'       =>  __('Delivery Location Data:', 'gron-custom'),
       'required'    => false,
       'class'       => array('wcfm_custom_hide'),
       'clear'       => true,
       'priority'    => 889
     );
-    $fields['gron_delivery_location'] = $deliver_location_field;
+    $fields['gron_delivery_location_data'] = $deliver_location_field;
 
     $vendor_field = array(
       'type'        => 'radio',
