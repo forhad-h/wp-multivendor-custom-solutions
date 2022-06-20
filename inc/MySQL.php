@@ -61,7 +61,7 @@ class MySQL {
         dbDelta( $query );
       }
 
-    }catch( Exception $e) {
+    }catch( \Exception $e) {
 
       $this->print_error( 'db_table_creation_failed', sprintf('Error: during create %s table.', $this->table_name ), $e );
 
@@ -81,7 +81,7 @@ class MySQL {
         'address' => $data->address
       ]);
 
-    }catch( Execption $e ) {
+    }catch( \Exception $e ) {
       $this->print_error( 'db_insert_failed', 'Error: during try to insert user info.', $e );
     }
 
@@ -98,7 +98,7 @@ class MySQL {
       $res = $this->db->get_row( $query );
       return $res;
 
-    }catch( Exception $e) {
+    }catch( \Exception $e) {
       $this->print_error( 'db_get_failed', 'Error: during try to get user info.', $e );
     }
 
@@ -110,7 +110,7 @@ class MySQL {
    * @param $data error data
   */
   private function print_error( $code, $message, $data = '' ) {
-    $error = new WP_Error( $code, $message, $data );
+    $error = new \WP_Error( $code, $message, $data );
     print $error;
   }
 
@@ -143,7 +143,7 @@ class MySQL {
 
       return $insert;
 
-    }catch( Exception $e ) {
+    }catch( \Exception $e ) {
       $this->print_error( 'not-inserted', 'shop timing not inserted!' );
     }
 
@@ -180,7 +180,7 @@ class MySQL {
 
       return $update;
 
-    }catch( Exception $e ) {
+    }catch( \Exception $e ) {
       $this->print_error( 'not-updated', 'shop timing not updated!' );
     }
 

@@ -28,6 +28,7 @@
 
     var vendorId = $(this).val();
 
+    gronWC_tjH2Bn_render_vendor_timings( vendorId )
     
   });
 
@@ -183,21 +184,25 @@ function gronWC_tjH2Bn_vendor_info_with_distance(params) {
 function gronWC_tjH2Bn_render_vendor_list(params) {
 
   var vendorInfo = params.vendorInfo;
+  var vendorId = vendorInfo.vendor_id;
+
   var isActive = params.isActive;
   var inputWrapperElm = $(".gron_vendor_list .woocommerce-input-wrapper");
 
   var fieldMarkup = "";
 
+  if(isActive) gronWC_tjH2Bn_render_vendor_timings( vendorId );
+
   // Field input
   fieldMarkup += '<input type="radio" class="input-radio " value="';
-  fieldMarkup += vendorInfo.vendor_id;
-  fieldMarkup += '" name="gron_vendor" id="gron_vendor_list_' + vendorInfo.vendor_id + '"';
+  fieldMarkup += vendorId;
+  fieldMarkup += '" name="gron_vendor" id="gron_vendor_list_' + vendorId + '"';
   fieldMarkup += isActive ? ' checked="checked"' : '';
   fieldMarkup += ">"
 
   // Field label
   fieldMarkup += '<label for="gron_vendor_list_';
-  fieldMarkup += vendorInfo.vendor_id;
+  fieldMarkup += vendorId;
   fieldMarkup += '" class="radio';
   fieldMarkup += isActive ? ' active' : '';
   fieldMarkup += '">';
@@ -276,3 +281,42 @@ function gronWC_tjH2Bn_location_updated() {
   return true;
 }
 
+function gronWC_tjH2Bn_render_vendor_timings( vendorId ) {
+  $.ajax({
+    url: gronWC.siteUrl + '/wp-json/gron/v1/vendor/timings/' + vendorId,
+    type: 'GET'
+  })
+  .done(function( res ) {
+    if( res ) {
+      var dayElm = $('#gron_deliver_day');
+
+      var days = res.days;
+      var times = res.times;
+
+      if( days ) {
+        dayElm.empty();
+
+        var daysArr = Object.entries(days);
+
+        for( var i = 0; i < daysArr.length; i++ ) {
+          dayElm.append('<option value="' + daysArr[i][0] + '">' + daysArr[i][1] + '</option>')
+        }
+      }
+
+      var timeElm = $('#gron_deliver_time');
+      if( times ) {
+        timeElm.empty();
+
+        var timesArr = Object.entries(times);
+
+        for( var i = 0; i < timesArr.length; i++ ) {
+          timeElm.append('<option value="' + timesArr[i][0] + '">' + timesArr[i][1] + '</option>')
+        }
+      }
+      
+    }
+  })
+  .fail(function( err ) {
+    console.log( "Error in gron-woocommerce.js -> gronWC_tjH2Bn_get_vendor_open_info", err.responseText );
+  });
+}
