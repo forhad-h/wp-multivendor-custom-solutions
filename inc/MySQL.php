@@ -25,7 +25,7 @@ class MySQL {
     $this->shop_timings_tb_name    = $wpdb->prefix . 'gron_shop_timings';
     $this->delivery_slots_tb_name  = $wpdb->prefix . 'gron_delivery_slots';
     $this->wcfm_delivery_orders_tb_name = $wpdb->prefix . 'wcfm_delivery_orders';
-
+    $this->gron_assigned_vendor_orders_tb_name = $wpdb->prefix . 'gron_assigned_vendor_orders';
   }
 
   /**
@@ -53,6 +53,13 @@ class MySQL {
           time_from TIME NOT NULL,
           time_to TIME NOT NULL,
           PRIMARY KEY (slot_id)
+        ) $charset_collate;",
+        "CREATE TABLE $this->gron_assigned_vendor_orders_tb_name (
+          assign_id BIGINT NOT NULL AUTO_INCREMENT,
+          vendor_id BIGINT NOT NULL,
+          order_id BIGINT NOT NULL,
+          status VARCHAR(21),
+          PRIMARY KEY (assign_id)
         ) $charset_collate;",
       );
       require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
