@@ -78,8 +78,15 @@ class Store_Manager {
         'label' => __( 'GRON - Deliveries','gron-custom' ),
         'icon' => 'inbox',
         'endpoint' => GRON_VENDOR_ENDPOINT_DELIVERY_REQUEST,
-        'slug' => GRON_VENDOR_ENDPOINT_DELIVERY_REQUEST,
-        'priority' => 305
+        'slug' => GRON_VENDOR_ENDPOINT_DELIVERY_REQUEST
+      ));
+
+      // create page for Deliveries
+      new Page(array(
+        'label' => __( 'GRON - Orders','gron-custom' ),
+        'icon' => 'inbox',
+        'endpoint' => GRON_VENDOR_ENDPOINT_GRON_ORDERS,
+        'slug' => GRON_VENDOR_ENDPOINT_GRON_ORDERS
       ));
 
     }elseif( wcfm_is_delivery_boy() ) {

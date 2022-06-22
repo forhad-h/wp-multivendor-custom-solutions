@@ -196,7 +196,7 @@ function gronWC_tjH2Bn_render_vendor_list(params) {
   // Field input
   fieldMarkup += '<input type="radio" class="input-radio " value="';
   fieldMarkup += vendorId;
-  fieldMarkup += '" name="gron_vendor" id="gron_vendor_list_' + vendorId + '"';
+  fieldMarkup += '" name="gron_assignable_vendor" id="gron_vendor_list_' + vendorId + '"';
   fieldMarkup += isActive ? ' checked="checked"' : '';
   fieldMarkup += ">"
 

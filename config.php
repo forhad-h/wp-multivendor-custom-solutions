@@ -15,6 +15,8 @@ define( "GRON_ADMIN_ENDPOINT_DELIVERY_REQUEST", 'gron-admin-delivery-notificatio
 define( "GRON_VENDOR_ENDPOINT_DELIVERY_REQUEST", 'gron-vendor-delivery-notifications' );
 define( "GRON_BOY_ENDPOINT_DELIVERY_REQUEST", 'gron-boy-delivery-requests' );
 
+define( "GRON_VENDOR_ENDPOINT_GRON_ORDERS", 'gron-vendor-orders' );
+
 define( "SQLite_FILE_PATH", "sqlite:" . GRON_DIR_PATH . "db/delivery_notifications.db" );
 
 define( "GRON_DELIVERY_ACCEPTED_STATUS_MSG", "Accepted by");

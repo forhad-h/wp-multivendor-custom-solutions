@@ -231,7 +231,7 @@ class GRON_WooCommerce
   /**
    * Mange notification after order processing
    * @param Int $order_id Order ID
-   * @param Object $posted_data
+   * @param Array $posted_data
    * @param Object $order The Order Object
    */
   public function order_processed($order_id, $posted_data, $order)
@@ -243,13 +243,13 @@ class GRON_WooCommerce
       Like pusher can not connect etc.
     */
 
-    // TODO: need to change assignable vendor field name
-    $data = array(
-      'vendor_id' => $posted_data['gron_vendor'],
-      'order_id' => $order_id
-    );
-
-    $this->mysql->insert_assigned_vendor_orders( $data );
+    if( array_key_exists( 'gron_assignable_vendor', $posted_data ) ) {
+      $data = array(
+        'vendor_id' => $posted_data['gron_assignable_vendor'],
+        'order_id' => $order_id
+      );
+      $this->mysql->insert_assigned_vendor_orders( $data ); 
+    }
 
     // Get vendor IDs from the $order
     $vendor_ids = $this->get_vendor_ids_from_order($order);
@@ -501,7 +501,7 @@ class GRON_WooCommerce
       ),
       'priority'    => 991
     );
-    $fields['gron_vendor'] = $vendor_field;
+    $fields['gron_assignable_vendor'] = $vendor_field;
 
 
     $collection_type_field = array(
