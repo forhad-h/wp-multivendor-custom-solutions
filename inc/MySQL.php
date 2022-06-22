@@ -25,7 +25,7 @@ class MySQL {
     $this->shop_timings_tb_name    = $wpdb->prefix . 'gron_shop_timings';
     $this->delivery_slots_tb_name  = $wpdb->prefix . 'gron_delivery_slots';
     $this->wcfm_delivery_orders_tb_name = $wpdb->prefix . 'wcfm_delivery_orders';
-
+    $this->gron_assigned_vendor_orders_tb_name = $wpdb->prefix . 'gron_assigned_vendor_orders';
   }
 
   /**
@@ -54,6 +54,13 @@ class MySQL {
           time_to TIME NOT NULL,
           PRIMARY KEY (slot_id)
         ) $charset_collate;",
+        "CREATE TABLE $this->gron_assigned_vendor_orders_tb_name (
+          assign_id BIGINT NOT NULL AUTO_INCREMENT,
+          vendor_id BIGINT NOT NULL,
+          order_id BIGINT NOT NULL,
+          status VARCHAR(21),
+          PRIMARY KEY (assign_id)
+        ) $charset_collate;",
       );
       require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
@@ -61,7 +68,7 @@ class MySQL {
         dbDelta( $query );
       }
 
-    }catch( Exception $e) {
+    }catch( \Exception $e) {
 
       $this->print_error( 'db_table_creation_failed', sprintf('Error: during create %s table.', $this->table_name ), $e );
 
@@ -81,7 +88,7 @@ class MySQL {
         'address' => $data->address
       ]);
 
-    }catch( Execption $e ) {
+    }catch( \Exception $e ) {
       $this->print_error( 'db_insert_failed', 'Error: during try to insert user info.', $e );
     }
 
@@ -98,7 +105,7 @@ class MySQL {
       $res = $this->db->get_row( $query );
       return $res;
 
-    }catch( Exception $e) {
+    }catch( \Exception $e) {
       $this->print_error( 'db_get_failed', 'Error: during try to get user info.', $e );
     }
 
@@ -110,7 +117,7 @@ class MySQL {
    * @param $data error data
   */
   private function print_error( $code, $message, $data = '' ) {
-    $error = new WP_Error( $code, $message, $data );
+    $error = new \WP_Error( $code, $message, $data );
     print $error;
   }
 
@@ -143,7 +150,7 @@ class MySQL {
 
       return $insert;
 
-    }catch( Exception $e ) {
+    }catch( \Exception $e ) {
       $this->print_error( 'not-inserted', 'shop timing not inserted!' );
     }
 
@@ -180,7 +187,7 @@ class MySQL {
 
       return $update;
 
-    }catch( Exception $e ) {
+    }catch( \Exception $e ) {
       $this->print_error( 'not-updated', 'shop timing not updated!' );
     }
 

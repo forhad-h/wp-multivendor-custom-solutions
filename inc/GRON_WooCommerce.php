@@ -78,6 +78,16 @@ class GRON_WooCommerce
     // Load script
     wp_enqueue_script('gron-woocommerce-script');
 
+    $deliver_location_field = array(
+      'type'        => 'text',
+      'label'       =>  __('Delivery Location Data:', 'gron-custom'),
+      'required'    => false,
+      'class'       => array('wcfm_custom_hide'),
+      'clear'       => true,
+      'priority'    => 889
+    );
+    $fields['gron_delivery_location_data'] = $deliver_location_field;
+
     $vendor_field = array(
       'type'        => 'radio',
       'label'       =>  __('Select Store:', 'gron-custom'),
@@ -214,7 +224,7 @@ class GRON_WooCommerce
 
     $order = wc_get_order($order_id);
 
-    $vendor_ids = $this->get_vendor_ids($order);
+    $vendor_ids = $this->get_vendor_ids_from_order($order);
 
     foreach ($vendor_ids as $item_id => $vendor_id) {
 
@@ -244,7 +254,7 @@ class GRON_WooCommerce
   function gron_custom_checkout_field_display_admin_order_meta($order)
   {
 
-    $vendor_ids = $this->get_vendor_ids($order);
+    $vendor_ids = $this->get_vendor_ids_from_order($order);
 
     echo '<h3 style="color:#17a2b8;font-weight: 500;font-size: 13px;border-bottom: 1px solid #ccc;padding-bottom: 11px;">Delivery Details:</h3>';
 
@@ -274,12 +284,12 @@ class GRON_WooCommerce
 
     /*
       TODO:
-      figure out how to redirect to thank you page, if any error occured here.
+      figure out how to redirect to thank you page, if any error occurred here.
       Like pusher can not connect etc.
     */
 
     // Get vendor IDs from the $order
-    $vendor_ids = $this->get_vendor_ids($order);
+    $vendor_ids = $this->get_vendor_ids_from_order($order);
 
     // Get devlivery boy IDs
     if (!empty($vendor_ids)) {
@@ -299,11 +309,11 @@ class GRON_WooCommerce
         if ($this->is_delivery_manage_by_vendor($vendor_id)) {
 
           // Delivery manage by vendor
-          $this->deliveriy_notification_process($vendor_id, $order_id, $item_id, 'vendor');
+          $this->delivery_notification_process($vendor_id, $order_id, $item_id, 'vendor');
         } else {
 
           // Delivery manage by admin
-          $this->deliveriy_notification_process($vendor_id, $order_id, $item_id, 'admin');
+          $this->delivery_notification_process($vendor_id, $order_id, $item_id, 'admin');
         }
       }
     }
@@ -314,7 +324,7 @@ class GRON_WooCommerce
    * @param Object $order Order object
    * @return NULL|Array Arrays of vendor ids
    */
-  private function get_vendor_ids($order)
+  private function get_vendor_ids_from_order($order)
   {
 
     $vendor_ids = array();
@@ -396,7 +406,7 @@ class GRON_WooCommerce
    * @param Int $order_id ID of the order
    * @param String $manage_by delivery manage by 'admin' or 'vendor'
    */
-  private function deliveriy_notification_process($vendor_id, $order_id, $item_id, $manage_by)
+  private function delivery_notification_process($vendor_id, $order_id, $item_id, $manage_by)
   {
 
     $delivery_boy_ids = array();
@@ -466,5 +476,35 @@ class GRON_WooCommerce
     return Utils::is_delivery_by_seller() &&
       Utils::is_delivery_by_me($vendor_id) &&
       Utils::is_allowed_the_vendor_for_dm($vendor_id);
+  }
+
+  private function get_author_info_by_products() {
+
+    $author_info = array();
+
+    foreach( WC()->cart->get_cart() as $cart_item) {
+
+      $product_id = $cart_item['product_id'];
+      $author_id = get_post_field('post_author', $product_id);
+
+      $author_data = get_userdata( $author_id );
+      $user_roles = $author_data->roles;
+
+      $is_admin = in_array( 'administrator', (array) $user_roles );
+      $is_vendor = in_array( 'wcfm_vendor', (array) $user_roles );
+      $role = '';
+
+      if($is_admin) $role = 'admin';
+      elseif($is_vendor) $role = 'vendor';
+
+      if( !array_key_exists($author_id, $author_info) ) {
+        $author_info[$author_id] = array(
+          'role' => $role,
+        );
+      }
+
+    }
+
+    return $author_info;
   }
 }

@@ -234,7 +234,8 @@ class Utils {
       'role__in'     => array( $vendor_role ),
       'orderby'      => 'ID',
       'order'        => 'ASC',
-      'fields'       => "ID"
+      'fields'       => "ID",
+      'number'       => 5
      );
 
     $vendor_ids = get_users( $args );
@@ -281,9 +282,11 @@ class Utils {
     $shop_timings = $mysql->get_shop_timings(true, $vendor_id);
 
     foreach ($shop_timings as $timing) {
-
+      
       $key = $timing->day_name;
-      $value = ucfirst($timing->day_name);
+      $start_time = Utils::time_format($timing->start_time);
+      $end_time = Utils::time_format($timing->end_time);
+      $value = ucfirst($timing->day_name) . ' (' . $start_time . ' - ' . $end_time . ')';
 
       $options[$key] = $value;
     }
@@ -306,7 +309,7 @@ class Utils {
     foreach ($slots as $slot) {
       $time_from = Utils::time_format($slot->time_from);
       $time_to = Utils::time_format($slot->time_to);
-      $key = $value = $time_from . '-' . $time_to;
+      $key = $value = $time_from . ' - ' . $time_to;
 
       $options[$key] = $value;
     }
