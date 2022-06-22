@@ -31,6 +31,12 @@ class GRON_WooCommerce
   /** @var WC $wc WooCommerce instance */
   private $wc;
 
+  /** @var Boolean billing fields for admin generated */
+  private $is_generated_admin_billing_fields = false;
+
+  /** @var Int vendor billing field priority */
+  private $vendor_billing_field_priority = 200;
+
   /**
    * consturct function of GRON_WooCommerce
    * Initialize Database connection
@@ -78,71 +84,19 @@ class GRON_WooCommerce
     // Load script
     wp_enqueue_script('gron-woocommerce-script');
 
-    $deliver_location_field = array(
-      'type'        => 'text',
-      'label'       =>  __('Delivery Location Data:', 'gron-custom'),
-      'required'    => false,
-      'class'       => array('wcfm_custom_hide'),
-      'clear'       => true,
-      'priority'    => 889
-    );
-    $fields['gron_delivery_location_data'] = $deliver_location_field;
+    $author_info = $this->get_author_info_by_products();
+    $new_fields = array();
 
-    $vendor_field = array(
-      'type'        => 'radio',
-      'label'       =>  __('Select Store:', 'gron-custom'),
-      'required'    => true,
-      'class'       => array('gron_field_wrapper', 'gron_vendor_list', 'gron_radio_select'),
-      'clear'       => true,
-      'options'     => array(
-        ''     => 'Placeholder'
-      ),
-      'priority'    => 991
-    );
-    $fields['gron_vendor'] = $vendor_field;
+    foreach ($author_info as $author_id => $info) {
 
+      if ($info['role'] === 'admin' && !$this->is_generated_admin_billing_fields) {
+        $new_fields = $this->generate_admin_billing_fields();
+      } elseif ($info['role'] === 'vendor') {
+        $new_fields = $this->generate_vendor_billing_fields( $author_id );
+      }
+    }
 
-    $collection_type_field = array(
-      'type'        => 'radio',
-      'label'       => __('Collection Type:', 'gron-custom'),
-      'required'    => true,
-      'class'       => array('gron_field_wrapper', 'gron_collection_type', 'gron_radio_select'),
-      'clear'       => true,
-      'options'     => array(
-        'self_collection'     => 'Self Collection',
-        'deliver_to_home'     => 'Deliver to Home'
-      ),
-      'priority'    => 993
-    );
-    $fields['gron_collection_type'] = $collection_type_field;
-
-    $date_field = array(
-      'type'        => 'select',
-      'label'       => __('Deliver Date:', 'gron-custom'),
-      'required'    => false,
-      'class'       => array('gron_field_wrapper', 'select2', 'gron_deliver_day'),
-      'clear'       => true,
-      'options'     => array(
-        '' => 'Placeholder'
-      ),
-      'priority'    => 995
-    );
-    $fields['gron_deliver_day'] = $date_field;
-
-    $time_field = array(
-      'type'        => 'select',
-      'label'       => __('Deliver Time:', 'gron-custom'),
-      'required'    => false,
-      'class'       => array('gron_field_wrapper', 'gron_deliver_time'),
-      'clear'       => true,
-      'options'     =>  array(
-        '' => 'Placeholder'
-      ),
-      'priority'    => 997
-    );
-    $fields['gron_deliver_time'] = $time_field;
-
-    return $fields;
+    return array_merge($fields, $new_fields);
   }
 
   /**
@@ -206,7 +160,7 @@ class GRON_WooCommerce
         'required'    => true,
         'class'       => array('gron_deliver_time'),
         'clear'       => true,
-        'options'     => array_merge( array("" => "Select Delivery Times"), Utils::get_delivery_times($vendor_id)),
+        'options'     => array_merge(array("" => "Select Delivery Times"), Utils::get_delivery_times($vendor_id)),
         'priority'    => ++$priority
       );
       $fields['gron_deliver_time_' . $vendor_id] = $time_field;
@@ -478,33 +432,156 @@ class GRON_WooCommerce
       Utils::is_allowed_the_vendor_for_dm($vendor_id);
   }
 
-  private function get_author_info_by_products() {
+  /**
+   * Get product author info by product in checkout page
+   *
+   * @return Array
+   */
+  private function get_author_info_by_products()
+  {
 
     $author_info = array();
 
-    foreach( WC()->cart->get_cart() as $cart_item) {
+    foreach (WC()->cart->get_cart() as $cart_item) {
 
       $product_id = $cart_item['product_id'];
       $author_id = get_post_field('post_author', $product_id);
 
-      $author_data = get_userdata( $author_id );
+      $author_data = get_userdata($author_id);
       $user_roles = $author_data->roles;
 
-      $is_admin = in_array( 'administrator', (array) $user_roles );
-      $is_vendor = in_array( 'wcfm_vendor', (array) $user_roles );
+      $is_admin = in_array('administrator', (array) $user_roles);
+      $is_vendor = in_array('wcfm_vendor', (array) $user_roles);
       $role = '';
 
-      if($is_admin) $role = 'admin';
-      elseif($is_vendor) $role = 'vendor';
+      if ($is_admin) $role = 'admin';
+      elseif ($is_vendor) $role = 'vendor';
 
-      if( !array_key_exists($author_id, $author_info) ) {
+      if (!array_key_exists($author_id, $author_info)) {
         $author_info[$author_id] = array(
           'role' => $role,
         );
       }
-
     }
 
     return $author_info;
   }
+
+  private function generate_admin_billing_fields()
+  {
+
+
+    $deliver_location_field = array(
+      'type'        => 'text',
+      'label'       =>  __('Delivery Location Data:', 'gron-custom'),
+      'required'    => false,
+      'class'       => array('wcfm_custom_hide'),
+      'clear'       => true,
+      'priority'    => 889
+    );
+    $fields['gron_delivery_location_data'] = $deliver_location_field;
+
+    $vendor_field = array(
+      'type'        => 'radio',
+      'label'       =>  __('Select Store:', 'gron-custom'),
+      'required'    => true,
+      'class'       => array('gron_field_wrapper', 'gron_vendor_list', 'gron_radio_select'),
+      'clear'       => true,
+      'options'     => array(
+        ''     => 'Placeholder'
+      ),
+      'priority'    => 991
+    );
+    $fields['gron_vendor'] = $vendor_field;
+
+
+    $collection_type_field = array(
+      'type'        => 'radio',
+      'label'       => __('Collection Type:', 'gron-custom'),
+      'required'    => true,
+      'class'       => array('gron_field_wrapper', 'gron_collection_type', 'gron_radio_select'),
+      'clear'       => true,
+      'options'     => array(
+        'self_collection'     => 'Self Collection',
+        'deliver_to_home'     => 'Deliver to Home'
+      ),
+      'priority'    => 993
+    );
+    $fields['gron_collection_type'] = $collection_type_field;
+
+    $date_field = array(
+      'type'        => 'select',
+      'label'       => __('Deliver Date:', 'gron-custom'),
+      'required'    => false,
+      'class'       => array('gron_field_wrapper', 'select2', 'gron_deliver_day'),
+      'clear'       => true,
+      'options'     => array(
+        '' => 'Placeholder'
+      ),
+      'priority'    => 995
+    );
+    $fields['gron_deliver_day'] = $date_field;
+
+    $time_field = array(
+      'type'        => 'select',
+      'label'       => __('Deliver Time:', 'gron-custom'),
+      'required'    => false,
+      'class'       => array('gron_field_wrapper', 'gron_deliver_time'),
+      'clear'       => true,
+      'options'     =>  array(
+        '' => 'Placeholder'
+      ),
+      'priority'    => 997
+    );
+    $fields['gron_deliver_time'] = $time_field;
+
+    $this->is_generated_admin_billing_fields = true;
+
+    return $fields;
+  }
+
+  private function generate_vendor_billing_fields($vendor_id)
+  {
+
+    $store_name = get_user_meta($vendor_id, 'store_name', true);
+
+    $collection_type_field = array(
+      'type'        => 'radio',
+      'label'       => sprintf('<span class="gron_cp_store_name">%1$s</span> %2$s', $store_name, __('Collection Type:', 'gron-custom')),
+      'required'    => true,
+      'class'       => array('gron_collection_type', 'gron_radio_select'),
+      'clear'       => true,
+      'options'     => array(
+        'self_collection'     => 'Self Collection',
+        'deliver_to_home'     => 'Deliver to Home'
+      ),
+      'priority'    => ++$this->vendor_billing_field_priority
+    );
+    $fields['gron_collection_type_' . $vendor_id] = $collection_type_field;
+
+    $date_field = array(
+      'type'        => 'select',
+      'label'       => __('Deliver Date:', 'gron-custom'),
+      'required'    => true,
+      'class'       => array('select2', 'gron_deliver_day'),
+      'clear'       => true,
+      'options'     => array_merge(array("" => "Select Delivery Day"), Utils::get_delivery_days($vendor_id)),
+      'priority'    => ++$this->vendor_billing_field_priority
+    );
+    $fields['gron_deliver_day_' . $vendor_id] = $date_field;
+
+    $time_field = array(
+      'type'        => 'select',
+      'label'       => __('Deliver Time:', 'gron-custom'),
+      'required'    => true,
+      'class'       => array('gron_deliver_time'),
+      'clear'       => true,
+      'options'     => array_merge(array("" => "Select Delivery Times"), Utils::get_delivery_times($vendor_id)),
+      'priority'    => ++$this->vendor_billing_field_priority
+    );
+    $fields['gron_deliver_time_' . $vendor_id] = $time_field;
+
+    return $fields;
+  }
+
 }
