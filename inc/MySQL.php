@@ -452,5 +452,24 @@ class MySQL {
 
     }
 
+    public function insert_assigned_vendor_orders( $data ) {
+
+      $vendor_id     = esc_sql( $data['vendor_id'] );
+      $order_id      = esc_sql( $data['order_id'] );
+
+      $data_to_insert = array(
+        'vendor_id' => $vendor_id,
+        'order_id' => $order_id,
+        'status' => 'processing',
+      );
+
+      $this->db->insert( $this->gron_assigned_vendor_orders_tb_name, $data_to_insert);
+
+      $assign_id = $this->db->insert_id;
+
+      return $assign_id;
+
+    }
+
 
 }

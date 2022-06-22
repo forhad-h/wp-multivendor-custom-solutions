@@ -104,6 +104,7 @@ class GRON_WooCommerce
    * @param Array $fields array of billing fields
    * @return Array modified array of billilng fields
    */
+  // TODO: Remove after test v2
   public function gron_billing_fields($fields)
   {
 
@@ -241,6 +242,14 @@ class GRON_WooCommerce
       figure out how to redirect to thank you page, if any error occurred here.
       Like pusher can not connect etc.
     */
+
+    // TODO: need to change assignable vendor field name
+    $data = array(
+      'vendor_id' => $posted_data['gron_vendor'],
+      'order_id' => $order_id
+    );
+
+    $this->mysql->insert_assigned_vendor_orders( $data );
 
     // Get vendor IDs from the $order
     $vendor_ids = $this->get_vendor_ids_from_order($order);
